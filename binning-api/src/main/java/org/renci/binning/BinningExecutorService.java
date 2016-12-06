@@ -1,19 +1,9 @@
 package org.renci.binning;
 
-public class BinningExecutorService {
+public interface BinningExecutorService {
 
-    private BinningThreadPoolExecutor executor;
+    public BinningThreadPoolExecutor getExecutor();
 
-    public BinningExecutorService() {
-        super();
-    }
-
-    public BinningThreadPoolExecutor getExecutor() {
-        return executor;
-    }
-
-    public void setExecutor(BinningThreadPoolExecutor executor) {
-        this.executor = executor;
-    }
+    public void setExecutor(BinningThreadPoolExecutor executor);
 
 }
