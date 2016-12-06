@@ -41,7 +41,7 @@
   </properties>
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/jdr0887/CANVAS/issues</url>
+    <url>https://github.com/jdr0887/binning/issues</url>
   </issueManagement>
   <licenses>    
     <license>
@@ -51,9 +51,9 @@
     </license>
   </licenses>
   <scm>
-    <url>https://github.com/jdr0887/CANVAS</url>
-    <developerConnection>scm:git:git@github.com:jdr0887/CANVAS.git</developerConnection>
-    <connection>scm:git:git@github.com:jdr0887/CANVAS.git</connection>
+    <url>https://github.com/jdr0887/binning</url>
+    <developerConnection>scm:git:git@github.com:jdr0887/binning.git</developerConnection>
+    <connection>scm:git:git@github.com:jdr0887/binning.git</connection>
     <tag>HEAD</tag>
   </scm>
   <dependencyManagement>
