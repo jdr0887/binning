@@ -4,8 +4,10 @@
 
   <bean id="binningThreadPoolExecutor" class="org.renci.binning.BinningThreadPoolExecutor" />
 
-  <bean id="binningExecutorService" class="org.renci.binning.BinningExecutorService">
+  <bean id="binningExecutorService" class="org.renci.binning.BinningExecutorServiceImpl">
     <property name="executor" ref="binningThreadPoolExecutor" />
   </bean>
+
+  <service ref="binningExecutorService" interface="org.renci.binning.BinningExecutorService" />
 
 </blueprint>
