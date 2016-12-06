@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.renci.binning</groupId>
+    <artifactId>binning</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <name>Binning :: Workflows</name>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.renci.binning</groupId>
+  <artifactId>binning-workflows</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+    <module>binning-workflow-diagnostic-gs</module>
+    <module>binning-workflow-diagnostic-mskcc</module>
+    <module>binning-workflow-diagnostic-ncgenes</module>
+    <module>binning-workflow-diagnostic-test</module>
+    <module>binning-workflow-diagnostic-uncseq</module>
+    <module>binning-workflow-incidental-ncgenes</module>
+    <module>binning-workflow-incidental-uncseq</module>
+  </modules>
+</project>

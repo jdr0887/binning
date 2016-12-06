@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions id="definitions" targetNamespace="http://activiti.org/bpmn20" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn">
+
+  <process id="uncseq_diagnostic_binning" name="UNCSeqDiagnosticBinning">
+
+    <startEvent id="start" />
+    <serviceTask id="initialize" activiti:class="org.renci.canvas.binning.diagnostic.InitializeDelegate" />
+    <serviceTask id="loadVCF" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.LoadVCFDelegate" />
+    <serviceTask id="annotateVariants" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.AnnotateVariantsDelegate" />
+    <serviceTask id="updateFrequencies" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.UpdateFrequenciesDelegate" />
+    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.UpdateDiagnosticBinsDelegate" />
+    <serviceTask id="generateReport" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.GenerateReportDelegate" />
+    <serviceTask id="finalize" activiti:class="org.renci.canvas.binning.diagnostic.FinalizeDelegate" />
+    <endEvent id="end" />
+
+    <sequenceFlow sourceRef="start" targetRef="initialize" />
+    <sequenceFlow sourceRef="initialize" targetRef="loadVCF" />
+    <sequenceFlow sourceRef="loadVCF" targetRef="annotateVariants" />
+    <sequenceFlow sourceRef="annotateVariants" targetRef="updateFrequencies" />
+    <sequenceFlow sourceRef="updateFrequencies" targetRef="updateDiagnosticBins" />
+    <sequenceFlow sourceRef="updateDiagnosticBins" targetRef="generateReport" />
+    <sequenceFlow sourceRef="generateReport" targetRef="finalize" />
+    <sequenceFlow sourceRef="finalize" targetRef="end" />
+
+  </process>
+
+</definitions>
