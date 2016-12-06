@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
+
+  <persistence-unit name="binning" transaction-type="JTA">
+
+    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+
+    <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=binningJTA)</jta-data-source>
+    <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=binningNoJTA)</non-jta-data-source>
+
+    <class>org.renci.binning.dao.annotation.model.AnnotationCodingSequenceExternalIds</class>
+    <class>org.renci.binning.dao.annotation.model.AnnotationCodingSequenceExternalIdsPK</class>
+    <class>org.renci.binning.dao.annotation.model.AnnotationGene</class>
+    <class>org.renci.binning.dao.annotation.model.AnnotationGeneExternalIds</class>
+    <class>org.renci.binning.dao.annotation.model.AnnotationGeneExternalIdsPK</class>
+    <class>org.renci.binning.dao.annotation.model.AnnotationGeneSynonyms</class>
+    <class>org.renci.binning.dao.clinbin.model.AnalysisClass</class>
+    <class>org.renci.binning.dao.clinbin.model.AnalysisClassIncidental</class>
+    <class>org.renci.binning.dao.clinbin.model.AnalysisClassIncidentalPK</class>
+    <class>org.renci.binning.dao.clinbin.model.AnalysisClassPK</class>
+    <class>org.renci.binning.dao.clinbin.model.BinGeneSymbol</class>
+    <class>org.renci.binning.dao.clinbin.model.BinGeneSymbolPK</class>
+    <class>org.renci.binning.dao.clinbin.model.BinningJob</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnosticPK</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalIncidental</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalPK</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalX</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalXPK</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalRiskX</class>
+    <class>org.renci.binning.dao.clinbin.model.BinResultsFinalRiskXPK</class>
+    <class>org.renci.binning.dao.clinbin.model.CarrierStatus</class>
+    <class>org.renci.binning.dao.clinbin.model.ClinBinStatusType</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticBinningJob</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticBinResults</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticBinResultsPK</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticGene</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticGeneGroupVersion</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticGeneGroupVersionPK</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticResultVersion</class>
+    <class>org.renci.binning.dao.clinbin.model.DiagnosticStatusType</class>
+    <class>org.renci.binning.dao.clinbin.model.DiseaseClass</class>
+    <class>org.renci.binning.dao.clinbin.model.DX</class>
+    <class>org.renci.binning.dao.clinbin.model.DXCoverage</class>
+    <class>org.renci.binning.dao.clinbin.model.DXCoveragePK</class>
+    <class>org.renci.binning.dao.clinbin.model.DXExons</class>
+    <class>org.renci.binning.dao.clinbin.model.HaplotypeX</class>
+    <class>org.renci.binning.dao.clinbin.model.HaplotypeXPK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBin</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinningJob</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGene</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGenePK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGeneX</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGeneXPK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGroupVersion</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGroupVersionPK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGroupVersionX</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinGroupVersionXPK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinResults</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinResultsPK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinType</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinX</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeX</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeXPK</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalResultVersion</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalResultVersionX</class>
+    <class>org.renci.binning.dao.clinbin.model.IncidentalStatusType</class>
+    <class>org.renci.binning.dao.clinbin.model.MaxFrequency</class>
+    <class>org.renci.binning.dao.clinbin.model.MaxFrequencyPK</class>
+    <class>org.renci.binning.dao.clinbin.model.MaxFrequencySource</class>
+    <class>org.renci.binning.dao.clinbin.model.MissingHaplotype</class>
+    <class>org.renci.binning.dao.clinbin.model.MissingHaplotypePK</class>
+    <class>org.renci.binning.dao.clinbin.model.NCGenesFrequencies</class>
+    <class>org.renci.binning.dao.clinbin.model.NCGenesFrequenciesPK</class>
+    <class>org.renci.binning.dao.clinbin.model.PhenotypeX</class>
+    <class>org.renci.binning.dao.clinbin.model.RsVariants</class>
+    <class>org.renci.binning.dao.clinbin.model.RsVariantsPK</class>
+    <class>org.renci.binning.dao.clinbin.model.UnimportantExon</class>
+    <class>org.renci.binning.dao.clinbin.model.UnimportantExonPK</class>
+    <class>org.renci.binning.dao.clinbin.model.UnimportantFeature</class>
+    <class>org.renci.binning.dao.clinbin.model.UnimportantFeaturePK</class>
+    <class>org.renci.binning.dao.clinbin.model.ZygosityModeType</class>
+    <class>org.renci.binning.dao.clinvar.model.AssertionRanking</class>
+    <class>org.renci.binning.dao.clinvar.model.AssertionRankingPK</class>
+    <class>org.renci.binning.dao.clinvar.model.ReferenceClinicalAssertions</class>
+    <class>org.renci.binning.dao.clinvar.model.TraitSets</class>
+    <class>org.renci.binning.dao.clinvar.model.Versions</class>
+    <class>org.renci.binning.dao.dbsnp.model.MappingWarning</class>
+    <class>org.renci.binning.dao.dbsnp.model.RSMappingT</class>
+    <class>org.renci.binning.dao.dbsnp.model.RSMappingTPK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNP</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPAllele</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPAlleleFrequency</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPAlleleFrequencyPK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPAllelePK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPGenotypeFrequency</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPGenotypeFrequencyPK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPHWProb</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPHWProbPK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPMapping</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPMappingAgg</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPMappingAggPK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPMappingPK</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPMappingWarning</class>
+    <class>org.renci.binning.dao.dbsnp.model.SNPMappingWarningPK</class>
+    <class>org.renci.binning.dao.esp.model.ESPSNPFrequencyPopulation</class>
+    <class>org.renci.binning.dao.esp.model.ESPSNPFrequencyPopulationPK</class>
+    <class>org.renci.binning.dao.exac.model.MaxVariantFrequency</class>
+    <class>org.renci.binning.dao.exac.model.MaxVariantFrequencyPK</class>
+    <class>org.renci.binning.dao.exac.model.VariantFrequency</class>
+    <class>org.renci.binning.dao.exac.model.VariantFrequencyPK</class>
+    <class>org.renci.binning.dao.genome1k.model.IndelMaxFrequency</class>
+    <class>org.renci.binning.dao.genome1k.model.IndelMaxFrequencyPK</class>
+    <class>org.renci.binning.dao.genome1k.model.OneThousandGenomeIndelFrequency</class>
+    <class>org.renci.binning.dao.genome1k.model.OneThousandGenomeIndelFrequencyPK</class>
+    <class>org.renci.binning.dao.genome1k.model.OneThousandGenomeSNPFrequencyPopulation</class>
+    <class>org.renci.binning.dao.genome1k.model.OneThousandGenomeSNPFrequencyPopulationPK</class>
+    <class>org.renci.binning.dao.genome1k.model.OneThousandGenomeSNPFrequencySubpopulation</class>
+    <class>org.renci.binning.dao.genome1k.model.OneThousandGenomeSNPFrequencySubpopulationPK</class>
+    <class>org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequency</class>
+    <class>org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequencyPK</class>
+    <class>org.renci.binning.dao.hgmd.model.HGMDLocatedVariant</class>
+    <class>org.renci.binning.dao.hgmd.model.HGMDLocatedVariantPK</class>
+    <class>org.renci.binning.dao.hgnc.model.HGNCGene</class>
+    <class>org.renci.binning.dao.hgnc.model.HGNCStatusType</class>
+    <class>org.renci.binning.dao.hgnc.model.LocusGroup</class>
+    <class>org.renci.binning.dao.hgnc.model.LocusType</class>
+    <class>org.renci.binning.dao.ref.model.GenomeRef</class>
+    <class>org.renci.binning.dao.ref.model.GenomeRefSeq</class>
+    <class>org.renci.binning.dao.ref.model.GenomeRefSeqLocation</class>
+    <class>org.renci.binning.dao.ref.model.GenomeRefSeqLocationPK</class>
+    <class>org.renci.binning.dao.ref.model.SeqType</class>
+    <class>org.renci.binning.dao.refseq.model.Feature</class>
+    <class>org.renci.binning.dao.refseq.model.FeatureTypes</class>
+    <class>org.renci.binning.dao.refseq.model.GroupingType</class>
+    <class>org.renci.binning.dao.refseq.model.LocationType</class>
+    <class>org.renci.binning.dao.refseq.model.RegionGroup</class>
+    <class>org.renci.binning.dao.refseq.model.RegionGroupRegion</class>
+    <class>org.renci.binning.dao.refseq.model.RegionGroupRegionPK</class>
+    <class>org.renci.binning.dao.refseq.model.RefSeqCodingSequence</class>
+    <class>org.renci.binning.dao.refseq.model.RefSeqGene</class>
+    <class>org.renci.binning.dao.refseq.model.Transcript</class>
+    <class>org.renci.binning.dao.refseq.model.TranscriptMaps</class>
+    <class>org.renci.binning.dao.refseq.model.TranscriptMapsExons</class>
+    <class>org.renci.binning.dao.refseq.model.TranscriptMapsExonsPK</class>
+    <class>org.renci.binning.dao.refseq.model.TranscriptRefSeqVers</class>
+    <class>org.renci.binning.dao.refseq.model.VariantEffect</class>
+    <class>org.renci.binning.dao.refseq.model.Variants_48_2</class>
+    <class>org.renci.binning.dao.refseq.model.Variants_48_2PK</class>
+    <class>org.renci.binning.dao.refseq.model.Variants_61_2</class>
+    <class>org.renci.binning.dao.refseq.model.Variants_61_2PK</class>
+    <!-- <class>org.renci.binning.dao.refseq.model.Variants_78_4</class> -->
+    <!-- <class>org.renci.binning.dao.refseq.model.Variants_78_4PK</class> -->
+    <class>org.renci.binning.dao.var.model.Assembly</class>
+    <class>org.renci.binning.dao.var.model.AssemblyLocation</class>
+    <class>org.renci.binning.dao.var.model.AssemblyLocationPK</class>
+    <class>org.renci.binning.dao.var.model.AssemblyLocatedVariant</class>
+    <class>org.renci.binning.dao.var.model.AssemblyLocatedVariantPK</class>
+    <class>org.renci.binning.dao.var.model.AssemblyLocatedVariantQC</class>
+    <class>org.renci.binning.dao.var.model.AssemblyLocatedVariantQCPK</class>
+    <!-- <class>org.renci.binning.dao.var.model.CanonicalAllele</class> -->
+    <class>org.renci.binning.dao.var.model.Lab</class>
+    <class>org.renci.binning.dao.var.model.Library</class>
+    <class>org.renci.binning.dao.var.model.LocatedVariant</class>
+    <class>org.renci.binning.dao.var.model.Project</class>
+    <class>org.renci.binning.dao.var.model.Sample</class>
+    <class>org.renci.binning.dao.var.model.VariantSet</class>
+    <class>org.renci.binning.dao.var.model.VariantSetLoad</class>
+    <class>org.renci.binning.dao.var.model.VariantSetLocation</class>
+    <class>org.renci.binning.dao.var.model.VariantSetLocationPK</class>
+    <class>org.renci.binning.dao.var.model.VariantType</class>
+
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+
+    <properties>
+      <property name="javax.persistence.query.timeout" value="300000" />
+      <property name="openjpa.jdbc.MappingDefaults" value="ForeignKeyDeleteAction=restrict, JoinForeignKeyDeleteAction=restrict" />
+      <!-- <property name="openjpa.jdbc.SchemaFactory" value="native(ForeignKeys=false)" /> -->
+      <!-- <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,Sequences=false)" /> -->
+      <property name="openjpa.jdbc.SchemaFactory" value="dynamic" />
+      <property name="openjpa.jdbc.SynchronizeMappings" value="validate" />
+      <property name="openjpa.Log" value="slf4j" />
+      <property name="openjpa.Multithreaded" value="true" />
+      <property name="openjpa.Log" value="DefaultLevel=INFO, Runtime=WARN, Tool=WARN, SQL=WARN" />
+      <property name="openjpa.jdbc.DBDictionary" value="postgres(SearchStringEscape=\, SupportsXMLColumn=false)" />
+      <property name="openjpa.RemoteCommitProvider" value="sjvm" />
+      <property name="openjpa.DataCache" value="true(CacheSize=5000, SoftReferenceSize=0)" />
+      <property name="openjpa.QueryCache" value="true" />
+    </properties>
+
+    <!-- <properties> -->
+    <!-- <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" /> -->
+    <!-- <property name="openjpa.jdbc.MappingDefaults" value="ForeignKeyDeleteAction=restrict, JoinForeignKeyDeleteAction=restrict" /> -->
+    <!-- <property name="openjpa.jdbc.SchemaFactory" value="native(ForeignKeys=false)" /> -->
+    <!-- <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,Sequences=false)" /> -->
+    <!-- <property name="openjpa.jdbc.SchemaFactory" value="dynamic" /> -->
+    <!-- <property name="openjpa.jdbc.SynchronizeMappings" value="validate" /> -->
+    <!-- <property name="openjpa.Multithreaded" value="true" /> -->
+    <!-- <property name="openjpa.ConnectionFactoryProperties" value="printParameters=true" /> -->
+    <!-- <property name="openjpa.Log" value="DefaultLevel=INFO, Runtime=WARN, Tool=WARN, SQL=TRACE" /> -->
+    <!-- <property name="openjpa.jdbc.DBDictionary" value="postgres(DisableAlterSeqenceIncrementBy=true, SearchStringEscape=\, SupportsXMLColumn=false)" 
+      /> -->
+    <!-- <property name="openjpa.RemoteCommitProvider" value="sjvm" /> -->
+    <!-- <property name="openjpa.DataCache" value="true(CacheSize=5000, SoftReferenceSize=0)" /> -->
+    <!-- <property name="openjpa.QueryCache" value="true" /> -->
+    <!-- <property name="openjpa.FetchBatchSize" value="100" /> -->
+    <!-- </properties> -->
+
+  </persistence-unit>
+</persistence>

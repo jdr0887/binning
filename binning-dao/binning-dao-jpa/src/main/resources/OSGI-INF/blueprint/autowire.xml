@@ -1,0 +1,262 @@
+<?xml version="1.0" ?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+  xmlns:tx="http://aries.apache.org/xmlns/transactions/v2.0.0" xmlns:jpa="http://aries.apache.org/xmlns/jpa/v2.0.0">
+
+  <jpa:enable />
+  <tx:enable />
+
+  <bean id="annotationGeneDAOImpl" class="org.renci.binning.dao.jpa.annotation.AnnotationGeneDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="annotationGeneExternalIdsDAOImpl" class="org.renci.binning.dao.jpa.annotation.AnnotationGeneExternalIdsDAOImpl"
+    ext:field-injection="true">
+  </bean>
+  <bean id="binResultsFinalDiagnosticDAOImpl" class="org.renci.binning.dao.jpa.clinbin.BinResultsFinalDiagnosticDAOImpl"
+    ext:field-injection="true">
+  </bean>
+  <bean id="binResultsFinalIncidentalXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.BinResultsFinalIncidentalXDAOImpl"
+    ext:field-injection="true">
+  </bean>
+  <bean id="binResultsFinalRiskXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.BinResultsFinalRiskXDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="carrierStatusDAOImpl" class="org.renci.binning.dao.jpa.clinbin.CarrierStatusDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="diagnosticBinningJobDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DiagnosticBinningJobDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="diagnosticGeneDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DiagnosticGeneDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="diagnosticResultVersionDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DiagnosticResultVersionDAOImpl"
+    ext:field-injection="true">
+  </bean>
+  <bean id="diagnosticStatusTypeDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DiagnosticStatusTypeDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="diseaseClassDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DiseaseClassDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="DXCoverageDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DXCoverageDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="DXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DXDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="DXExonsDAOImpl" class="org.renci.binning.dao.jpa.clinbin.DXExonsDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="incidentalBinGeneXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalBinGeneXDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="incidentalBinGroupVersionXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalBinGroupVersionXDAOImpl"
+    ext:field-injection="true">
+  </bean>
+  <bean id="incidentalBinHaplotypeXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalBinHaplotypeXDAOImpl"
+    ext:field-injection="true">
+  </bean>
+  <bean id="incidentalBinningJobDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalBinningJobDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="incidentalBinXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalBinXDAOImpl" ext:field-injection="true">
+  </bean>
+  <bean id="incidentalResultVersionXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalResultVersionXDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="maxFrequencyDAOImpl" class="org.renci.binning.dao.jpa.clinbin.MaxFrequencyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="maxFrequencySourceDAOImpl" class="org.renci.binning.dao.jpa.clinbin.MaxFrequencySourceDAOImpl" ext:field-injection="true"></bean>
+  <bean id="missingHaplotypeDAOImpl" class="org.renci.binning.dao.jpa.clinbin.MissingHaplotypeDAOImpl" ext:field-injection="true"></bean>
+  <bean id="NCGenesFrequenciesDAOImpl" class="org.renci.binning.dao.jpa.clinbin.NCGenesFrequenciesDAOImpl" ext:field-injection="true"></bean>
+  <bean id="reportDAOImpl" class="org.renci.binning.dao.jpa.clinbin.ReportDAOImpl" ext:field-injection="true"></bean>
+  <bean id="unimportantExonDAOImpl" class="org.renci.binning.dao.jpa.clinbin.UnimportantExonDAOImpl" ext:field-injection="true"></bean>
+  <bean id="assertionRankingDAOImpl" class="org.renci.binning.dao.jpa.clinvar.AssertionRankingDAOImpl" ext:field-injection="true"></bean>
+  <bean id="referenceClinicalAssertionsDAOImpl" class="org.renci.binning.dao.jpa.clinvar.ReferenceClinicalAssertionsDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="SNPAlleleDAOImpl" class="org.renci.binning.dao.jpa.dbsnp.SNPAlleleDAOImpl" ext:field-injection="true"></bean>
+  <bean id="SNPAlleleFrequencyDAOImpl" class="org.renci.binning.dao.jpa.dbsnp.SNPAlleleFrequencyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="SNPDAOImpl" class="org.renci.binning.dao.jpa.dbsnp.SNPDAOImpl" ext:field-injection="true"></bean>
+  <bean id="SNPGenotypeFrequencyDAOImpl" class="org.renci.binning.dao.jpa.dbsnp.SNPGenotypeFrequencyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="SNPMappingAggDAOImpl" class="org.renci.binning.dao.jpa.dbsnp.SNPMappingAggDAOImpl" ext:field-injection="true"></bean>
+  <bean id="SNPMappingDAOImpl" class="org.renci.binning.dao.jpa.dbsnp.SNPMappingDAOImpl" ext:field-injection="true"></bean>
+  <bean id="ESPSNPFrequencyPopulationDAOImpl" class="org.renci.binning.dao.jpa.esp.ESPSNPFrequencyPopulationDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="maxVariantFrequencyDAOImpl" class="org.renci.binning.dao.jpa.exac.MaxVariantFrequencyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variantFrequencyDAOImpl" class="org.renci.binning.dao.jpa.exac.VariantFrequencyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="indelMaxFrequencyDAOImpl" class="org.renci.binning.dao.jpa.genome1k.IndelMaxFrequencyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="oneThousandGenomeIndelFrequencyDAOImpl" class="org.renci.binning.dao.jpa.genome1k.OneThousandGenomeIndelFrequencyDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="oneThousandGenomeSNPFrequencyPopulationDAOImpl" class="org.renci.binning.dao.jpa.genome1k.OneThousandGenomeSNPFrequencyPopulationDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="oneThousandGenomeSNPFrequencySubpopulationDAOImpl" class="org.renci.binning.dao.jpa.genome1k.OneThousandGenomeSNPFrequencySubpopulationDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="SNPPopulationMaxFrequencyDAOImpl" class="org.renci.binning.dao.jpa.genome1k.SNPPopulationMaxFrequencyDAOImpl"
+    ext:field-injection="true"></bean>
+  <bean id="HGMDLocatedVariantDAOImpl" class="org.renci.binning.dao.jpa.hgmd.HGMDLocatedVariantDAOImpl" ext:field-injection="true"></bean>
+  <bean id="HGNCGeneDAOImpl" class="org.renci.binning.dao.jpa.hgnc.HGNCGeneDAOImpl" ext:field-injection="true"></bean>
+  <bean id="genomeRefDAOImpl" class="org.renci.binning.dao.jpa.ref.GenomeRefDAOImpl" ext:field-injection="true"></bean>
+  <bean id="genomeRefSeqDAOImpl" class="org.renci.binning.dao.jpa.ref.GenomeRefSeqDAOImpl" ext:field-injection="true"></bean>
+  <bean id="genomeRefSeqLocationDAOImpl" class="org.renci.binning.dao.jpa.ref.GenomeRefSeqLocationDAOImpl" ext:field-injection="true"></bean>
+  <bean id="featureDAOImpl" class="org.renci.binning.dao.jpa.refseq.FeatureDAOImpl" ext:field-injection="true"></bean>
+  <bean id="locationTypeDAOImpl" class="org.renci.binning.dao.jpa.refseq.LocationTypeDAOImpl" ext:field-injection="true"></bean>
+  <bean id="refSeqCodingSequenceDAOImpl" class="org.renci.binning.dao.jpa.refseq.RefSeqCodingSequenceDAOImpl" ext:field-injection="true"></bean>
+  <bean id="refSeqGeneDAOImpl" class="org.renci.binning.dao.jpa.refseq.RefSeqGeneDAOImpl" ext:field-injection="true"></bean>
+  <bean id="regionGroupDAOImpl" class="org.renci.binning.dao.jpa.refseq.RegionGroupDAOImpl" ext:field-injection="true"></bean>
+  <bean id="regionGroupRegionDAOImpl" class="org.renci.binning.dao.jpa.refseq.RegionGroupRegionDAOImpl" ext:field-injection="true"></bean>
+  <bean id="transcriptDAOImpl" class="org.renci.binning.dao.jpa.refseq.TranscriptDAOImpl" ext:field-injection="true"></bean>
+  <bean id="transcriptMapsDAOImpl" class="org.renci.binning.dao.jpa.refseq.TranscriptMapsDAOImpl" ext:field-injection="true"></bean>
+  <bean id="transcriptMapsExonsDAOImpl" class="org.renci.binning.dao.jpa.refseq.TranscriptMapsExonsDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variantEffectDAOImpl" class="org.renci.binning.dao.jpa.refseq.VariantEffectDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variants_48_2_DAOImpl" class="org.renci.binning.dao.jpa.refseq.Variants_48_2_DAOImpl" ext:field-injection="true"></bean>
+  <bean id="variants_61_2_DAOImpl" class="org.renci.binning.dao.jpa.refseq.Variants_61_2_DAOImpl" ext:field-injection="true"></bean>
+  <bean id="assemblyDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyDAOImpl" ext:field-injection="true"></bean>
+  <bean id="assemblyLocatedVariantDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyLocatedVariantDAOImpl" ext:field-injection="true"></bean>
+  <bean id="assemblyLocatedVariantQCDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyLocatedVariantQCDAOImpl" ext:field-injection="true"></bean>
+  <bean id="assemblyLocationDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyLocationDAOImpl" ext:field-injection="true"></bean>
+  <bean id="labDAOImpl" class="org.renci.binning.dao.jpa.var.LabDAOImpl" ext:field-injection="true"></bean>
+  <bean id="libraryDAOImpl" class="org.renci.binning.dao.jpa.var.LibraryDAOImpl" ext:field-injection="true"></bean>
+  <bean id="locatedVariantDAOImpl" class="org.renci.binning.dao.jpa.var.LocatedVariantDAOImpl" ext:field-injection="true"></bean>
+  <bean id="projectDAOImpl" class="org.renci.binning.dao.jpa.var.ProjectDAOImpl" ext:field-injection="true"></bean>
+  <bean id="sampleDAOImpl" class="org.renci.binning.dao.jpa.var.SampleDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variantSetDAOImpl" class="org.renci.binning.dao.jpa.var.VariantSetDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variantSetLoadDAOImpl" class="org.renci.binning.dao.jpa.var.VariantSetLoadDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variantSetLocationDAOImpl" class="org.renci.binning.dao.jpa.var.VariantSetLocationDAOImpl" ext:field-injection="true"></bean>
+  <bean id="variantTypeDAOImpl" class="org.renci.binning.dao.jpa.var.VariantTypeDAOImpl" ext:field-injection="true"></bean>
+
+  <bean id="binningDAOBeanServiceImpl" class="org.renci.binning.dao.jpa.BinningDAOBeanServiceImpl" ext:field-injection="true">
+    <property name="annotationGeneDAO" ref="annotationGeneDAOImpl" />
+    <property name="annotationGeneExternalIdsDAO" ref="annotationGeneExternalIdsDAOImpl" />
+    <property name="binResultsFinalDiagnosticDAO" ref="binResultsFinalDiagnosticDAOImpl" />
+    <property name="binResultsFinalIncidentalXDAO" ref="binResultsFinalIncidentalXDAOImpl" />
+    <property name="binResultsFinalRiskXDAO" ref="binResultsFinalRiskXDAOImpl" />
+    <property name="carrierStatusDAO" ref="carrierStatusDAOImpl" />
+    <property name="diagnosticBinningJobDAO" ref="diagnosticBinningJobDAOImpl" />
+    <property name="diagnosticGeneDAO" ref="diagnosticGeneDAOImpl" />
+    <property name="diagnosticResultVersionDAO" ref="diagnosticResultVersionDAOImpl" />
+    <property name="diagnosticStatusTypeDAO" ref="diagnosticStatusTypeDAOImpl" />
+    <property name="diseaseClassDAO" ref="diseaseClassDAOImpl" />
+    <property name="DXCoverageDAO" ref="DXCoverageDAOImpl" />
+    <property name="DXDAO" ref="DXDAOImpl" />
+    <property name="DXExonsDAO" ref="DXExonsDAOImpl" />
+    <property name="incidentalBinGeneXDAO" ref="incidentalBinGeneXDAOImpl" />
+    <property name="incidentalBinGroupVersionXDAO" ref="incidentalBinGroupVersionXDAOImpl" />
+    <property name="incidentalBinHaplotypeXDAO" ref="incidentalBinHaplotypeXDAOImpl" />
+    <property name="incidentalBinningJobDAO" ref="incidentalBinningJobDAOImpl" />
+    <property name="incidentalBinXDAO" ref="incidentalBinXDAOImpl" />
+    <property name="incidentalResultVersionXDAO" ref="incidentalResultVersionXDAOImpl" />
+    <property name="maxFrequencyDAO" ref="maxFrequencyDAOImpl" />
+    <property name="maxFrequencySourceDAO" ref="maxFrequencySourceDAOImpl" />
+    <property name="missingHaplotypeDAO" ref="missingHaplotypeDAOImpl" />
+    <property name="NCGenesFrequenciesDAO" ref="NCGenesFrequenciesDAOImpl" />
+    <property name="reportDAO" ref="reportDAOImpl" />
+    <property name="unimportantExonDAO" ref="unimportantExonDAOImpl" />
+    <property name="assertionRankingDAO" ref="assertionRankingDAOImpl" />
+    <property name="referenceClinicalAssertionsDAO" ref="referenceClinicalAssertionsDAOImpl" />
+    <property name="SNPAlleleDAO" ref="SNPAlleleDAOImpl" />
+    <property name="SNPAlleleFrequencyDAO" ref="SNPAlleleFrequencyDAOImpl" />
+    <property name="SNPDAO" ref="SNPDAOImpl" />
+    <property name="SNPGenotypeFrequencyDAO" ref="SNPGenotypeFrequencyDAOImpl" />
+    <property name="SNPMappingAggDAO" ref="SNPMappingAggDAOImpl" />
+    <property name="SNPMappingDAO" ref="SNPMappingDAOImpl" />
+    <property name="ESPSNPFrequencyPopulationDAO" ref="ESPSNPFrequencyPopulationDAOImpl" />
+    <property name="maxVariantFrequencyDAO" ref="maxVariantFrequencyDAOImpl" />
+    <property name="variantFrequencyDAO" ref="variantFrequencyDAOImpl" />
+    <property name="indelMaxFrequencyDAO" ref="indelMaxFrequencyDAOImpl" />
+    <property name="oneThousandGenomeIndelFrequencyDAO" ref="oneThousandGenomeIndelFrequencyDAOImpl" />
+    <property name="oneThousandGenomeSNPFrequencyPopulationDAO" ref="oneThousandGenomeSNPFrequencyPopulationDAOImpl" />
+    <property name="oneThousandGenomeSNPFrequencySubpopulationDAO" ref="oneThousandGenomeSNPFrequencySubpopulationDAOImpl" />
+    <property name="SNPPopulationMaxFrequencyDAO" ref="SNPPopulationMaxFrequencyDAOImpl" />
+    <property name="HGMDLocatedVariantDAO" ref="HGMDLocatedVariantDAOImpl" />
+    <property name="HGNCGeneDAO" ref="HGNCGeneDAOImpl" />
+    <property name="genomeRefDAO" ref="genomeRefDAOImpl" />
+    <property name="genomeRefSeqDAO" ref="genomeRefSeqDAOImpl" />
+    <property name="genomeRefSeqLocationDAO" ref="genomeRefSeqLocationDAOImpl" />
+    <property name="featureDAO" ref="featureDAOImpl" />
+    <property name="locationTypeDAO" ref="locationTypeDAOImpl" />
+    <property name="refSeqCodingSequenceDAO" ref="refSeqCodingSequenceDAOImpl" />
+    <property name="refSeqGeneDAO" ref="refSeqGeneDAOImpl" />
+    <property name="regionGroupDAO" ref="regionGroupDAOImpl" />
+    <property name="regionGroupRegionDAO" ref="regionGroupRegionDAOImpl" />
+    <property name="transcriptDAO" ref="transcriptDAOImpl" />
+    <property name="transcriptMapsDAO" ref="transcriptMapsDAOImpl" />
+    <property name="transcriptMapsExonsDAO" ref="transcriptMapsExonsDAOImpl" />
+    <property name="variantEffectDAO" ref="variantEffectDAOImpl" />
+    <property name="variants_48_2_DAO" ref="variants_48_2_DAOImpl" />
+    <property name="variants_61_2_DAO" ref="variants_61_2_DAOImpl" />
+    <property name="assemblyDAO" ref="assemblyDAOImpl" />
+    <property name="assemblyLocatedVariantDAO" ref="assemblyLocatedVariantDAOImpl" />
+    <property name="assemblyLocatedVariantQCDAO" ref="assemblyLocatedVariantQCDAOImpl" />
+    <property name="assemblyLocationDAO" ref="assemblyLocationDAOImpl" />
+    <property name="labDAO" ref="labDAOImpl" />
+    <property name="libraryDAO" ref="libraryDAOImpl" />
+    <property name="locatedVariantDAO" ref="locatedVariantDAOImpl" />
+    <property name="projectDAO" ref="projectDAOImpl" />
+    <property name="sampleDAO" ref="sampleDAOImpl" />
+    <property name="variantSetDAO" ref="variantSetDAOImpl" />
+    <property name="variantSetLoadDAO" ref="variantSetLoadDAOImpl" />
+    <property name="variantSetLocationDAO" ref="variantSetLocationDAOImpl" />
+    <property name="variantTypeDAO" ref="variantTypeDAOImpl" />
+  </bean>
+
+  <service ref="annotationGeneDAOImpl" interface="org.renci.binning.dao.annotation.AnnotationGeneDAO" />
+  <service ref="annotationGeneExternalIdsDAOImpl" interface="org.renci.binning.dao.annotation.AnnotationGeneExternalIdsDAO" />
+  <service ref="binResultsFinalDiagnosticDAOImpl" interface="org.renci.binning.dao.clinbin.BinResultsFinalDiagnosticDAO" />
+  <service ref="binResultsFinalIncidentalXDAOImpl" interface="org.renci.binning.dao.clinbin.BinResultsFinalIncidentalXDAO" />
+  <service ref="binResultsFinalRiskXDAOImpl" interface="org.renci.binning.dao.clinbin.BinResultsFinalRiskXDAO" />
+  <service ref="carrierStatusDAOImpl" interface="org.renci.binning.dao.clinbin.CarrierStatusDAO" />
+  <service ref="diagnosticBinningJobDAOImpl" interface="org.renci.binning.dao.clinbin.DiagnosticBinningJobDAO" />
+  <service ref="diagnosticGeneDAOImpl" interface="org.renci.binning.dao.clinbin.DiagnosticGeneDAO" />
+  <service ref="diagnosticResultVersionDAOImpl" interface="org.renci.binning.dao.clinbin.DiagnosticResultVersionDAO" />
+  <service ref="diagnosticStatusTypeDAOImpl" interface="org.renci.binning.dao.clinbin.DiagnosticStatusTypeDAO" />
+  <service ref="diseaseClassDAOImpl" interface="org.renci.binning.dao.clinbin.DiseaseClassDAO" />
+  <service ref="DXCoverageDAOImpl" interface="org.renci.binning.dao.clinbin.DXCoverageDAO" />
+  <service ref="DXDAOImpl" interface="org.renci.binning.dao.clinbin.DXDAO" />
+  <service ref="DXExonsDAOImpl" interface="org.renci.binning.dao.clinbin.DXExonsDAO" />
+  <service ref="incidentalBinGeneXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinGeneXDAO" />
+  <service ref="incidentalBinGroupVersionXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinGroupVersionXDAO" />
+  <service ref="incidentalBinHaplotypeXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinHaplotypeXDAO" />
+  <service ref="incidentalBinningJobDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinningJobDAO" />
+  <service ref="incidentalBinXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinXDAO" />
+  <service ref="incidentalResultVersionXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalResultVersionXDAO" />
+  <service ref="maxFrequencyDAOImpl" interface="org.renci.binning.dao.clinbin.MaxFrequencyDAO" />
+  <service ref="maxFrequencySourceDAOImpl" interface="org.renci.binning.dao.clinbin.MaxFrequencySourceDAO" />
+  <service ref="missingHaplotypeDAOImpl" interface="org.renci.binning.dao.clinbin.MissingHaplotypeDAO" />
+  <service ref="NCGenesFrequenciesDAOImpl" interface="org.renci.binning.dao.clinbin.NCGenesFrequenciesDAO" />
+  <service ref="reportDAOImpl" interface="org.renci.binning.dao.clinbin.ReportDAO" />
+  <service ref="unimportantExonDAOImpl" interface="org.renci.binning.dao.clinbin.UnimportantExonDAO" />
+  <service ref="assertionRankingDAOImpl" interface="org.renci.binning.dao.clinvar.AssertionRankingDAO" />
+  <service ref="referenceClinicalAssertionsDAOImpl" interface="org.renci.binning.dao.clinvar.ReferenceClinicalAssertionsDAO" />
+  <service ref="SNPAlleleDAOImpl" interface="org.renci.binning.dao.dbsnp.SNPAlleleDAO" />
+  <service ref="SNPAlleleFrequencyDAOImpl" interface="org.renci.binning.dao.dbsnp.SNPAlleleFrequencyDAO" />
+  <service ref="SNPDAOImpl" interface="org.renci.binning.dao.dbsnp.SNPDAO" />
+  <service ref="SNPGenotypeFrequencyDAOImpl" interface="org.renci.binning.dao.dbsnp.SNPGenotypeFrequencyDAO" />
+  <service ref="SNPMappingAggDAOImpl" interface="org.renci.binning.dao.dbsnp.SNPMappingAggDAO" />
+  <service ref="SNPMappingDAOImpl" interface="org.renci.binning.dao.dbsnp.SNPMappingDAO" />
+  <service ref="ESPSNPFrequencyPopulationDAOImpl" interface="org.renci.binning.dao.esp.ESPSNPFrequencyPopulationDAO" />
+  <service ref="maxVariantFrequencyDAOImpl" interface="org.renci.binning.dao.exac.MaxVariantFrequencyDAO" />
+  <service ref="variantFrequencyDAOImpl" interface="org.renci.binning.dao.exac.VariantFrequencyDAO" />
+  <service ref="indelMaxFrequencyDAOImpl" interface="org.renci.binning.dao.genome1k.IndelMaxFrequencyDAO" />
+  <service ref="oneThousandGenomeIndelFrequencyDAOImpl" interface="org.renci.binning.dao.genome1k.OneThousandGenomeIndelFrequencyDAO" />
+  <service ref="oneThousandGenomeSNPFrequencyPopulationDAOImpl" interface="org.renci.binning.dao.genome1k.OneThousandGenomeSNPFrequencyPopulationDAO" />
+  <service ref="oneThousandGenomeSNPFrequencySubpopulationDAOImpl" interface="org.renci.binning.dao.genome1k.OneThousandGenomeSNPFrequencySubpopulationDAO" />
+  <service ref="SNPPopulationMaxFrequencyDAOImpl" interface="org.renci.binning.dao.genome1k.SNPPopulationMaxFrequencyDAO" />
+  <service ref="HGMDLocatedVariantDAOImpl" interface="org.renci.binning.dao.hgmd.HGMDLocatedVariantDAO" />
+  <service ref="HGNCGeneDAOImpl" interface="org.renci.binning.dao.hgnc.HGNCGeneDAO" />
+  <service ref="genomeRefDAOImpl" interface="org.renci.binning.dao.ref.GenomeRefDAO" />
+  <service ref="genomeRefSeqDAOImpl" interface="org.renci.binning.dao.ref.GenomeRefSeqDAO" />
+  <service ref="genomeRefSeqLocationDAOImpl" interface="org.renci.binning.dao.ref.GenomeRefSeqLocationDAO" />
+  <service ref="featureDAOImpl" interface="org.renci.binning.dao.refseq.FeatureDAO" />
+  <service ref="locationTypeDAOImpl" interface="org.renci.binning.dao.refseq.LocationTypeDAO" />
+  <service ref="refSeqCodingSequenceDAOImpl" interface="org.renci.binning.dao.refseq.RefSeqCodingSequenceDAO" />
+  <service ref="refSeqGeneDAOImpl" interface="org.renci.binning.dao.refseq.RefSeqGeneDAO" />
+  <service ref="regionGroupDAOImpl" interface="org.renci.binning.dao.refseq.RegionGroupDAO" />
+  <service ref="regionGroupRegionDAOImpl" interface="org.renci.binning.dao.refseq.RegionGroupRegionDAO" />
+  <service ref="transcriptDAOImpl" interface="org.renci.binning.dao.refseq.TranscriptDAO" />
+  <service ref="transcriptMapsDAOImpl" interface="org.renci.binning.dao.refseq.TranscriptMapsDAO" />
+  <service ref="transcriptMapsExonsDAOImpl" interface="org.renci.binning.dao.refseq.TranscriptMapsExonsDAO" />
+  <service ref="variantEffectDAOImpl" interface="org.renci.binning.dao.refseq.VariantEffectDAO" />
+  <service ref="variants_48_2_DAOImpl" interface="org.renci.binning.dao.refseq.Variants_48_2_DAO" />
+  <service ref="variants_61_2_DAOImpl" interface="org.renci.binning.dao.refseq.Variants_61_2_DAO" />
+  <service ref="assemblyDAOImpl" interface="org.renci.binning.dao.var.AssemblyDAO" />
+  <service ref="assemblyLocatedVariantDAOImpl" interface="org.renci.binning.dao.var.AssemblyLocatedVariantDAO" />
+  <service ref="assemblyLocatedVariantQCDAOImpl" interface="org.renci.binning.dao.var.AssemblyLocatedVariantQCDAO" />
+  <service ref="assemblyLocationDAOImpl" interface="org.renci.binning.dao.var.AssemblyLocationDAO" />
+  <service ref="labDAOImpl" interface="org.renci.binning.dao.var.LabDAO" />
+  <service ref="libraryDAOImpl" interface="org.renci.binning.dao.var.LibraryDAO" />
+  <service ref="locatedVariantDAOImpl" interface="org.renci.binning.dao.var.LocatedVariantDAO" />
+  <service ref="projectDAOImpl" interface="org.renci.binning.dao.var.ProjectDAO" />
+  <service ref="sampleDAOImpl" interface="org.renci.binning.dao.var.SampleDAO" />
+  <service ref="variantSetDAOImpl" interface="org.renci.binning.dao.var.VariantSetDAO" />
+  <service ref="variantSetLoadDAOImpl" interface="org.renci.binning.dao.var.VariantSetLoadDAO" />
+  <service ref="variantSetLocationDAOImpl" interface="org.renci.binning.dao.var.VariantSetLocationDAO" />
+  <service ref="variantTypeDAOImpl" interface="org.renci.binning.dao.var.VariantTypeDAO" />
+  <service ref="binningDAOBeanServiceImpl" interface="org.renci.binning.dao.BinningDAOBeanService" />
+
+</blueprint>

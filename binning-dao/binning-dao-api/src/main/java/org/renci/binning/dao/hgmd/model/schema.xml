@@ -1,0 +1,19 @@
+<tables>
+  <table name="hgmd_loc_var" remarks="" schema="hgmd" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="acc_num" nullable="false" remarks="" size="10" type="varchar" />
+    <column autoUpdated="false" digits="0" id="1" name="tag" nullable="false" remarks="" size="2147483647" type="hgmd_enum" />
+    <column autoUpdated="false" digits="0" id="2" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="hgmd_loc_var_loc_var_id_fkey" implied="false" onDeleteCascade="false" table="loc_var" />
+    </column>
+    <primaryKey column="acc_num" sequenceNumberInPK="1" />
+    <index name="hgmd_loc_var_pkey" unique="true">
+      <column ascending="true" name="acc_num" />
+    </index>
+    <index name="hgmd_loc_var_loc_var_id_idx" unique="false">
+      <column ascending="true" name="loc_var_id" />
+    </index>
+    <index name="hgmd_loc_var_tag_idx" unique="false">
+      <column ascending="true" name="tag" />
+    </index>
+  </table>
+</tables>

@@ -1,0 +1,6 @@
+.classpath
+.project
+.settings
+target
+logs
+src/main/resources/org/renci/canvas/binning/canvas.properties

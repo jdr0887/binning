@@ -1,0 +1,714 @@
+
+<tables>
+  <table name="analysis_class" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.analysis_class_analysis_class_id_seq'::regclass)" digits="0" id="0"
+      name="analysis_class_id" nullable="false" remarks="" size="10" type="serial" />
+    <column autoUpdated="false" digits="0" id="1" name="selected_class" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="2" name="select_class_descr" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="3" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="analysis_class_loc_var_id_fkey" implied="false" onDeleteCascade="false" table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="user_name" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="6" id="5" name="timestamp" nullable="false" remarks="" size="35" type="timestamptz" />
+    <column autoUpdated="false" digits="0" id="6" name="hgnc_gene" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="7" name="dx_id" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="analysis_class_id" sequenceNumberInPK="1" />
+    <primaryKey column="selected_class" sequenceNumberInPK="2" />
+    <primaryKey column="select_class_descr" sequenceNumberInPK="3" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="4" />
+    <primaryKey column="user_name" sequenceNumberInPK="5" />
+    <primaryKey column="timestamp" sequenceNumberInPK="6" />
+    <primaryKey column="hgnc_gene" sequenceNumberInPK="7" />
+    <primaryKey column="dx_id" sequenceNumberInPK="8" />
+    <index name="analysis_class_pkey" unique="true">
+      <column ascending="true" name="analysis_class_id" />
+      <column ascending="true" name="selected_class" />
+      <column ascending="true" name="select_class_descr" />
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="user_name" />
+      <column ascending="true" name="timestamp" />
+      <column ascending="true" name="hgnc_gene" />
+      <column ascending="true" name="dx_id" />
+    </index>
+  </table>
+  <table name="analysis_class_incidental" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.analysis_class_incidental_analysis_class_incidental_id_seq'::regclass)"
+      digits="0" id="0" name="analysis_class_incidental_id" nullable="false" remarks="" size="10" type="serial" />
+    <column autoUpdated="false" digits="0" id="1" name="selected_class" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="2" name="select_class_descr" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="3" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="analysis_class_incidental_loc_var_id_fkey" implied="false" onDeleteCascade="false"
+        table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="user_name" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="6" id="5" name="timestamp" nullable="false" remarks="" size="35" type="timestamptz" />
+    <column autoUpdated="false" digits="0" id="6" name="hgnc_gene" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="7" name="disease" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="8" name="bin" nullable="false" remarks="" size="2147483647" type="text" />
+    <primaryKey column="analysis_class_incidental_id" sequenceNumberInPK="1" />
+    <primaryKey column="selected_class" sequenceNumberInPK="2" />
+    <primaryKey column="select_class_descr" sequenceNumberInPK="3" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="4" />
+    <primaryKey column="user_name" sequenceNumberInPK="5" />
+    <primaryKey column="timestamp" sequenceNumberInPK="6" />
+    <primaryKey column="hgnc_gene" sequenceNumberInPK="7" />
+    <primaryKey column="disease" sequenceNumberInPK="8" />
+    <primaryKey column="bin" sequenceNumberInPK="9" />
+    <index name="analysis_class_incidental_pkey" unique="true">
+      <column ascending="true" name="analysis_class_incidental_id" />
+      <column ascending="true" name="selected_class" />
+      <column ascending="true" name="select_class_descr" />
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="user_name" />
+      <column ascending="true" name="timestamp" />
+      <column ascending="true" name="hgnc_gene" />
+      <column ascending="true" name="disease" />
+      <column ascending="true" name="bin" />
+    </index>
+  </table>
+  <table name="bin_gene_symbol" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="project_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="1" name="version_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="bin_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="3" name="gene_type_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="4" name="gene_symbol" nullable="false" remarks="" size="255" type="varchar" />
+    <primaryKey column="project_id" sequenceNumberInPK="1" />
+    <primaryKey column="version_id" sequenceNumberInPK="2" />
+    <primaryKey column="bin_id" sequenceNumberInPK="3" />
+    <primaryKey column="gene_type_id" sequenceNumberInPK="4" />
+    <primaryKey column="gene_symbol" sequenceNumberInPK="5" />
+    <index name="bin_gene_symbol_pkey" unique="true">
+      <column ascending="true" name="project_id" />
+      <column ascending="true" name="version_id" />
+      <column ascending="true" name="bin_id" />
+      <column ascending="true" name="gene_type_id" />
+      <column ascending="true" name="gene_symbol" />
+    </index>
+  </table>
+  <table name="bin_results_final_diagnostic" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="participant" nullable="false" remarks="" size="50" type="varchar" />
+    <column autoUpdated="false" digits="0" id="1" name="dx_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="dx_id" foreignKey="bin_results_final_diagnostic_dx_id_fkey" implied="false" onDeleteCascade="false" table="dx" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="diagnostic_list_version" nullable="false" remarks="" size="10" type="int4">
+      <parent column="diagnostic_result_version" foreignKey="bin_results_final_diagnostic_diagnostic_list_version_fkey" implied="false"
+        onDeleteCascade="false" table="diagnostic_result_version" />
+    </column>
+    <column autoUpdated="false" digits="0" id="3" name="asm_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="asm_id" foreignKey="bin_results_final_diagnostic_asm_id_fkey" implied="false" onDeleteCascade="false" table="asm" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="bin_results_final_diagnostic_loc_var_id_fkey" implied="false" onDeleteCascade="false"
+        table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="0" id="5" name="chromosome" nullable="false" remarks="" size="15" type="varchar" />
+    <column autoUpdated="false" digits="0" id="6" name="pos" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="7" name="type" nullable="false" remarks="" size="15" type="varchar" />
+    <column autoUpdated="false" digits="0" id="8" name="transcr" nullable="false" remarks="" size="31" type="varchar" />
+    <column autoUpdated="false" digits="0" id="9" name="refseq_gene" nullable="false" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="10" name="hgnc_gene" nullable="false" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="11" name="loc_type" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="loc_type" foreignKey="bin_results_final_diagnostic_loc_type_fkey" implied="false" onDeleteCascade="false"
+        table="loc_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="12" name="strand" nullable="false" remarks="" size="1" type="bpchar" />
+    <column autoUpdated="false" digits="0" id="13" name="transcr_pos" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="14" name="cds_pos" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="15" name="aa_start" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="16" name="aa_end" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="17" name="original_aa" nullable="true" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="18" name="final_aa" nullable="true" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="19" name="frameshift" nullable="true" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="0" id="20" name="inframe" nullable="true" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="0" id="21" name="intron_exon_dist" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="22" name="variant_effect" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="variant_effect" foreignKey="bin_results_final_diagnostic_variant_effect_fkey" implied="false" onDeleteCascade="false"
+        table="variant_effect" />
+    </column>
+    <column autoUpdated="false" digits="0" id="23" name="mapnum" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="24" name="nummaps" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="25" name="gene_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="26" name="acc_num" nullable="true" remarks="" size="10" type="varchar" />
+    <column autoUpdated="false" digits="0" id="27" name="tag" nullable="true" remarks="" size="2147483647" type="hgmd_enum" />
+    <column autoUpdated="false" digits="17" id="28" name="max_allele_freq" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="29" name="class_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="class_id" foreignKey="bin_results_final_diagnostic_class_id_fkey" implied="false" onDeleteCascade="false"
+        table="disease_class" />
+    </column>
+    <column autoUpdated="false" digits="0" id="30" name="refallele" nullable="true" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="31" name="altallele" nullable="true" remarks="" size="65535" type="varchar" />
+    <column autoUpdated="false" digits="0" id="32" name="hgvsgenomic" nullable="true" remarks="" size="131090" type="varchar" />
+    <column autoUpdated="false" digits="0" id="33" name="hgvscds" nullable="true" remarks="" size="131090" type="varchar" />
+    <column autoUpdated="false" digits="0" id="34" name="hgvstranscript" nullable="true" remarks="" size="131090" type="varchar" />
+    <column autoUpdated="false" digits="0" id="35" name="hgvsprotein" nullable="true" remarks="" size="65555" type="varchar" />
+    <column autoUpdated="false" digits="0" id="36" name="depth" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="17" id="37" name="qd" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="38" name="read_pos_rank_sum" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="39" name="frac_reads_with_dels" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="40" name="hrun" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="17" id="41" name="strand_score" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="42" name="ref_depth" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="43" name="alt_depth" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="44" name="homozygous" nullable="true" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="17" id="45" name="genotype_qual" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="46" name="tier" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="47" name="inheritance" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="48" name="rs_id" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="49" name="exon_truncation_count" nullable="true" remarks="" size="10" type="int4" />
+    <primaryKey column="participant" sequenceNumberInPK="1" />
+    <primaryKey column="dx_id" sequenceNumberInPK="2" />
+    <primaryKey column="diagnostic_list_version" sequenceNumberInPK="3" />
+    <primaryKey column="asm_id" sequenceNumberInPK="4" />
+    <primaryKey column="transcr" sequenceNumberInPK="5" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="6" />
+    <primaryKey column="mapnum" sequenceNumberInPK="7" />
+    <index name="bin_results_final_diagnostic_pkey" unique="true">
+      <column ascending="true" name="participant" />
+      <column ascending="true" name="dx_id" />
+      <column ascending="true" name="diagnostic_list_version" />
+      <column ascending="true" name="asm_id" />
+      <column ascending="true" name="transcr" />
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="mapnum" />
+    </index>
+    <index name="bin_results_final_diagnostic_participant_idx" unique="false">
+      <column ascending="true" name="participant" />
+    </index>
+  </table>
+  <table name="bin_results_final_incidental" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="participant" nullable="false" remarks="" size="50" type="varchar" />
+    <column autoUpdated="false" digits="0" id="1" name="zygosity_mode" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="zygosity_mode_type_name" foreignKey="bin_results_final_incidental_zygosity_mode_fkey" implied="false"
+        onDeleteCascade="false" table="zygosity_mode_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="incidental_bin" nullable="false" remarks="" size="15" type="varchar">
+      <parent column="incidental_bin_type_name" foreignKey="bin_results_final_incidental_incidental_bin_fkey" implied="false"
+        onDeleteCascade="false" table="incidental_bin_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="3" name="incidental_list_version" nullable="false" remarks="" size="10" type="int4">
+      <parent column="binning_result_version" foreignKey="bin_results_final_incidental_incidental_list_version_fkey" implied="false"
+        onDeleteCascade="false" table="incidental_result_version" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="carrier_status_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="carrier_status_id" foreignKey="bin_results_final_incidental_carrier_status_id_fkey" implied="false"
+        onDeleteCascade="false" table="carrier_status" />
+    </column>
+    <column autoUpdated="false" digits="0" id="5" name="asm_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="asm_id" foreignKey="bin_results_final_incidental_asm_id_fkey" implied="false" onDeleteCascade="false" table="asm" />
+    </column>
+    <column autoUpdated="false" digits="0" id="6" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="bin_results_final_incidental_loc_var_id_fkey" implied="false" onDeleteCascade="false"
+        table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="0" id="7" name="chromosome" nullable="false" remarks="" size="15" type="varchar" />
+    <column autoUpdated="false" digits="0" id="8" name="pos" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="9" name="type" nullable="false" remarks="" size="15" type="varchar" />
+    <column autoUpdated="false" digits="0" id="10" name="transcr" nullable="false" remarks="" size="31" type="varchar" />
+    <column autoUpdated="false" digits="0" id="11" name="refseq_gene" nullable="false" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="12" name="hgnc_gene" nullable="false" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="13" name="loc_type" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="loc_type" foreignKey="bin_results_final_incidental_loc_type_fkey" implied="false" onDeleteCascade="false"
+        table="loc_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="14" name="strand" nullable="false" remarks="" size="1" type="bpchar" />
+    <column autoUpdated="false" digits="0" id="15" name="transcr_pos" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="16" name="cds_pos" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="17" name="aa_start" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="18" name="aa_end" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="19" name="original_aa" nullable="true" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="20" name="final_aa" nullable="true" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="21" name="frameshift" nullable="true" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="0" id="22" name="inframe" nullable="true" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="0" id="23" name="intron_exon_dist" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="24" name="variant_effect" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="variant_effect" foreignKey="bin_results_final_incidental_variant_effect_fkey" implied="false" onDeleteCascade="false"
+        table="variant_effect" />
+    </column>
+    <column autoUpdated="false" digits="0" id="25" name="mapnum" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="26" name="nummaps" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="27" name="gene_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="28" name="acc_num" nullable="true" remarks="" size="10" type="varchar" />
+    <column autoUpdated="false" digits="0" id="29" name="tag" nullable="true" remarks="" size="2147483647" type="hgmd_enum" />
+    <column autoUpdated="false" digits="17" id="30" name="max_allele_freq" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="31" name="disease" nullable="false" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="32" name="refallele" nullable="true" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="33" name="altallele" nullable="true" remarks="" size="65535" type="varchar" />
+    <column autoUpdated="false" digits="0" id="34" name="hgvsgenomic" nullable="true" remarks="" size="131090" type="varchar" />
+    <column autoUpdated="false" digits="0" id="35" name="hgvscds" nullable="true" remarks="" size="131090" type="varchar" />
+    <column autoUpdated="false" digits="0" id="36" name="hgvstranscript" nullable="true" remarks="" size="131090" type="varchar" />
+    <column autoUpdated="false" digits="0" id="37" name="hgvsprotein" nullable="true" remarks="" size="65555" type="varchar" />
+    <column autoUpdated="false" digits="0" id="38" name="depth" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="17" id="39" name="qd" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="40" name="read_pos_rank_sum" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="41" name="frac_reads_with_dels" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="42" name="hrun" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="17" id="43" name="strand_score" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="44" name="ref_depth" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="45" name="alt_depth" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="46" name="homozygous" nullable="true" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="17" id="47" name="genotype_qual" nullable="true" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="48" name="rs_id" nullable="true" remarks="" size="10" type="int4" />
+    <primaryKey column="participant" sequenceNumberInPK="1" />
+    <primaryKey column="incidental_bin" sequenceNumberInPK="2" />
+    <primaryKey column="incidental_list_version" sequenceNumberInPK="3" />
+    <primaryKey column="asm_id" sequenceNumberInPK="4" />
+    <primaryKey column="transcr" sequenceNumberInPK="5" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="6" />
+    <primaryKey column="mapnum" sequenceNumberInPK="7" />
+    <index name="bin_results_final_incidental_pkey" unique="true">
+      <column ascending="true" name="participant" />
+      <column ascending="true" name="incidental_bin" />
+      <column ascending="true" name="incidental_list_version" />
+      <column ascending="true" name="asm_id" />
+      <column ascending="true" name="transcr" />
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="mapnum" />
+    </index>
+    <index name="bin_results_final_incidental_participant_idx" unique="false">
+      <column ascending="true" name="participant" />
+    </index>
+  </table>
+  <table name="binning_job" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.binning_job_binning_job_id_seq'::regclass)" digits="0" id="0"
+      name="binning_job_id" nullable="false" remarks="" size="10" type="serial" />
+    <column autoUpdated="false" digits="0" id="1" name="incidental_list_version" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="diagnostic_list_version" nullable="true" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="3" name="participant" nullable="false" remarks="" size="50" type="varchar" />
+    <column autoUpdated="false" digits="6" id="4" name="bin_start" nullable="true" remarks="" size="35" type="timestamptz" />
+    <column autoUpdated="false" digits="6" id="5" name="bin_stop" nullable="true" remarks="" size="35" type="timestamptz" />
+    <column autoUpdated="false" digits="0" id="6" name="gender" nullable="false" remarks="" size="2147483647" type="gender" />
+    <column autoUpdated="false" defaultValue="false" digits="0" id="7" name="select_bin_1" nullable="false" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" defaultValue="false" digits="0" id="8" name="select_bin_2a" nullable="false" remarks="" size="1"
+      type="bool" />
+    <column autoUpdated="false" defaultValue="false" digits="0" id="9" name="select_bin_2b" nullable="false" remarks="" size="1"
+      type="bool" />
+    <column autoUpdated="false" defaultValue="false" digits="0" id="10" name="select_bin_2c" nullable="false" remarks="" size="1"
+      type="bool" />
+    <column autoUpdated="false" digits="0" id="11" name="dx_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="dx_id" foreignKey="binning_job_dx_id_fkey" implied="false" onDeleteCascade="false" table="dx" />
+    </column>
+    <column autoUpdated="false" digits="0" id="12" name="status" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="status" foreignKey="binning_job_status_fkey" implied="false" onDeleteCascade="false" table="status_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="13" name="failure_message" nullable="false" remarks="" size="1023" type="varchar" />
+    <column autoUpdated="false" digits="0" id="14" name="select_carrier" nullable="false" remarks="" size="1" type="bool" />
+    <column autoUpdated="false" digits="0" id="15" name="vcf_file" nullable="false" remarks="" size="2147483647" type="text" />
+    <primaryKey column="binning_job_id" sequenceNumberInPK="1" />
+    <index name="binning_job_pkey" unique="true">
+      <column ascending="true" name="binning_job_id" />
+    </index>
+  </table>
+  <table name="carrier_status" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="carrier_status_id" nullable="false" remarks="" size="10" type="int4">
+      <child column="carrier_status_id" foreignKey="bin_results_final_incidental_carrier_status_id_fkey" implied="false"
+        onDeleteCascade="false" table="bin_results_final_incidental" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="carrier_status_name" nullable="false" remarks="" size="2147483647" type="text" />
+    <primaryKey column="carrier_status_id" sequenceNumberInPK="1" />
+    <index name="carrier_status_pkey" unique="true">
+      <column ascending="true" name="carrier_status_id" />
+    </index>
+    <index name="carrier_status_carrier_status_name_key" unique="true">
+      <column ascending="true" name="carrier_status_name" />
+    </index>
+  </table>
+  <table name="diagnostic_bin_results" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="diagnostic_bin_results_loc_var_id_fkey" implied="false" onDeleteCascade="false" table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="6" id="1" name="bin_timestamp" nullable="false" remarks="" size="35" type="timestamptz" />
+    <column autoUpdated="false" digits="0" id="2" name="diagnostic_list_version" nullable="false" remarks="" size="10" type="int4">
+      <parent column="diagnostic_list_version" foreignKey="diagnostic_bin_results_diagnostic_list_version_fkey" implied="false"
+        onDeleteCascade="false" table="diagnostic_gene" />
+    </column>
+    <column autoUpdated="false" digits="0" id="3" name="dx_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="dx_id" foreignKey="diagnostic_bin_results_diagnostic_list_version_fkey" implied="false" onDeleteCascade="false"
+        table="diagnostic_gene" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="gene_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="gene_id" foreignKey="diagnostic_bin_results_diagnostic_list_version_fkey" implied="false" onDeleteCascade="false"
+        table="diagnostic_gene" />
+    </column>
+    <column autoUpdated="false" digits="0" id="5" name="class_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="class_id" foreignKey="diagnostic_bin_results_class_id_fkey" implied="false" onDeleteCascade="false" table="disease_class" />
+    </column>
+    <column autoUpdated="false" digits="0" id="6" name="transcr" nullable="false" remarks="" size="31" type="varchar" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="1" />
+    <primaryKey column="bin_timestamp" sequenceNumberInPK="2" />
+    <primaryKey column="diagnostic_list_version" sequenceNumberInPK="3" />
+    <primaryKey column="dx_id" sequenceNumberInPK="4" />
+    <primaryKey column="gene_id" sequenceNumberInPK="5" />
+    <primaryKey column="class_id" sequenceNumberInPK="6" />
+    <primaryKey column="transcr" sequenceNumberInPK="7" />
+    <index name="diagnostic_bin_results_pkey" unique="true">
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="bin_timestamp" />
+      <column ascending="true" name="diagnostic_list_version" />
+      <column ascending="true" name="dx_id" />
+      <column ascending="true" name="gene_id" />
+      <column ascending="true" name="class_id" />
+      <column ascending="true" name="transcr" />
+    </index>
+  </table>
+  <table name="diagnostic_gene" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.diagnostic_gene_diagnostic_gene_id_seq'::regclass)" digits="0" id="0"
+      name="diagnostic_gene_id" nullable="false" remarks="" size="10" type="serial" />
+    <column autoUpdated="false" digits="0" id="1" name="diagnostic_list_version" nullable="false" remarks="" size="10" type="int4">
+      <child column="diagnostic_list_version" foreignKey="diagnostic_bin_results_diagnostic_list_version_fkey" implied="false"
+        onDeleteCascade="false" table="diagnostic_bin_results" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="dx_id" nullable="false" remarks="" size="10" type="int4">
+      <child column="dx_id" foreignKey="diagnostic_bin_results_diagnostic_list_version_fkey" implied="false" onDeleteCascade="false"
+        table="diagnostic_bin_results" />
+      <parent column="dx_id" foreignKey="diagnostic_gene_dx_id_fkey" implied="false" onDeleteCascade="false" table="dx" />
+    </column>
+    <column autoUpdated="false" digits="0" id="3" name="gene_id" nullable="false" remarks="" size="10" type="int4">
+      <child column="gene_id" foreignKey="diagnostic_bin_results_diagnostic_list_version_fkey" implied="false" onDeleteCascade="false"
+        table="diagnostic_bin_results" />
+      <parent column="gene_id" foreignKey="diagnostic_gene_gene_id_fkey" implied="false" onDeleteCascade="false" table="gene" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="tier" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="5" name="inheritance" nullable="false" remarks="" size="2147483647" type="text" />
+    <primaryKey column="diagnostic_gene_id" sequenceNumberInPK="1" />
+    <index name="diagnostic_gene_pkey" unique="true">
+      <column ascending="true" name="diagnostic_gene_id" />
+    </index>
+    <index name="diagnostic_gene_diagnostic_list_version_dx_id_gene_id_key" unique="true">
+      <column ascending="true" name="diagnostic_list_version" />
+      <column ascending="true" name="dx_id" />
+      <column ascending="true" name="gene_id" />
+    </index>
+  </table>
+  <table name="diagnostic_gene_group_version" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="dbin_group_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="1" name="dx_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="dx_id" foreignKey="diagnostic_gene_group_version_dx_id_fkey" implied="false" onDeleteCascade="false" table="dx" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="diagnostic_list_version" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="dbin_group_version" sequenceNumberInPK="1" />
+    <primaryKey column="dx_id" sequenceNumberInPK="2" />
+    <primaryKey column="diagnostic_list_version" sequenceNumberInPK="3" />
+    <index name="diagnostic_gene_group_version_pkey" unique="true">
+      <column ascending="true" name="dbin_group_version" />
+      <column ascending="true" name="dx_id" />
+      <column ascending="true" name="diagnostic_list_version" />
+    </index>
+  </table>
+  <table name="diagnostic_result_version" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="diagnostic_result_version" nullable="false" remarks="" size="10" type="int4">
+      <child column="diagnostic_list_version" foreignKey="bin_results_final_diagnostic_diagnostic_list_version_fkey" implied="false"
+        onDeleteCascade="false" table="bin_results_final_diagnostic" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="ref_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="ref_id" foreignKey="diagnostic_result_version_ref_id_fkey" implied="false" onDeleteCascade="false" table="genome_ref" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="refseq_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="3" name="hgmd_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="4" name="gen1000_snp_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="5" name="gen1000_indel_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="6" name="dbin_group_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="7" name="algorithm_version" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="diagnostic_result_version" sequenceNumberInPK="1" />
+    <index name="diagnostic_result_version_pkey" unique="true">
+      <column ascending="true" name="diagnostic_result_version" />
+    </index>
+    <index name="diagnostic_result_version_ref_id_refseq_version_hgmd_versio_key" unique="true">
+      <column ascending="true" name="ref_id" />
+      <column ascending="true" name="refseq_version" />
+      <column ascending="true" name="hgmd_version" />
+      <column ascending="true" name="gen1000_snp_version" />
+      <column ascending="true" name="gen1000_indel_version" />
+      <column ascending="true" name="dbin_group_version" />
+      <column ascending="true" name="algorithm_version" />
+    </index>
+  </table>
+  <table name="disease_class" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="class_id" nullable="false" remarks="" size="10" type="int4">
+      <child column="class_id" foreignKey="bin_results_final_diagnostic_class_id_fkey" implied="false" onDeleteCascade="false"
+        table="bin_results_final_diagnostic" />
+      <child column="class_id" foreignKey="diagnostic_bin_results_class_id_fkey" implied="false" onDeleteCascade="false"
+        table="diagnostic_bin_results" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="class_name" nullable="false" remarks="" size="2147483647" type="text" />
+    <primaryKey column="class_id" sequenceNumberInPK="1" />
+    <index name="disease_class_pkey" unique="true">
+      <column ascending="true" name="class_id" />
+    </index>
+  </table>
+  <table name="dx" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.dx_dx_id_seq'::regclass)" digits="0" id="0" name="dx_id" nullable="false"
+      remarks="" size="10" type="serial">
+      <child column="dx_id" foreignKey="bin_results_final_diagnostic_dx_id_fkey" implied="false" onDeleteCascade="false"
+        table="bin_results_final_diagnostic" />
+      <child column="dx_id" foreignKey="binning_job_dx_id_fkey" implied="false" onDeleteCascade="false" table="binning_job" />
+      <child column="dx_id" foreignKey="diagnostic_gene_dx_id_fkey" implied="false" onDeleteCascade="false" table="diagnostic_gene" />
+      <child column="dx_id" foreignKey="diagnostic_gene_group_version_dx_id_fkey" implied="false" onDeleteCascade="false"
+        table="diagnostic_gene_group_version" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="dx_name" nullable="false" remarks="" size="1024" type="varchar" />
+    <primaryKey column="dx_id" sequenceNumberInPK="1" />
+    <index name="dx_pkey" unique="true">
+      <column ascending="true" name="dx_id" />
+    </index>
+    <index name="dx_dx_name_key" unique="true">
+      <column ascending="true" name="dx_name" />
+    </index>
+  </table>
+  <table name="dx_coverage" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="dx_exon_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="dx_exon_id" foreignKey="dx_coverage_dx_exon_id_fkey" implied="false" onDeleteCascade="false" table="dx_exons" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="participant" nullable="false" remarks="" size="50" type="varchar" />
+    <column autoUpdated="false" digits="17" id="2" name="frac_gt_1" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="3" name="frac_gt_5" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="4" name="frac_gt_10" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="5" name="frac_gt_15" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="6" name="frac_gt_30" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="17" id="7" name="frac_gt_50" nullable="false" remarks="" size="17" type="float8" />
+    <primaryKey column="dx_exon_id" sequenceNumberInPK="1" />
+    <primaryKey column="participant" sequenceNumberInPK="2" />
+    <index name="dx_coverage_pkey" unique="true">
+      <column ascending="true" name="dx_exon_id" />
+      <column ascending="true" name="participant" />
+    </index>
+  </table>
+  <table name="dx_exons" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.dx_exons_dx_exon_id_seq'::regclass)" digits="0" id="0" name="dx_exon_id"
+      nullable="false" remarks="" size="10" type="serial">
+      <child column="dx_exon_id" foreignKey="dx_coverage_dx_exon_id_fkey" implied="false" onDeleteCascade="false" table="dx_coverage" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="diagnostic_list_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="gene_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="3" name="transcr" nullable="false" remarks="" size="100" type="varchar" />
+    <column autoUpdated="false" digits="0" id="4" name="exon" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="5" name="chromosome" nullable="false" remarks="" size="100" type="varchar" />
+    <column autoUpdated="false" digits="0" id="6" name="interval_start" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="7" name="interval_end" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="dx_exon_id" sequenceNumberInPK="1" />
+    <index name="dx_exons_pkey" unique="true">
+      <column ascending="true" name="dx_exon_id" />
+    </index>
+    <index name="dx_exons_diagnostic_list_version_transcr_exon_key" unique="true">
+      <column ascending="true" name="diagnostic_list_version" />
+      <column ascending="true" name="transcr" />
+      <column ascending="true" name="exon" />
+    </index>
+  </table>
+  <table name="incidental_bin" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="true" defaultValue="nextval('clinbin.incidental_bin_incidental_bin_id_seq'::regclass)" digits="0" id="0"
+      name="incidental_bin_id" nullable="false" remarks="" size="10" type="serial">
+      <child column="incidental_bin_id" foreignKey="incidental_bin_gene_incidental_bin_id_fkey" implied="false" onDeleteCascade="false"
+        table="incidental_bin_gene" />
+      <child column="incidental_bin_id" foreignKey="incidental_bin_group_version_incidental_bin_id_fkey" implied="false"
+        onDeleteCascade="false" table="incidental_bin_group_version" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="incidental_list_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="bin_name" nullable="false" remarks="" size="1024" type="varchar" />
+    <column autoUpdated="false" digits="0" id="3" name="zygosity_mode" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="zygosity_mode_type_name" foreignKey="incidental_bin_zygosity_mode_fkey" implied="false" onDeleteCascade="false"
+        table="zygosity_mode_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="4" name="incidental_bin" nullable="false" remarks="" size="15" type="varchar">
+      <parent column="incidental_bin_type_name" foreignKey="incidental_bin_incidental_bin_fkey" implied="false" onDeleteCascade="false"
+        table="incidental_bin_type" />
+    </column>
+    <primaryKey column="incidental_bin_id" sequenceNumberInPK="1" />
+    <index name="incidental_bin_pkey" unique="true">
+      <column ascending="true" name="incidental_bin_id" />
+    </index>
+    <index name="incidental_bin_incidental_list_version_bin_name_key" unique="true">
+      <column ascending="true" name="incidental_list_version" />
+      <column ascending="true" name="bin_name" />
+    </index>
+  </table>
+  <table name="incidental_bin_gene" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="incidental_bin_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="incidental_bin_id" foreignKey="incidental_bin_gene_incidental_bin_id_fkey" implied="false" onDeleteCascade="false"
+        table="incidental_bin" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="gene_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="gene_id" foreignKey="incidental_bin_gene_gene_id_fkey" implied="false" onDeleteCascade="false" table="gene" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="disease" nullable="false" remarks="" size="255" type="varchar" />
+    <primaryKey column="incidental_bin_id" sequenceNumberInPK="1" />
+    <primaryKey column="gene_id" sequenceNumberInPK="2" />
+    <index name="incidental_bin_gene_pkey" unique="true">
+      <column ascending="true" name="incidental_bin_id" />
+      <column ascending="true" name="gene_id" />
+    </index>
+  </table>
+  <table name="incidental_bin_group_version" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="ibin_group_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="1" name="incidental_bin_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="incidental_bin_id" foreignKey="incidental_bin_group_version_incidental_bin_id_fkey" implied="false"
+        onDeleteCascade="false" table="incidental_bin" />
+    </column>
+    <primaryKey column="ibin_group_version" sequenceNumberInPK="1" />
+    <primaryKey column="incidental_bin_id" sequenceNumberInPK="2" />
+    <index name="incidental_bin_group_version_pkey" unique="true">
+      <column ascending="true" name="ibin_group_version" />
+      <column ascending="true" name="incidental_bin_id" />
+    </index>
+  </table>
+  <table name="incidental_bin_results" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="loc_var_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="loc_var_id" foreignKey="incidental_bin_results_loc_var_id_fkey" implied="false" onDeleteCascade="false" table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="6" id="1" name="bin_timestamp" nullable="false" remarks="" size="35" type="timestamptz" />
+    <column autoUpdated="false" digits="0" id="2" name="incidental_list_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="3" name="bin_name" nullable="false" remarks="" size="1023" type="varchar" />
+    <column autoUpdated="false" digits="0" id="4" name="gene_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="gene_id" foreignKey="incidental_bin_results_gene_id_fkey" implied="false" onDeleteCascade="false" table="gene" />
+    </column>
+    <column autoUpdated="false" digits="0" id="5" name="disease" nullable="false" remarks="" size="255" type="varchar" />
+    <column autoUpdated="false" digits="0" id="6" name="zygosity_mode" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="zygosity_mode_type_name" foreignKey="incidental_bin_results_zygosity_mode_fkey" implied="false"
+        onDeleteCascade="false" table="zygosity_mode_type" />
+    </column>
+    <column autoUpdated="false" digits="0" id="7" name="incidental_bin" nullable="false" remarks="" size="15" type="varchar" />
+    <column autoUpdated="false" digits="0" id="8" name="transcr" nullable="false" remarks="" size="31" type="varchar" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="1" />
+    <primaryKey column="bin_timestamp" sequenceNumberInPK="2" />
+    <primaryKey column="incidental_list_version" sequenceNumberInPK="3" />
+    <primaryKey column="bin_name" sequenceNumberInPK="4" />
+    <primaryKey column="gene_id" sequenceNumberInPK="5" />
+    <primaryKey column="disease" sequenceNumberInPK="6" />
+    <primaryKey column="zygosity_mode" sequenceNumberInPK="7" />
+    <primaryKey column="incidental_bin" sequenceNumberInPK="8" />
+    <primaryKey column="transcr" sequenceNumberInPK="9" />
+    <index name="incidental_bin_results_pkey" unique="true">
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="bin_timestamp" />
+      <column ascending="true" name="incidental_list_version" />
+      <column ascending="true" name="bin_name" />
+      <column ascending="true" name="gene_id" />
+      <column ascending="true" name="disease" />
+      <column ascending="true" name="zygosity_mode" />
+      <column ascending="true" name="incidental_bin" />
+      <column ascending="true" name="transcr" />
+    </index>
+  </table>
+  <table name="incidental_bin_type" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="incidental_bin_type_name" nullable="false" remarks="" size="15" type="varchar">
+      <child column="incidental_bin" foreignKey="bin_results_final_incidental_incidental_bin_fkey" implied="false" onDeleteCascade="false"
+        table="bin_results_final_incidental" />
+      <child column="incidental_bin" foreignKey="incidental_bin_incidental_bin_fkey" implied="false" onDeleteCascade="false" table="incidental_bin" />
+    </column>
+    <primaryKey column="incidental_bin_type_name" sequenceNumberInPK="1" />
+    <index name="incidental_bin_type_pkey" unique="true">
+      <column ascending="true" name="incidental_bin_type_name" />
+    </index>
+  </table>
+  <table name="incidental_result_version" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="binning_result_version" nullable="false" remarks="" size="10" type="int4">
+      <child column="incidental_list_version" foreignKey="bin_results_final_incidental_incidental_list_version_fkey" implied="false"
+        onDeleteCascade="false" table="bin_results_final_incidental" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="ref_id" nullable="false" remarks="" size="10" type="int4">
+      <parent column="ref_id" foreignKey="incidental_result_version_ref_id_fkey" implied="false" onDeleteCascade="false" table="genome_ref" />
+    </column>
+    <column autoUpdated="false" digits="0" id="2" name="refseq_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="3" name="hgmd_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="4" name="gen1000_snp_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="5" name="gen1000_indel_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="6" name="ibin_group_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="7" name="binning_algorithm_version" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="binning_result_version" sequenceNumberInPK="1" />
+    <index name="incidental_result_version_pkey" unique="true">
+      <column ascending="true" name="binning_result_version" />
+    </index>
+    <index name="incidental_result_version_ref_id_refseq_version_hgmd_versio_key" unique="true">
+      <column ascending="true" name="ref_id" />
+      <column ascending="true" name="refseq_version" />
+      <column ascending="true" name="hgmd_version" />
+      <column ascending="true" name="gen1000_snp_version" />
+      <column ascending="true" name="gen1000_indel_version" />
+      <column ascending="true" name="ibin_group_version" />
+      <column ascending="true" name="binning_algorithm_version" />
+    </index>
+  </table>
+  <table name="max_freq" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="max_freq_loc_var_id_fkey" implied="false" onDeleteCascade="false" table="loc_var" />
+    </column>
+    <column autoUpdated="false" digits="0" id="1" name="gen1000_version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="17" id="2" name="max_allele_freq" nullable="false" remarks="" size="17" type="float8" />
+    <column autoUpdated="false" digits="0" id="3" name="source" nullable="false" remarks="" size="2147483647" type="text">
+      <parent column="source" foreignKey="max_freq_source_fkey" implied="false" onDeleteCascade="false" table="max_freq_source" />
+    </column>
+    <primaryKey column="loc_var_id" sequenceNumberInPK="1" />
+    <primaryKey column="gen1000_version" sequenceNumberInPK="2" />
+    <index name="max_freq_pkey" unique="true">
+      <column ascending="true" name="loc_var_id" />
+      <column ascending="true" name="gen1000_version" />
+    </index>
+  </table>
+  <table name="max_freq_source" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="source" nullable="false" remarks="" size="2147483647" type="text">
+      <child column="source" foreignKey="max_freq_source_fkey" implied="false" onDeleteCascade="false" table="max_freq" />
+    </column>
+    <primaryKey column="source" sequenceNumberInPK="1" />
+    <index name="max_freq_source_pkey" unique="true">
+      <column ascending="true" name="source" />
+    </index>
+  </table>
+  <table name="rs_variants" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="bin_id" nullable="false" remarks="" size="15" type="varchar" />
+    <column autoUpdated="false" digits="0" id="1" name="version" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="loc_var_id" nullable="false" remarks="" size="19" type="int8">
+      <parent column="loc_var_id" foreignKey="rs_variants_loc_var_id_fkey" implied="false" onDeleteCascade="false" table="loc_var" />
+    </column>
+    <primaryKey column="bin_id" sequenceNumberInPK="1" />
+    <primaryKey column="version" sequenceNumberInPK="2" />
+    <primaryKey column="loc_var_id" sequenceNumberInPK="3" />
+    <index name="rs_variants_pkey" unique="true">
+      <column ascending="true" name="bin_id" />
+      <column ascending="true" name="version" />
+      <column ascending="true" name="loc_var_id" />
+    </index>
+  </table>
+  <table name="status_type" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="status" nullable="false" remarks="" size="2147483647" type="text">
+      <child column="status" foreignKey="binning_job_status_fkey" implied="false" onDeleteCascade="false" table="binning_job" />
+    </column>
+    <primaryKey column="status" sequenceNumberInPK="1" />
+    <index name="status_type_pkey" unique="true">
+      <column ascending="true" name="status" />
+    </index>
+  </table>
+  <table name="unimportant_exon" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="transcr" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="1" name="noncan_exon" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="count" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="transcr" sequenceNumberInPK="1" />
+    <primaryKey column="noncan_exon" sequenceNumberInPK="2" />
+    <index name="unimportant_exon_pkey" unique="true">
+      <column ascending="true" name="transcr" />
+      <column ascending="true" name="noncan_exon" />
+    </index>
+  </table>
+  <table name="unimportant_feature" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="transcr" nullable="false" remarks="" size="2147483647" type="text" />
+    <column autoUpdated="false" digits="0" id="1" name="feature_id" nullable="false" remarks="" size="10" type="int4" />
+    <column autoUpdated="false" digits="0" id="2" name="count" nullable="false" remarks="" size="10" type="int4" />
+    <primaryKey column="transcr" sequenceNumberInPK="1" />
+    <primaryKey column="feature_id" sequenceNumberInPK="2" />
+    <index name="unimportant_feature_pkey" unique="true">
+      <column ascending="true" name="transcr" />
+      <column ascending="true" name="feature_id" />
+    </index>
+  </table>
+  <table name="zygosity_mode_type" remarks="" schema="clinbin" type="TABLE">
+    <column autoUpdated="false" digits="0" id="0" name="zygosity_mode_type_name" nullable="false" remarks="" size="2147483647" type="text">
+      <child column="zygosity_mode" foreignKey="bin_results_final_incidental_zygosity_mode_fkey" implied="false" onDeleteCascade="false"
+        table="bin_results_final_incidental" />
+      <child column="zygosity_mode" foreignKey="incidental_bin_zygosity_mode_fkey" implied="false" onDeleteCascade="false" table="incidental_bin" />
+      <child column="zygosity_mode" foreignKey="incidental_bin_results_zygosity_mode_fkey" implied="false" onDeleteCascade="false"
+        table="incidental_bin_results" />
+    </column>
+    <primaryKey column="zygosity_mode_type_name" sequenceNumberInPK="1" />
+    <index name="zygosity_mode_type_pkey" unique="true">
+      <column ascending="true" name="zygosity_mode_type_name" />
+    </index>
+  </table>
+</tables>
