@@ -89,7 +89,7 @@
         <configuration>
           <instructions>
             <Private-Package>org.renci.binning.*</Private-Package>
-            <Export-Package>org.renci.binning.*</Export-Package>
+            <Export-Package>org.renci.binning*</Export-Package>
           </instructions>
         </configuration>
       </plugin>
