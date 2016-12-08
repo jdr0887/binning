@@ -12,12 +12,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.renci.binning.dao.Persistable;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType
 @Entity
 @Table(schema = "annot", name = "cds")
-public class AnnotationCodingSequence {
+public class AnnotationCodingSequence implements Persistable {
+
+    private static final long serialVersionUID = 71786943322926117L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cds_cds_id_seq")
