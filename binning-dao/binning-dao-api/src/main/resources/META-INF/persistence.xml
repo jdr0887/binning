@@ -9,6 +9,7 @@
     <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=binningJTA)</jta-data-source>
     <non-jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=binningNoJTA)</non-jta-data-source>
 
+    <class>org.renci.binning.dao.annotation.model.AnnotationCodingSequence</class>
     <class>org.renci.binning.dao.annotation.model.AnnotationCodingSequenceExternalIds</class>
     <class>org.renci.binning.dao.annotation.model.AnnotationCodingSequenceExternalIdsPK</class>
     <class>org.renci.binning.dao.annotation.model.AnnotationGene</class>
