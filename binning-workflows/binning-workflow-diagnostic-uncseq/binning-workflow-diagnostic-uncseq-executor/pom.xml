@@ -12,9 +12,9 @@
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.renci.binning</groupId>
-      <artifactId>binning-api</artifactId>
-    </dependency>          
+      <groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-uncseq</groupId>
+      <artifactId>binning-workflow-diagnostic-uncseq-commons</artifactId>
+    </dependency>                  
   </dependencies>
   <build>
     <plugins>
@@ -24,8 +24,8 @@
 	<extensions>true</extensions>
         <configuration>
           <instructions>
-            <Private-Package>org.renci.canvas.binning.diagnostic.uncseq.*</Private-Package>
-            <Export-Package>org.renci.canvas.binning.diagnostic.uncseq.*</Export-Package>
+            <Private-Package>org.renci.binning.diagnostic.uncseq.executor.*</Private-Package>
+            <Export-Package>org.renci.binning.diagnostic.uncseq.executor*</Export-Package>
           </instructions>
         </configuration>
       </plugin>
