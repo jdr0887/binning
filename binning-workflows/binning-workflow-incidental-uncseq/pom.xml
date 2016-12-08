@@ -10,9 +10,30 @@
   <artifactId>binning-workflow-incidental-uncseq</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+	<groupId>org.renci.binning.binning-workflows.binning-workflow-incidental-uncseq</groupId>
+	<artifactId>binning-workflow-incidental-uncseq-commons</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+	<groupId>org.renci.binning.binning-workflows.binning-workflow-incidental-uncseq</groupId>
+	<artifactId>binning-workflow-incidental-uncseq-ws-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+	<groupId>org.renci.binning.binning-workflows.binning-workflow-incidental-uncseq</groupId>
+	<artifactId>binning-workflow-incidental-uncseq-executor</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+      </dependency>      
+    </dependencies>
+  </dependencyManagement>  
   <modules>
     <module>binning-workflow-incidental-uncseq-features</module>
     <module>binning-workflow-incidental-uncseq-commands</module>
-    <module>binning-workflow-incidental-uncseq-executor</module>    
+    <module>binning-workflow-incidental-uncseq-executor</module>
+    <module>binning-workflow-incidental-uncseq-commons</module>
+    <module>binning-workflow-incidental-uncseq-ws</module>
   </modules>
 </project>

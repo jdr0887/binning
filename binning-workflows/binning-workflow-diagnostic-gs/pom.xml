@@ -10,9 +10,30 @@
   <artifactId>binning-workflow-diagnostic-gs</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs</groupId>
+	<artifactId>binning-workflow-diagnostic-gs-commons</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs</groupId>
+	<artifactId>binning-workflow-diagnostic-gs-ws-api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs</groupId>
+	<artifactId>binning-workflow-diagnostic-gs-executor</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+      </dependency>      
+    </dependencies>
+  </dependencyManagement>
   <modules>
     <module>binning-workflow-diagnostic-gs-features</module>
+    <module>binning-workflow-diagnostic-gs-commons</module>
     <module>binning-workflow-diagnostic-gs-commands</module>
-    <module>binning-workflow-diagnostic-gs-executor</module>    
+    <module>binning-workflow-diagnostic-gs-executor</module>
+    <module>binning-workflow-diagnostic-gs-ws</module>
   </modules>
 </project>
