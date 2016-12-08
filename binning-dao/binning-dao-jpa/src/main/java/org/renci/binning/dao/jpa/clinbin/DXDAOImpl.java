@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional(readOnly = true)
-public class DXDAOImpl extends BaseDAOImpl<DX, Long> implements DXDAO {
+public class DXDAOImpl extends BaseDAOImpl<DX, Integer> implements DXDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(DXDAOImpl.class);
 
