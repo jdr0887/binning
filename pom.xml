@@ -14,7 +14,7 @@
     <commons.discovery.version>0.5</commons.discovery.version>
     <commons.dbcp.version>1.4</commons.dbcp.version>
     <commons.beanutils.version>1.8.3</commons.beanutils.version>
-    <commons.io.version>2.4</commons.io.version>
+    <commons.io.version>2.5</commons.io.version>
     <commons.lang.version>2.6</commons.lang.version>
     <commons.exec.version>1.3</commons.exec.version>
     <commons.lang3.version>3.5</commons.lang3.version>
@@ -23,7 +23,6 @@
     <commons.cli.version>1.2</commons.cli.version>
     <commons.pool.version>1.6</commons.pool.version>
     <commons.net.version>3.3</commons.net.version>
-    <commons.math.version>2.2</commons.math.version>
     <commons.math3.version>3.5</commons.math3.version>
     <commons.httpclient.version>3.1</commons.httpclient.version>
     <commons.csv.version>1.4</commons.csv.version>            
@@ -37,7 +36,7 @@
     <activiti.version>5.22.0</activiti.version>
     <karaf.version>4.0.7</karaf.version>
     <cxf.version>3.1.8</cxf.version>
-    <postgresql.version>9.4.1210.jre7</postgresql.version>
+    <postgresql.version>9.4.1212.jre7</postgresql.version>
   </properties>
   <issueManagement>
     <system>GitHub Issues</system>
@@ -62,7 +61,18 @@
 	<groupId>com.github.samtools</groupId>
 	<artifactId>htsjdk</artifactId>
 	<version>2.6.1</version>
-      </dependency>      
+      </dependency>
+      <dependency>
+      	<groupId>org.osgi</groupId>
+      	<artifactId>org.osgi.compendium</artifactId>
+      	<version>${osgi.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.osgi</groupId>
+      	<artifactId>org.osgi.core</artifactId>
+      	<version>${osgi.version}</version>
+      	<scope>provided</scope>
+      </dependency>            
       <dependency>
 	<groupId>org.activiti</groupId>
 	<artifactId>activiti-engine</artifactId>
@@ -77,7 +87,97 @@
 	<groupId>org.biojava</groupId>
 	<artifactId>biojava-sequencing</artifactId>
 	<version>${biojava.version}</version>
-      </dependency>              
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-ws-rm</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-ws-security</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-ws-addr</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-ws-policy</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.apache.cxf</groupId>
+	<artifactId>cxf-rt-rs-client</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.apache.cxf</groupId>
+	<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-frontend-jaxws</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-transports-http</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.cxf</groupId>
+      	<artifactId>cxf-rt-transports-http-jetty</artifactId>
+      	<version>${cxf.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.geronimo.specs</groupId>
+      	<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+      	<version>1.1.3</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.geronimo.specs</groupId>
+      	<artifactId>geronimo-jaxws_2.2_spec</artifactId>
+      	<version>1.1</version>
+      </dependency>      
+      <dependency>
+	<groupId>com.fasterxml.jackson.jaxrs</groupId>
+	<artifactId>jackson-jaxrs-json-provider</artifactId>
+	<version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>com.fasterxml.jackson.core</groupId>
+	<artifactId>jackson-core</artifactId>
+	<version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>com.fasterxml.jackson.core</groupId>
+	<artifactId>jackson-annotations</artifactId>
+	<version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>com.fasterxml.jackson.core</groupId>
+	<artifactId>jackson-databind</artifactId>
+	<version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+      	<groupId>org.apache.geronimo.specs</groupId>
+      	<artifactId>geronimo-jpa_2.0_spec</artifactId>
+      	<version>1.1</version>
+      </dependency>
+      <dependency>
+	<groupId>org.apache.karaf.shell</groupId>
+	<artifactId>org.apache.karaf.shell.core</artifactId>
+      	<version>${karaf.version}</version>      
+      </dependency>                      
+      <dependency>
+	<groupId>javax.ws.rs</groupId>
+	<artifactId>javax.ws.rs-api</artifactId>      
+	<version>2.0.1</version>
+      </dependency>      
       <dependency>      
 	<groupId>org.renci.commons</groupId>
 	<artifactId>commons-exec</artifactId>
@@ -265,6 +365,11 @@
   <build>
     <pluginManagement>
       <plugins>
+	<plugin>
+          <groupId>org.apache.karaf.tooling</groupId>
+          <artifactId>karaf-services-maven-plugin</artifactId>
+	  <version>${karaf.version}</version>
+	</plugin>      			
 	<plugin>
           <groupId>org.apache.openjpa</groupId>
           <artifactId>openjpa-maven-plugin</artifactId>
