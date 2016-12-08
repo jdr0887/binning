@@ -9,6 +9,7 @@ import org.activiti.engine.delegate.JavaDelegate;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.binning.diagnostic.test.commons.UpdateDiagnosticBinsCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
