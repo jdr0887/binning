@@ -1,13 +1,10 @@
-<features name="mapseq-pipeline-ncgenes-baseline-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
+<features name="binning-workflow-incidental-ncgenes-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
-  <feature name="mapseq-pipeline-ncgenes-baseline" version="${project.version}" resolver="(obr)">
-    <bundle>mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-commons/${project.version}</bundle>
-    <bundle>mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-workflow/${project.version}</bundle>
-    <bundle>mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-commands/${project.version}</bundle>
-    <bundle>mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-ws-api/${project.version}</bundle>
-    <bundle>mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-ws-impl/${project.version}</bundle>
-    <bundle start-level="100">mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-executor/${project.version}</bundle>
-    <bundle start-level="100">mvn:edu.unc.mapseq.pipelines.ncgenes-baseline/ncgenes-baseline-messaging/${project.version}</bundle>
+  <feature name="binning-workflow-incidental-ncgenes" version="${project.version}" resolver="(obr)">
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes/binning-workflow-incidental-ncgenes-commons/${project.version}</bundle>
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes/binning-workflow-incidental-ncgenes-commands/${project.version}</bundle>    
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes/binning-workflow-incidental-ncgenes-executor/${project.version}</bundle>
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes/binning-workflow-incidental-ncgenes-ws/${project.version}</bundle>
   </feature>
 
 </features>
