@@ -1,6 +1,6 @@
 package org.renci.binning.incidental.uncseq.executor;
 
-import static org.renci.binning.Constants.BINNING_DIR;
+import static org.renci.binning.Constants.BINNING_HOME;
 
 import java.util.Date;
 import java.util.Map;
@@ -11,6 +11,7 @@ import org.activiti.engine.delegate.JavaDelegate;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
+import org.renci.binning.incidental.uncseq.commons.LoadVCFCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +46,7 @@ public class LoadVCFDelegate implements JavaDelegate {
             binningJob.setStatus(daoBean.getIncidentalStatusTypeDAO().findById("VCF loading"));
             daoBean.getIncidentalBinningJobDAO().save(binningJob);
 
-            Executors.newSingleThreadExecutor().submit(new LoadVCFCallable(daoBean, binningJob, variables.get(BINNING_DIR).toString()))
+            Executors.newSingleThreadExecutor().submit(new LoadVCFCallable(daoBean, binningJob, variables.get(BINNING_HOME).toString()))
                     .get();
 
             binningJob.setStatus(daoBean.getIncidentalStatusTypeDAO().findById("VCF loaded"));
