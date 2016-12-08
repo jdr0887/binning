@@ -52,15 +52,15 @@ public class DiagnosticBinningJob implements Persistable {
     private DiagnosticStatusType status;
 
     @Column(name = "failure_message", length = 1023, nullable = false)
-    private String failureMessage;
+    private String failureMessage = "";
 
     @Column(name = "vcf_file", nullable = false)
     @Lob
-    private String vcfFile;
+    private String vcfFile = "";
 
     @Column(name = "study", nullable = false)
     @Lob
-    private String study;
+    private String study = "";
 
     @ManyToOne
     @JoinColumn(name = "asm_id")
