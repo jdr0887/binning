@@ -12,6 +12,7 @@ import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.refseq.model.Variants_61_2;
+import org.renci.binning.diagnostic.uncseq.commons.AnnotateVariantsCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
