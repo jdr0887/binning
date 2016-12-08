@@ -1,6 +1,6 @@
 package org.renci.binning;
 
-import static org.renci.binning.Constants.BINNING_DIR;
+import static org.renci.binning.Constants.BINNING_HOME;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class DiagnosticMain implements Runnable {
 
                     String binningDir = "/storage/binning";
 
-                    variables.put(BINNING_DIR, binningDir);
+                    variables.put(BINNING_HOME, binningDir);
 
                     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("diagnostic_binning", variables);
                     // repositoryService.deleteDeployment(deployment.getId());
