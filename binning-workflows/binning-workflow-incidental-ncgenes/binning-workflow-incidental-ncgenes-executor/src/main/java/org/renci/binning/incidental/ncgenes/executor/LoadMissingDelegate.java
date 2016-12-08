@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
+import org.renci.binning.incidental.ncgenes.commons.LoadMissingCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
