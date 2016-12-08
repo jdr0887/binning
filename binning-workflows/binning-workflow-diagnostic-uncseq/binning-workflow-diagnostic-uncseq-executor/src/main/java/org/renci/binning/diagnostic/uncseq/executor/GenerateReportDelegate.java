@@ -10,6 +10,7 @@ import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.clinbin.model.Report;
+import org.renci.binning.diagnostic.uncseq.commons.GenerateReportCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
