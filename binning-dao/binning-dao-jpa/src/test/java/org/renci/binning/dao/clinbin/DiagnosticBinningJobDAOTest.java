@@ -23,7 +23,7 @@ public class DiagnosticBinningJobDAOTest {
         Arrays.asList("NA12878", "NA12891", "NA12892").forEach(a -> {
             try {
                 DiagnosticBinningJob job = new DiagnosticBinningJob();
-                job.setDx(daoMgr.getDAOBean().getDXDAO().findById(9L));
+                job.setDx(daoMgr.getDAOBean().getDXDAO().findById(9));
                 job.setStatus(daoMgr.getDAOBean().getDiagnosticStatusTypeDAO().findById("Requested"));
                 job.setGender("M");
                 job.setListVersion(40);
