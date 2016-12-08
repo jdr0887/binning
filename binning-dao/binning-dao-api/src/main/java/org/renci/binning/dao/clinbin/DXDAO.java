@@ -6,7 +6,7 @@ import org.renci.binning.dao.BaseDAO;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
 
-public interface DXDAO extends BaseDAO<DX, Long> {
+public interface DXDAO extends BaseDAO<DX, Integer> {
 
     public List<DX> findAll() throws BinningDAOException;
 
