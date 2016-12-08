@@ -14,6 +14,8 @@ public interface IncidentalBinningJobDAO extends BaseDAO<IncidentalBinningJob, I
 
     public List<IncidentalBinningJob> findCompletedJobsByStudy(String study) throws BinningDAOException;
 
+    public List<IncidentalBinningJob> findByExample(IncidentalBinningJob binningJob) throws BinningDAOException;
+
     public Integer save(IncidentalBinningJob entity) throws BinningDAOException;
 
 }

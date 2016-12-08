@@ -10,13 +10,16 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.DiagnosticBinningJobDAO;
+import org.renci.binning.dao.clinbin.model.DX;
+import org.renci.binning.dao.clinbin.model.DX_;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.clinbin.model.DiagnosticStatusType;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob_;
+import org.renci.binning.dao.clinbin.model.DiagnosticStatusType;
 import org.renci.binning.dao.clinbin.model.DiagnosticStatusType_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -93,6 +96,45 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             Join<DiagnosticBinningJob, DiagnosticStatusType> diagnosticBinningJobDiagnosticStatusTypeJoin = root
                     .join(DiagnosticBinningJob_.status);
             predicates.add(critBuilder.equal(diagnosticBinningJobDiagnosticStatusTypeJoin.get(DiagnosticStatusType_.name), "Complete"));
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            TypedQuery<DiagnosticBinningJob> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
+    public List<DiagnosticBinningJob> findByExample(DiagnosticBinningJob binningJob) throws BinningDAOException {
+        logger.debug("ENTERING findByExample(DiagnosticBinningJob)");
+        List<DiagnosticBinningJob> ret = new ArrayList<DiagnosticBinningJob>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<DiagnosticBinningJob> crit = critBuilder.createQuery(getPersistentClass());
+            Root<DiagnosticBinningJob> root = crit.from(getPersistentClass());
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            if (StringUtils.isNotEmpty(binningJob.getStudy())) {
+                predicates.add(critBuilder.equal(root.get(DiagnosticBinningJob_.study), binningJob.getStudy()));
+            }
+
+            if (StringUtils.isNotEmpty(binningJob.getParticipant())) {
+                predicates.add(critBuilder.equal(root.get(DiagnosticBinningJob_.participant), binningJob.getParticipant()));
+            }
+
+            if (StringUtils.isNotEmpty(binningJob.getGender())) {
+                predicates.add(critBuilder.equal(root.get(DiagnosticBinningJob_.gender), binningJob.getGender()));
+            }
+
+            if (binningJob.getListVersion() != null) {
+                predicates.add(critBuilder.equal(root.get(DiagnosticBinningJob_.listVersion), binningJob.getListVersion()));
+            }
+
+            if (binningJob.getDx() != null) {
+                predicates.add(critBuilder.equal(root.join(DiagnosticBinningJob_.dx).get(DX_.id), binningJob.getDx().getId()));
+            }
+
             crit.where(predicates.toArray(new Predicate[predicates.size()]));
             TypedQuery<DiagnosticBinningJob> query = getEntityManager().createQuery(crit);
             ret.addAll(query.getResultList());

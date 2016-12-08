@@ -14,6 +14,8 @@ public interface DiagnosticBinningJobDAO extends BaseDAO<DiagnosticBinningJob, I
 
     public List<DiagnosticBinningJob> findCompletedJobsByStudy(String study) throws BinningDAOException;
 
+    public List<DiagnosticBinningJob> findByExample(DiagnosticBinningJob binningJob) throws BinningDAOException;
+
     public Integer save(DiagnosticBinningJob entity) throws BinningDAOException;
 
 }
