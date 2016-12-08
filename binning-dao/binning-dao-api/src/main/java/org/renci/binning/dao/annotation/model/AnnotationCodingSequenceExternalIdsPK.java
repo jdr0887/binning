@@ -11,13 +11,13 @@ public class AnnotationCodingSequenceExternalIdsPK implements Serializable {
     private static final long serialVersionUID = -6426105654816246883L;
 
     @Column(name = "cds_id")
-    private Integer cdsId;
+    private Integer annotationCodingSequence;
 
     @Column(name = "namespace", length = 31)
     private String namespace;
 
     @Column(name = "namespace_ver", length = 31)
-    private String namespaceVer;
+    private String namespaceVersion;
 
     @Column(name = "gene_external_id")
     private Integer geneExternalId;
@@ -26,12 +26,12 @@ public class AnnotationCodingSequenceExternalIdsPK implements Serializable {
         super();
     }
 
-    public Integer getCdsId() {
-        return cdsId;
+    public Integer getAnnotationCodingSequence() {
+        return annotationCodingSequence;
     }
 
-    public void setCdsId(Integer cdsId) {
-        this.cdsId = cdsId;
+    public void setAnnotationCodingSequence(Integer annotationCodingSequence) {
+        this.annotationCodingSequence = annotationCodingSequence;
     }
 
     public String getNamespace() {
@@ -50,20 +50,29 @@ public class AnnotationCodingSequenceExternalIdsPK implements Serializable {
         this.geneExternalId = geneExternalId;
     }
 
+    public String getNamespaceVersion() {
+        return namespaceVersion;
+    }
+
+    public void setNamespaceVersion(String namespaceVersion) {
+        this.namespaceVersion = namespaceVersion;
+    }
+
     @Override
     public String toString() {
-        return String.format("AnnotationCodingSequenceExternalIdsPK [cdsId=%s, namespace=%s, namespaceVer=%s, geneExternalId=%s]", cdsId,
-                namespace, namespaceVer, geneExternalId);
+        return String.format(
+                "AnnotationCodingSequenceExternalIdsPK [annotationCodingSequence=%s, namespace=%s, namespaceVersion=%s, geneExternalId=%s]",
+                annotationCodingSequence, namespace, namespaceVersion, geneExternalId);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((cdsId == null) ? 0 : cdsId.hashCode());
+        result = prime * result + ((annotationCodingSequence == null) ? 0 : annotationCodingSequence.hashCode());
         result = prime * result + ((geneExternalId == null) ? 0 : geneExternalId.hashCode());
         result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
-        result = prime * result + ((namespaceVer == null) ? 0 : namespaceVer.hashCode());
+        result = prime * result + ((namespaceVersion == null) ? 0 : namespaceVersion.hashCode());
         return result;
     }
 
@@ -76,10 +85,10 @@ public class AnnotationCodingSequenceExternalIdsPK implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         AnnotationCodingSequenceExternalIdsPK other = (AnnotationCodingSequenceExternalIdsPK) obj;
-        if (cdsId == null) {
-            if (other.cdsId != null)
+        if (annotationCodingSequence == null) {
+            if (other.annotationCodingSequence != null)
                 return false;
-        } else if (!cdsId.equals(other.cdsId))
+        } else if (!annotationCodingSequence.equals(other.annotationCodingSequence))
             return false;
         if (geneExternalId == null) {
             if (other.geneExternalId != null)
@@ -91,10 +100,10 @@ public class AnnotationCodingSequenceExternalIdsPK implements Serializable {
                 return false;
         } else if (!namespace.equals(other.namespace))
             return false;
-        if (namespaceVer == null) {
-            if (other.namespaceVer != null)
+        if (namespaceVersion == null) {
+            if (other.namespaceVersion != null)
                 return false;
-        } else if (!namespaceVer.equals(other.namespaceVer))
+        } else if (!namespaceVersion.equals(other.namespaceVersion))
             return false;
         return true;
     }
