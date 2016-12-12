@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -19,7 +17,6 @@ import org.renci.binning.dao.Persistable;
 
 @Entity
 @Table(schema = "ref", name = "genome_ref_seq")
-@NamedQueries({ @NamedQuery(name = "GenomeRefSeq.findAll", query = "SELECT DISTINCT a FROM GenomeRefSeq a") })
 @Cacheable
 public class GenomeRefSeq implements Persistable {
 

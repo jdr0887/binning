@@ -10,17 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.renci.binning.dao.Persistable;
 
 @Entity
 @Table(schema = "ref", name = "genome_ref")
-@NamedQueries({ @NamedQuery(name = "GenomeRef.findAll", query = "SELECT DISTINCT a FROM GenomeRef a"),
-        @NamedQuery(name = "GenomeRef.findByName", query = "SELECT DISTINCT a FROM GenomeRef a where a.name = :name"),
-        @NamedQuery(name = "GenomeRef.findByNameAndSource", query = "SELECT DISTINCT a FROM GenomeRef a where a.name = :name and a.source = :source") })
 @Cacheable
 public class GenomeRef implements Persistable {
 
