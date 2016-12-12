@@ -5,9 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.renci.binning.dao.Persistable;
+
 @Entity
 @Table(schema = "ref", name = "seq_type")
-public class SeqType {
+public class SeqType implements Persistable {
+
+    private static final long serialVersionUID = -6610844911515283183L;
 
     @Id
     @Column(name = "seq_type_name")
@@ -27,7 +31,7 @@ public class SeqType {
 
     @Override
     public String toString() {
-        return "SeqType [name=" + name + "]";
+        return String.format("SeqType [name=%s]", name);
     }
 
     @Override
