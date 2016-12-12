@@ -10,7 +10,7 @@
   ">
 
   <reference id="binningDAOBeanService" interface="org.renci.binning.dao.BinningDAOBeanService" />
-  <reference id="binningExecutorService" interface="org.renci.binning.BinningExecutorService" />
+  <reference id="binningExecutorService" interface="org.renci.binning.core.BinningExecutorService" />
 
   <bean id="diagnosticGeneScreenImpl" class="org.renci.binning.diagnostic.gs.ws.DiagnosticGeneScreenServiceImpl">
     <property name="binningDAOBeanService" ref="binningDAOBeanService" />

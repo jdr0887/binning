@@ -12,7 +12,7 @@
   ">
 
   <reference id="binningDAOBeanService" interface="org.renci.binning.dao.BinningDAOBeanService" />
-  <reference id="binningExecutorService" interface="org.renci.binning.BinningExecutorService" />
+  <reference id="binningExecutorService" interface="org.renci.binning.core.BinningExecutorService" />
 
   <bean id="diagnosticMSKCCImpl" class="org.renci.binning.diagnostic.mskcc.ws.DiagnosticMSKCCServiceImpl">
     <property name="binningDAOBeanService" ref="binningDAOBeanService" />

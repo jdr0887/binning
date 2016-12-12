@@ -12,7 +12,7 @@
   ">
 
   <reference id="binningDAOBeanService" interface="org.renci.binning.dao.BinningDAOBeanService" />
-  <reference id="binningExecutorService" interface="org.renci.binning.BinningExecutorService" />
+  <reference id="binningExecutorService" interface="org.renci.binning.core.BinningExecutorService" />
 
   <bean id="incidentalNCGenesImpl" class="org.renci.binning.incidental.ncgenes.ws.IncidentalNCGenesServiceImpl">
     <property name="binningDAOBeanService" ref="binningDAOBeanService" />
