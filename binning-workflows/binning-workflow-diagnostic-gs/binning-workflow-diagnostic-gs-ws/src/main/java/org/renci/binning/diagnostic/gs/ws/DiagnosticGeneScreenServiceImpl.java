@@ -2,14 +2,14 @@ package org.renci.binning.diagnostic.gs.ws;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.renci.binning.BinningExecutorService;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.diagnostic.gs.executor.DiagnosticGSTask;
-import org.renci.binning.diagnostic.gs.ws.DiagnosticGeneScreenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,16 +26,18 @@ public class DiagnosticGeneScreenServiceImpl implements DiagnosticGeneScreenServ
     }
 
     @Override
-    public Integer submit(String participant, String gender, Integer dxId, Integer listVersion) {
-        logger.debug("ENTERING submit(String, String, Integer, Integer)");
+    public Response submit(DiagnosticBinningJobInfo info) {
+        logger.debug("ENTERING submit(DiagnosticBinningJobInfo)");
+        logger.info(info.toString());
         DiagnosticBinningJob binningJob = new DiagnosticBinningJob();
         try {
             binningJob.setStudy("GS");
-            binningJob.setGender(gender);
-            binningJob.setParticipant(participant);
-            binningJob.setListVersion(listVersion);
+            binningJob.setGender(info.getGender());
+            binningJob.setParticipant(info.getParticipant());
+            binningJob.setListVersion(Integer.valueOf(info.getListVersion()));
             binningJob.setStatus(binningDAOBeanService.getDiagnosticStatusTypeDAO().findById("Requested"));
-            DX dx = binningDAOBeanService.getDXDAO().findById(dxId);
+            DX dx = binningDAOBeanService.getDXDAO().findById(Integer.valueOf(info.getDxId()));
+            logger.info(dx.toString());
             binningJob.setDx(dx);
             List<DiagnosticBinningJob> foundBinningJobs = binningDAOBeanService.getDiagnosticBinningJobDAO().findByExample(binningJob);
             if (CollectionUtils.isNotEmpty(foundBinningJobs)) {
@@ -44,16 +46,17 @@ public class DiagnosticGeneScreenServiceImpl implements DiagnosticGeneScreenServ
                 binningJob.setId(binningDAOBeanService.getDiagnosticBinningJobDAO().save(binningJob));
             }
             logger.info(binningJob.toString());
+            info.setId(binningJob.getId());
 
-            DiagnosticGSTask task = new DiagnosticGSTask();
-            task.setBinningDAOBeanService(binningDAOBeanService);
-            task.setBinningJob(binningJob);
-            binningExecutorService.getExecutor().submit(task);
+            // DiagnosticGSTask task = new DiagnosticGSTask();
+            // task.setBinningDAOBeanService(binningDAOBeanService);
+            // task.setBinningJob(binningJob);
+            // binningExecutorService.getExecutor().submit(task);
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
         }
-        return binningJob.getId();
+        return Response.ok(info).build();
     }
 
     public BinningExecutorService getBinningExecutorService() {
