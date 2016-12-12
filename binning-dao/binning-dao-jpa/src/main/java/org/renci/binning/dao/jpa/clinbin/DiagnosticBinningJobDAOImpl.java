@@ -8,7 +8,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -110,6 +109,8 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
         return ret;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public List<DiagnosticBinningJob> findByExample(DiagnosticBinningJob binningJob) throws BinningDAOException {
         logger.debug("ENTERING findByExample(DiagnosticBinningJob)");
@@ -137,11 +138,11 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             }
 
             if (binningJob.getDx() != null) {
-                Join<DiagnosticBinningJob, DX> diagnosticBinningJobDXJoin = root.join(DiagnosticBinningJob_.dx, JoinType.LEFT);
+                Join<DiagnosticBinningJob, DX> diagnosticBinningJobDXJoin = root.join(DiagnosticBinningJob_.dx);
                 logger.info("is join null: {}", diagnosticBinningJobDXJoin == null);
                 logger.info("is expression null: {}", diagnosticBinningJobDXJoin.get(DX_.id));
                 logger.info("is dxid null: {}", binningJob.getDx().getId() == null);
-                predicates.add(critBuilder.equal(diagnosticBinningJobDXJoin.get(DX_.id), binningJob.getDx().getId()));
+                predicates.add(critBuilder.equal(root.join(DiagnosticBinningJob_.dx).get(DX_.id), binningJob.getDx().getId()));
             }
 
             crit.where(predicates.toArray(new Predicate[predicates.size()]));

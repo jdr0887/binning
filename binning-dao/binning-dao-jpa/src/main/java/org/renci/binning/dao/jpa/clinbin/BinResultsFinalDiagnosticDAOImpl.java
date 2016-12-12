@@ -28,7 +28,6 @@ import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @OsgiServiceProvider(classes = { BinResultsFinalDiagnosticDAO.class })

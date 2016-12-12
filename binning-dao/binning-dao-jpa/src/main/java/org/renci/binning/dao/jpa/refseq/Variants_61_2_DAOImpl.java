@@ -51,7 +51,6 @@ import org.renci.binning.dao.var.model.VariantType_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @org.springframework.transaction.annotation.Transactional(readOnly = true)
