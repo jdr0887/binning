@@ -18,35 +18,33 @@ public class DiagnosticBinningJobDAOTest {
     @Test
     public void testSave() throws BinningDAOException {
         BinningDAOManager daoMgr = BinningDAOManager.getInstance();
-        final DiagnosticBinningJobDAO diagnosticBinningJobDAO = daoMgr.getDAOBean().getDiagnosticBinningJobDAO();
 
-        Arrays.asList("NA12878", "NA12891", "NA12892").forEach(a -> {
-            try {
-                DiagnosticBinningJob job = new DiagnosticBinningJob();
-                job.setDx(daoMgr.getDAOBean().getDXDAO().findById(9));
-                job.setStatus(daoMgr.getDAOBean().getDiagnosticStatusTypeDAO().findById("Requested"));
-                job.setGender("M");
-                job.setListVersion(40);
-                job.setStudy("NCGENES Study");
-                job.setParticipant(a);
-                job.setVcfFile(String.format("/tmp/%s-exons.vcf", a));
-                job.setFailureMessage("");
-                job.setId(diagnosticBinningJobDAO.save(job));
-                System.out.println(job.toString());
-            } catch (BinningDAOException e) {
-                e.printStackTrace();
-            }
-        });
-
+        // Arrays.asList("NA12878", "NA12891", "NA12892").forEach(a -> {
+        // try {
         // DiagnosticBinningJob job = new DiagnosticBinningJob();
-        // job.setDx(daoMgr.getDAOBean().getDXDAO().findById(46L));
+        // job.setDx(daoMgr.getDAOBean().getDXDAO().findById(9));
         // job.setStatus(daoMgr.getDAOBean().getDiagnosticStatusTypeDAO().findById("Requested"));
-        // job.setGender("F");
+        // job.setGender("M");
         // job.setListVersion(40);
-        // job.setStudy("GS");
-        // job.setParticipant("GSU_000136");
-        // job.setVcfFile("/tmp/GSU_000136.merged.fb.va.vcf");
+        // job.setStudy("NCGENES Study");
+        // job.setParticipant(a);
+        // job.setVcfFile(String.format("/tmp/%s-exons.vcf", a));
         // job.setFailureMessage("");
+        // job.setId(diagnosticBinningJobDAO.save(job));
+        // System.out.println(job.toString());
+        // } catch (BinningDAOException e) {
+        // e.printStackTrace();
+        // }
+        // });
+
+        DiagnosticBinningJob job = new DiagnosticBinningJob();
+        job.setDx(daoMgr.getDAOBean().getDXDAO().findById(46));
+        job.setGender("F");
+        job.setListVersion(40);
+        job.setStudy("GS");
+        job.setParticipant("jdr-test");
+        daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findByExample(job);
+
         // job.setId(diagnosticBinningJobDAO.save(job));
 
     }
