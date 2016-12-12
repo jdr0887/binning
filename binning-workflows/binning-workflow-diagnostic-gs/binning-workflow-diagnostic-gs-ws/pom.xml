@@ -62,7 +62,7 @@
     </dependency>
     <dependency>
       <groupId>org.renci.binning</groupId>
-      <artifactId>binning-api</artifactId>
+      <artifactId>binning-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
