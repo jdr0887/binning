@@ -225,7 +225,7 @@
       </dependency>
       <dependency>
 	<groupId>org.renci.binning</groupId>
-	<artifactId>binning-api</artifactId>
+	<artifactId>binning-core</artifactId>
       	<version>0.0.1-SNAPSHOT</version>	
       </dependency>      
       <dependency>
@@ -437,7 +437,7 @@
     </plugins>
   </build>  
   <modules>
-    <module>binning-api</module>    
+    <module>binning-core</module>    
     <module>binning-datasource</module>
     <module>binning-dao</module>
     <module>binning-features</module>    
