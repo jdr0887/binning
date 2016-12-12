@@ -41,7 +41,7 @@
   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="dataSource" ref="dataSource" />
     <property name="jpaVendorAdapter" ref="openJpaVendorAdapter" />
-    <property name="persistenceUnitName" value="binning" />
+    <property name="persistenceUnitName" value="binning_test" />
   </bean>
 
   <bean id="sharedEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
