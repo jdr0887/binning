@@ -1,11 +1,16 @@
 package org.renci.binning.dao.clinbin.model;
 
+import java.util.List;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -13,21 +18,33 @@ import org.renci.binning.dao.Persistable;
 
 @Entity
 @Table(schema = "clinbin", name = "dx", uniqueConstraints = { @UniqueConstraint(columnNames = { "dx_name" }) })
-@NamedQueries({ @NamedQuery(name = "DX.findAll", query = "SELECT a FROM DX a order by a.name") })
 @Cacheable
 public class DX implements Persistable {
 
     private static final long serialVersionUID = 7208210752522886524L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dx_dx_id_seq")
+    @SequenceGenerator(schema = "clinbin", name = "dx_dx_id_seq", sequenceName = "dx_dx_id_seq", allocationSize = 1, initialValue = 1)
     @Column(name = "dx_id")
     private Integer id;
 
     @Column(name = "dx_name", length = 1024)
     private String name;
 
+    @OneToMany(mappedBy = "dx", fetch = FetchType.LAZY)
+    private List<DiagnosticBinningJob> diagnosticBinningJobSet;
+
     public DX() {
         super();
+    }
+
+    public List<DiagnosticBinningJob> getDiagnosticBinningJobSet() {
+        return diagnosticBinningJobSet;
+    }
+
+    public void setDiagnosticBinningJobSet(List<DiagnosticBinningJob> diagnosticBinningJobSet) {
+        this.diagnosticBinningJobSet = diagnosticBinningJobSet;
     }
 
     public Integer getId() {
