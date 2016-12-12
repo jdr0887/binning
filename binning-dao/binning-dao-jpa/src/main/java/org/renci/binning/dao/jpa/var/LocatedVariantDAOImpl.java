@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.var;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -14,30 +15,33 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.ref.model.GenomeRef;
 import org.renci.binning.dao.ref.model.GenomeRefSeq;
+import org.renci.binning.dao.ref.model.GenomeRefSeq_;
+import org.renci.binning.dao.ref.model.GenomeRef_;
 import org.renci.binning.dao.refseq.model.Variants_61_2;
+import org.renci.binning.dao.refseq.model.Variants_61_2_;
 import org.renci.binning.dao.var.LocatedVariantDAO;
 import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.var.model.VariantType;
-import org.renci.binning.dao.ref.model.GenomeRefSeq_;
-import org.renci.binning.dao.ref.model.GenomeRef_;
-import org.renci.binning.dao.refseq.model.Variants_61_2_;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant_;
 import org.renci.binning.dao.var.model.Assembly_;
+import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
+import org.renci.binning.dao.var.model.VariantType;
 import org.renci.binning.dao.var.model.VariantType_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { LocatedVariantDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class LocatedVariantDAOImpl extends BaseDAOImpl<LocatedVariant, Long> implements LocatedVariantDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(LocatedVariantDAOImpl.class);
@@ -212,6 +216,8 @@ public class LocatedVariantDAOImpl extends BaseDAOImpl<LocatedVariant, Long> imp
         return ret;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized Long save(LocatedVariant entity) throws BinningDAOException {
         logger.debug("ENTERING save(LocatedVariant)");
@@ -227,6 +233,8 @@ public class LocatedVariantDAOImpl extends BaseDAOImpl<LocatedVariant, Long> imp
         return entity.getId();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(LocatedVariant entity) throws BinningDAOException {
         logger.debug("ENTERING delete(LocatedVariant)");

@@ -3,12 +3,14 @@ package org.renci.binning.dao.jpa.var;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.LabDAO;
@@ -17,10 +19,12 @@ import org.renci.binning.dao.var.model.Lab_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { LabDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class LabDAOImpl extends BaseDAOImpl<Lab, String> implements LabDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(LabDAOImpl.class);
@@ -34,6 +38,8 @@ public class LabDAOImpl extends BaseDAOImpl<Lab, String> implements LabDAO {
         return Lab.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized String save(Lab entity) throws BinningDAOException {
         logger.debug("ENTERING save(Lab)");
@@ -49,6 +55,8 @@ public class LabDAOImpl extends BaseDAOImpl<Lab, String> implements LabDAO {
         return entity.getName();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(Lab entity) throws BinningDAOException {
         logger.debug("ENTERING delete(T)");

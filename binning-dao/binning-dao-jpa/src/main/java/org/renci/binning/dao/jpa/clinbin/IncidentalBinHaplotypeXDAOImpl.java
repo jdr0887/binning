@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.clinbin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,33 +12,36 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.IncidentalBinHaplotypeXDAO;
 import org.renci.binning.dao.clinbin.model.HaplotypeX;
+import org.renci.binning.dao.clinbin.model.HaplotypeX_;
 import org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeX;
 import org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeXPK;
+import org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeXPK_;
+import org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeX_;
 import org.renci.binning.dao.clinbin.model.ZygosityModeType;
+import org.renci.binning.dao.clinbin.model.ZygosityModeType_;
 import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant;
+import org.renci.binning.dao.hgmd.model.HGMDLocatedVariantPK_;
+import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant_;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.clinbin.model.HaplotypeX_;
-import org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeXPK_;
-import org.renci.binning.dao.clinbin.model.IncidentalBinHaplotypeX_;
-import org.renci.binning.dao.clinbin.model.ZygosityModeType_;
-import org.renci.binning.dao.hgmd.model.HGMDLocatedVariantPK_;
-import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant_;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant_;
 import org.renci.binning.dao.var.model.Assembly_;
+import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { IncidentalBinHaplotypeXDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class IncidentalBinHaplotypeXDAOImpl extends BaseDAOImpl<IncidentalBinHaplotypeX, IncidentalBinHaplotypeXPK>
         implements IncidentalBinHaplotypeXDAO {
 

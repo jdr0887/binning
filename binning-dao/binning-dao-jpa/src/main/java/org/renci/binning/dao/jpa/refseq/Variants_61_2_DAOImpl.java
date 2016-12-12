@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.Coalesce;
@@ -16,34 +17,35 @@ import javax.persistence.criteria.Subquery;
 
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.annotation.model.AnnotationGene;
+import org.renci.binning.dao.annotation.model.AnnotationGene_;
 import org.renci.binning.dao.clinbin.model.DX;
+import org.renci.binning.dao.clinbin.model.DX_;
 import org.renci.binning.dao.clinbin.model.DiagnosticGene;
+import org.renci.binning.dao.clinbin.model.DiagnosticGene_;
 import org.renci.binning.dao.clinbin.model.MaxFrequency;
+import org.renci.binning.dao.clinbin.model.MaxFrequency_;
 import org.renci.binning.dao.exac.model.MaxVariantFrequency;
+import org.renci.binning.dao.exac.model.MaxVariantFrequency_;
 import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant;
+import org.renci.binning.dao.hgmd.model.HGMDLocatedVariantPK_;
+import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant_;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.refseq.Variants_61_2_DAO;
 import org.renci.binning.dao.refseq.model.LocationType;
+import org.renci.binning.dao.refseq.model.LocationType_;
 import org.renci.binning.dao.refseq.model.VariantEffect;
+import org.renci.binning.dao.refseq.model.VariantEffect_;
 import org.renci.binning.dao.refseq.model.Variants_61_2;
 import org.renci.binning.dao.refseq.model.Variants_61_2PK;
+import org.renci.binning.dao.refseq.model.Variants_61_2_;
 import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.annotation.model.AnnotationGene_;
-import org.renci.binning.dao.clinbin.model.DX_;
-import org.renci.binning.dao.clinbin.model.DiagnosticGene_;
-import org.renci.binning.dao.clinbin.model.MaxFrequency_;
-import org.renci.binning.dao.exac.model.MaxVariantFrequency_;
-import org.renci.binning.dao.hgmd.model.HGMDLocatedVariantPK_;
-import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant_;
-import org.renci.binning.dao.refseq.model.LocationType_;
-import org.renci.binning.dao.refseq.model.VariantEffect_;
-import org.renci.binning.dao.refseq.model.Variants_61_2_;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant_;
 import org.renci.binning.dao.var.model.Assembly_;
+import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.renci.binning.dao.var.model.VariantType_;
 import org.slf4j.Logger;
@@ -52,7 +54,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { Variants_61_2_DAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class Variants_61_2_DAOImpl extends BaseDAOImpl<Variants_61_2, Variants_61_2PK> implements Variants_61_2_DAO {
 
     private static final Logger logger = LoggerFactory.getLogger(Variants_61_2_DAOImpl.class);
@@ -66,7 +71,8 @@ public class Variants_61_2_DAOImpl extends BaseDAOImpl<Variants_61_2, Variants_6
         return Variants_61_2.class;
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public Variants_61_2PK save(Variants_61_2 entity) throws BinningDAOException {
         logger.debug("ENTERING save(Variants_61_2PK)");

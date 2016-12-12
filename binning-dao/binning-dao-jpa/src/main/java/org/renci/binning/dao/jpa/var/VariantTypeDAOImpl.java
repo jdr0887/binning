@@ -3,12 +3,14 @@ package org.renci.binning.dao.jpa.var;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.VariantTypeDAO;
@@ -17,10 +19,12 @@ import org.renci.binning.dao.var.model.VariantType_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { VariantTypeDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class VariantTypeDAOImpl extends BaseDAOImpl<VariantType, String> implements VariantTypeDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(VariantTypeDAOImpl.class);
@@ -34,6 +38,8 @@ public class VariantTypeDAOImpl extends BaseDAOImpl<VariantType, String> impleme
         return VariantType.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized String save(VariantType entity) throws BinningDAOException {
         logger.debug("ENTERING save(VariantType)");

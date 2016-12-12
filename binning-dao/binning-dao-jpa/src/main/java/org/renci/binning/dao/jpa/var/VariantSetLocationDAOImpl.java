@@ -1,5 +1,8 @@
 package org.renci.binning.dao.jpa.var;
 
+import javax.inject.Singleton;
+
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.VariantSetLocationDAO;
@@ -8,10 +11,12 @@ import org.renci.binning.dao.var.model.VariantSetLocationPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { VariantSetLocationDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class VariantSetLocationDAOImpl extends BaseDAOImpl<VariantSetLocation, VariantSetLocationPK> implements VariantSetLocationDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(VariantSetLocationDAOImpl.class);
@@ -25,6 +30,8 @@ public class VariantSetLocationDAOImpl extends BaseDAOImpl<VariantSetLocation, V
         return VariantSetLocation.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public VariantSetLocationPK save(VariantSetLocation entity) throws BinningDAOException {
         logger.debug("ENTERING save(Assembly)");
@@ -40,6 +47,8 @@ public class VariantSetLocationDAOImpl extends BaseDAOImpl<VariantSetLocation, V
         return entity.getKey();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(VariantSetLocation entity) throws BinningDAOException {
         logger.debug("ENTERING delete(VariantSetLocation)");

@@ -1,5 +1,8 @@
 package org.renci.binning.dao.jpa.var;
 
+import javax.inject.Singleton;
+
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.AssemblyLocationDAO;
@@ -8,10 +11,12 @@ import org.renci.binning.dao.var.model.AssemblyLocationPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { AssemblyLocationDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class AssemblyLocationDAOImpl extends BaseDAOImpl<AssemblyLocation, AssemblyLocationPK> implements AssemblyLocationDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(AssemblyLocationDAOImpl.class);
@@ -25,6 +30,8 @@ public class AssemblyLocationDAOImpl extends BaseDAOImpl<AssemblyLocation, Assem
         return AssemblyLocation.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized AssemblyLocationPK save(AssemblyLocation entity) throws BinningDAOException {
         logger.debug("ENTERING save(AssemblyLocation)");
@@ -40,6 +47,8 @@ public class AssemblyLocationDAOImpl extends BaseDAOImpl<AssemblyLocation, Assem
         return entity.getKey();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(AssemblyLocation entity) throws BinningDAOException {
         logger.debug("ENTERING delete(AssemblyLocation)");

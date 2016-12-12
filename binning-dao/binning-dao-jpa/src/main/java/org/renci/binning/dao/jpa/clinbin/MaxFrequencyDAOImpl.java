@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.clinbin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.Coalesce;
@@ -14,15 +15,16 @@ import javax.persistence.criteria.Root;
 
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.MaxFrequencyDAO;
 import org.renci.binning.dao.clinbin.model.MaxFrequency;
 import org.renci.binning.dao.clinbin.model.MaxFrequencyPK;
+import org.renci.binning.dao.clinbin.model.MaxFrequency_;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.refseq.model.Variants_61_2;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.clinbin.model.MaxFrequency_;
 import org.renci.binning.dao.refseq.model.Variants_61_2_;
+import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +32,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { MaxFrequencyDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class MaxFrequencyDAOImpl extends BaseDAOImpl<MaxFrequency, MaxFrequencyPK> implements MaxFrequencyDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(MaxFrequencyDAOImpl.class);
@@ -97,7 +102,8 @@ public class MaxFrequencyDAOImpl extends BaseDAOImpl<MaxFrequency, MaxFrequencyP
         return ret;
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized MaxFrequencyPK save(MaxFrequency entity) throws BinningDAOException {
         logger.debug("ENTERING save(MaxFrequency)");

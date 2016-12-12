@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.ref;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,6 +11,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.ref.GenomeRefSeqDAO;
@@ -20,10 +22,12 @@ import org.renci.binning.dao.ref.model.GenomeRef_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { GenomeRefSeqDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class GenomeRefSeqDAOImpl extends BaseDAOImpl<GenomeRefSeq, String> implements GenomeRefSeqDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(GenomeRefSeqDAOImpl.class);
@@ -40,8 +44,16 @@ public class GenomeRefSeqDAOImpl extends BaseDAOImpl<GenomeRefSeq, String> imple
     @Override
     public List<GenomeRefSeq> findAll() throws BinningDAOException {
         logger.debug("ENTERING findAll()");
-        TypedQuery<GenomeRefSeq> query = getEntityManager().createNamedQuery("GenomeRefSeq.findAll", GenomeRefSeq.class);
-        List<GenomeRefSeq> ret = query.getResultList();
+        List<GenomeRefSeq> ret = new ArrayList<>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<GenomeRefSeq> crit = critBuilder.createQuery(getPersistentClass());
+            crit.distinct(true);
+            TypedQuery<GenomeRefSeq> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            throw new BinningDAOException(e);
+        }
         return ret;
     }
 
@@ -128,6 +140,8 @@ public class GenomeRefSeqDAOImpl extends BaseDAOImpl<GenomeRefSeq, String> imple
         return ret;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized String save(GenomeRefSeq entity) throws BinningDAOException {
         logger.debug("ENTERING save(GenomeRefSeq)");

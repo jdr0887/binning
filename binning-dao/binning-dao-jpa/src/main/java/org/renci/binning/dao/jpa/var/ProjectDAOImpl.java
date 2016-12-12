@@ -1,5 +1,8 @@
 package org.renci.binning.dao.jpa.var;
 
+import javax.inject.Singleton;
+
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.ProjectDAO;
@@ -7,10 +10,12 @@ import org.renci.binning.dao.var.model.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { ProjectDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements ProjectDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(ProjectDAOImpl.class);
@@ -24,6 +29,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
         return Project.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized String save(Project entity) throws BinningDAOException {
         logger.debug("ENTERING save(Project)");
@@ -39,6 +46,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
         return entity.getName();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(Project entity) throws BinningDAOException {
         logger.debug("ENTERING delete(T)");

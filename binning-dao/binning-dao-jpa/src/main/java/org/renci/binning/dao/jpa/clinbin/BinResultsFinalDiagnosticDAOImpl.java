@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.clinbin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -11,25 +12,29 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.BinResultsFinalDiagnosticDAO;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnosticPK;
-import org.renci.binning.dao.clinbin.model.DX;
-import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnosticPK_;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic_;
+import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DX_;
+import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion_;
 import org.renci.binning.dao.clinbin.model.DiseaseClass_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { BinResultsFinalDiagnosticDAO.class })
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class BinResultsFinalDiagnosticDAOImpl extends BaseDAOImpl<BinResultsFinalDiagnostic, BinResultsFinalDiagnosticPK>
         implements BinResultsFinalDiagnosticDAO {
 
@@ -153,7 +158,8 @@ public class BinResultsFinalDiagnosticDAOImpl extends BaseDAOImpl<BinResultsFina
         return ret;
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void deleteByAssemblyId(Integer assemblyId) throws BinningDAOException {
         Query qDelete = getEntityManager()
@@ -162,7 +168,8 @@ public class BinResultsFinalDiagnosticDAOImpl extends BaseDAOImpl<BinResultsFina
         qDelete.executeUpdate();
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized BinResultsFinalDiagnosticPK save(BinResultsFinalDiagnostic entity) throws BinningDAOException {
         logger.debug("ENTERING save(BinResultsFinalDiagnostic)");

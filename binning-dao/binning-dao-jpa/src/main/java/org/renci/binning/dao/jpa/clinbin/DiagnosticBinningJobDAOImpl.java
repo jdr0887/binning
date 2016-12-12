@@ -3,14 +3,17 @@ package org.renci.binning.dao.jpa.clinbin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.DiagnosticBinningJobDAO;
 import org.renci.binning.dao.clinbin.model.DX;
@@ -23,10 +26,12 @@ import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { DiagnosticBinningJobDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJob, Integer> implements DiagnosticBinningJobDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(DiagnosticBinningJobDAOImpl.class);
@@ -57,7 +62,7 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             TypedQuery<DiagnosticBinningJob> query = getEntityManager().createQuery(crit);
             ret.addAll(query.getResultList());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return ret;
     }
@@ -78,7 +83,7 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             TypedQuery<DiagnosticBinningJob> query = getEntityManager().createQuery(crit);
             ret.addAll(query.getResultList());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return ret;
     }
@@ -100,7 +105,7 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             TypedQuery<DiagnosticBinningJob> query = getEntityManager().createQuery(crit);
             ret.addAll(query.getResultList());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return ret;
     }
@@ -132,19 +137,24 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             }
 
             if (binningJob.getDx() != null) {
-                predicates.add(critBuilder.equal(root.join(DiagnosticBinningJob_.dx).get(DX_.id), binningJob.getDx().getId()));
+                Join<DiagnosticBinningJob, DX> diagnosticBinningJobDXJoin = root.join(DiagnosticBinningJob_.dx, JoinType.LEFT);
+                logger.info("is join null: {}", diagnosticBinningJobDXJoin == null);
+                logger.info("is expression null: {}", diagnosticBinningJobDXJoin.get(DX_.id));
+                logger.info("is dxid null: {}", binningJob.getDx().getId() == null);
+                predicates.add(critBuilder.equal(diagnosticBinningJobDXJoin.get(DX_.id), binningJob.getDx().getId()));
             }
 
             crit.where(predicates.toArray(new Predicate[predicates.size()]));
             TypedQuery<DiagnosticBinningJob> query = getEntityManager().createQuery(crit);
             ret.addAll(query.getResultList());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return ret;
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized Integer save(DiagnosticBinningJob entity) throws BinningDAOException {
         logger.debug("ENTERING save(DiagnosticBinningJob)");

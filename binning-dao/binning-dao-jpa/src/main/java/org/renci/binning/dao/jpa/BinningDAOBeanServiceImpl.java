@@ -511,8 +511,8 @@ public class BinningDAOBeanServiceImpl implements BinningDAOBeanService {
         return HGMDLocatedVariantDAO;
     }
 
-    public void setHGMDLocatedVariantDAO(HGMDLocatedVariantDAO hGMDLocatedVariantDAO) {
-        HGMDLocatedVariantDAO = hGMDLocatedVariantDAO;
+    public void setHGMDLocatedVariantDAO(HGMDLocatedVariantDAO HGMDLocatedVariantDAO) {
+        this.HGMDLocatedVariantDAO = HGMDLocatedVariantDAO;
     }
 
     public IncidentalBinningJobDAO getIncidentalBinningJobDAO() {

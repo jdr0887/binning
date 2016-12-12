@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.clinvar;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -12,41 +13,44 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnosticPK;
-import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalX;
-import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalXPK;
-import org.renci.binning.dao.clinbin.model.BinResultsFinalRiskX;
-import org.renci.binning.dao.clinbin.model.BinResultsFinalRiskXPK;
-import org.renci.binning.dao.clinbin.model.DX;
-import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
-import org.renci.binning.dao.clinbin.model.IncidentalBinX;
-import org.renci.binning.dao.clinbin.model.IncidentalResultVersionX;
-import org.renci.binning.dao.clinvar.ReferenceClinicalAssertionsDAO;
-import org.renci.binning.dao.clinvar.model.ReferenceClinicalAssertions;
-import org.renci.binning.dao.clinvar.model.Versions;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnosticPK_;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic_;
+import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalX;
+import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalXPK;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalXPK_;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalX_;
+import org.renci.binning.dao.clinbin.model.BinResultsFinalRiskX;
+import org.renci.binning.dao.clinbin.model.BinResultsFinalRiskXPK;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalRiskXPK_;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalRiskX_;
+import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DX_;
+import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion_;
+import org.renci.binning.dao.clinbin.model.IncidentalBinX;
 import org.renci.binning.dao.clinbin.model.IncidentalBinX_;
+import org.renci.binning.dao.clinbin.model.IncidentalResultVersionX;
 import org.renci.binning.dao.clinbin.model.IncidentalResultVersionX_;
+import org.renci.binning.dao.clinvar.ReferenceClinicalAssertionsDAO;
+import org.renci.binning.dao.clinvar.model.ReferenceClinicalAssertions;
 import org.renci.binning.dao.clinvar.model.ReferenceClinicalAssertions_;
+import org.renci.binning.dao.clinvar.model.Versions;
 import org.renci.binning.dao.clinvar.model.Versions_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { ReferenceClinicalAssertionsDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class ReferenceClinicalAssertionsDAOImpl extends BaseDAOImpl<ReferenceClinicalAssertions, Long>
         implements ReferenceClinicalAssertionsDAO {
 

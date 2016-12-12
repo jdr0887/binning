@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.hgmd;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,21 +11,24 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.hgmd.HGMDLocatedVariantDAO;
 import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant;
 import org.renci.binning.dao.hgmd.model.HGMDLocatedVariantPK;
+import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant_;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant_;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { HGMDLocatedVariantDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class HGMDLocatedVariantDAOImpl extends BaseDAOImpl<HGMDLocatedVariant, HGMDLocatedVariantPK> implements HGMDLocatedVariantDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(HGMDLocatedVariantDAOImpl.class);

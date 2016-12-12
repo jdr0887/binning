@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.genome1k;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,22 +11,25 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.genome1k.IndelMaxFrequencyDAO;
 import org.renci.binning.dao.genome1k.model.IndelMaxFrequency;
 import org.renci.binning.dao.genome1k.model.IndelMaxFrequencyPK;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
-import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.genome1k.model.IndelMaxFrequencyPK_;
 import org.renci.binning.dao.genome1k.model.IndelMaxFrequency_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
+import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { IndelMaxFrequencyDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class IndelMaxFrequencyDAOImpl extends BaseDAOImpl<IndelMaxFrequency, IndelMaxFrequencyPK> implements IndelMaxFrequencyDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(IndelMaxFrequencyDAOImpl.class);

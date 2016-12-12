@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.clinbin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -11,6 +12,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.IncidentalBinningJobDAO;
 import org.renci.binning.dao.clinbin.model.IncidentalBinX_;
@@ -25,7 +27,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { IncidentalBinningJobDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class IncidentalBinningJobDAOImpl extends BaseDAOImpl<IncidentalBinningJob, Integer> implements IncidentalBinningJobDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(IncidentalBinningJobDAOImpl.class);
@@ -146,7 +151,8 @@ public class IncidentalBinningJobDAOImpl extends BaseDAOImpl<IncidentalBinningJo
         return ret;
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized Integer save(IncidentalBinningJob entity) throws BinningDAOException {
         logger.debug("ENTERING save(IncidentalBinningJob)");

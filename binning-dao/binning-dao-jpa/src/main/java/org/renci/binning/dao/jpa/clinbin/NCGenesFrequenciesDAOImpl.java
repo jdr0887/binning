@@ -1,24 +1,28 @@
 package org.renci.binning.dao.jpa.clinbin;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.NCGenesFrequenciesDAO;
 import org.renci.binning.dao.clinbin.model.NCGenesFrequencies;
 import org.renci.binning.dao.clinbin.model.NCGenesFrequenciesPK;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.clinbin.model.NCGenesFrequenciesPK_;
 import org.renci.binning.dao.clinbin.model.NCGenesFrequencies_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { NCGenesFrequenciesDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class NCGenesFrequenciesDAOImpl extends BaseDAOImpl<NCGenesFrequencies, NCGenesFrequenciesPK> implements NCGenesFrequenciesDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(NCGenesFrequenciesDAOImpl.class);

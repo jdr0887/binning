@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.var;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,12 +11,13 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.SampleDAO;
 import org.renci.binning.dao.var.model.Project;
-import org.renci.binning.dao.var.model.Sample;
 import org.renci.binning.dao.var.model.Project_;
+import org.renci.binning.dao.var.model.Sample;
 import org.renci.binning.dao.var.model.Sample_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { SampleDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class SampleDAOImpl extends BaseDAOImpl<Sample, Integer> implements SampleDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(SampleDAOImpl.class);
@@ -37,6 +42,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, Integer> implements Sampl
         return Sample.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized Integer save(Sample entity) throws BinningDAOException {
         logger.debug("ENTERING save(Sample)");
@@ -52,6 +59,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, Integer> implements Sampl
         return entity.getId();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(Sample entity) throws BinningDAOException {
         logger.debug("ENTERING delete(T)");

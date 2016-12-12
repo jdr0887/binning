@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.clinbin;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -12,21 +13,24 @@ import javax.persistence.criteria.Root;
 
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.IncidentalBinGeneXDAO;
 import org.renci.binning.dao.clinbin.model.IncidentalBinGeneX;
 import org.renci.binning.dao.clinbin.model.IncidentalBinGeneXPK;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.clinbin.model.IncidentalBinGeneXPK_;
 import org.renci.binning.dao.clinbin.model.IncidentalBinGeneX_;
 import org.renci.binning.dao.clinbin.model.ZygosityModeType_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { IncidentalBinGeneXDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class IncidentalBinGeneXDAOImpl extends BaseDAOImpl<IncidentalBinGeneX, IncidentalBinGeneXPK> implements IncidentalBinGeneXDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(IncidentalBinGeneXDAOImpl.class);

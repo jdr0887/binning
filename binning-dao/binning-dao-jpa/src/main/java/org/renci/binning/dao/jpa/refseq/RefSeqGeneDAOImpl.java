@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.refseq;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,22 +11,25 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.refseq.RefSeqGeneDAO;
 import org.renci.binning.dao.refseq.model.RefSeqGene;
-import org.renci.binning.dao.refseq.model.RegionGroup;
-import org.renci.binning.dao.refseq.model.Transcript;
 import org.renci.binning.dao.refseq.model.RefSeqGene_;
+import org.renci.binning.dao.refseq.model.RegionGroup;
 import org.renci.binning.dao.refseq.model.RegionGroup_;
+import org.renci.binning.dao.refseq.model.Transcript;
 import org.renci.binning.dao.refseq.model.Transcript_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { RefSeqGeneDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class RefSeqGeneDAOImpl extends BaseDAOImpl<RefSeqGene, Long> implements RefSeqGeneDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(RefSeqGeneDAOImpl.class);

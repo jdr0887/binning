@@ -1,7 +1,9 @@
 package org.renci.binning.dao.jpa.var;
 
+import javax.inject.Singleton;
 import javax.persistence.Query;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.AssemblyLocatedVariantQCDAO;
@@ -10,10 +12,12 @@ import org.renci.binning.dao.var.model.AssemblyLocatedVariantQCPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { AssemblyLocatedVariantQCDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class AssemblyLocatedVariantQCDAOImpl extends BaseDAOImpl<AssemblyLocatedVariantQC, AssemblyLocatedVariantQCPK>
         implements AssemblyLocatedVariantQCDAO {
 
@@ -28,6 +32,8 @@ public class AssemblyLocatedVariantQCDAOImpl extends BaseDAOImpl<AssemblyLocated
         return AssemblyLocatedVariantQC.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized AssemblyLocatedVariantQCPK save(AssemblyLocatedVariantQC entity) throws BinningDAOException {
         logger.debug("ENTERING save(AssemblyLocation)");
@@ -43,6 +49,8 @@ public class AssemblyLocatedVariantQCDAOImpl extends BaseDAOImpl<AssemblyLocated
         return entity.getKey();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void deleteByAssemblyId(Integer assemblyId) throws BinningDAOException {
         Query qDelete = getEntityManager()
@@ -51,6 +59,8 @@ public class AssemblyLocatedVariantQCDAOImpl extends BaseDAOImpl<AssemblyLocated
         qDelete.executeUpdate();
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public void delete(AssemblyLocatedVariantQC entity) throws BinningDAOException {
         logger.debug("ENTERING delete(AssemblyLocatedVariantQC)");

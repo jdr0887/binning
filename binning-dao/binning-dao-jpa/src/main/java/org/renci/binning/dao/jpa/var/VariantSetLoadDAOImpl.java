@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.var;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.var.VariantSetLoadDAO;
@@ -23,10 +25,12 @@ import org.renci.binning.dao.var.model.VariantSet_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional
+@OsgiServiceProvider(classes = { VariantSetLoadDAO.class })
+@javax.transaction.Transactional
+@Singleton
 public class VariantSetLoadDAOImpl extends BaseDAOImpl<VariantSetLoad, Integer> implements VariantSetLoadDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(VariantSetLoadDAOImpl.class);
@@ -40,6 +44,8 @@ public class VariantSetLoadDAOImpl extends BaseDAOImpl<VariantSetLoad, Integer> 
         return VariantSetLoad.class;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public Integer save(VariantSetLoad entity) {
         logger.debug("ENTERING save(VariantSetLoad)");

@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.ref;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,7 +11,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.ref.GenomeRefDAO;
@@ -21,10 +22,12 @@ import org.renci.binning.dao.ref.model.GenomeRef_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { GenomeRefDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class GenomeRefDAOImpl extends BaseDAOImpl<GenomeRef, Integer> implements GenomeRefDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(GenomeRefDAOImpl.class);
@@ -42,11 +45,18 @@ public class GenomeRefDAOImpl extends BaseDAOImpl<GenomeRef, Integer> implements
     public List<GenomeRef> findByName(String name) throws BinningDAOException {
         logger.debug("ENTERING findByName()");
         List<GenomeRef> ret = new ArrayList<>();
-        TypedQuery<GenomeRef> query = getEntityManager().createNamedQuery("GenomeRef.findByName", GenomeRef.class);
-        query.setParameter("name", name);
-        List<GenomeRef> results = query.getResultList();
-        if (CollectionUtils.isNotEmpty(results)) {
-            ret.addAll(results);
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<GenomeRef> crit = critBuilder.createQuery(getPersistentClass());
+            Root<GenomeRef> root = crit.from(getPersistentClass());
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            predicates.add(critBuilder.equal(root.get(GenomeRef_.name), name));
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            crit.distinct(true);
+            TypedQuery<GenomeRef> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            throw new BinningDAOException(e);
         }
         return ret;
     }
@@ -55,12 +65,19 @@ public class GenomeRefDAOImpl extends BaseDAOImpl<GenomeRef, Integer> implements
     public List<GenomeRef> findByNameAndSource(String name, String source) throws BinningDAOException {
         logger.debug("ENTERING findByNameAndSource(String, String)");
         List<GenomeRef> ret = new ArrayList<>();
-        TypedQuery<GenomeRef> query = getEntityManager().createNamedQuery("GenomeRef.findByNameAndSource", GenomeRef.class);
-        query.setParameter("name", name);
-        query.setParameter("source", source);
-        List<GenomeRef> results = query.getResultList();
-        if (CollectionUtils.isNotEmpty(results)) {
-            ret.addAll(results);
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<GenomeRef> crit = critBuilder.createQuery(getPersistentClass());
+            Root<GenomeRef> root = crit.from(getPersistentClass());
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            predicates.add(critBuilder.equal(root.get(GenomeRef_.name), name));
+            predicates.add(critBuilder.equal(root.get(GenomeRef_.source), source));
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            crit.distinct(true);
+            TypedQuery<GenomeRef> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            throw new BinningDAOException(e);
         }
         return ret;
     }
@@ -68,8 +85,16 @@ public class GenomeRefDAOImpl extends BaseDAOImpl<GenomeRef, Integer> implements
     @Override
     public List<GenomeRef> findAll() throws BinningDAOException {
         logger.debug("ENTERING findAll()");
-        TypedQuery<GenomeRef> query = getEntityManager().createNamedQuery("GenomeRef.findAll", GenomeRef.class);
-        List<GenomeRef> ret = query.getResultList();
+        List<GenomeRef> ret = new ArrayList<>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<GenomeRef> crit = critBuilder.createQuery(getPersistentClass());
+            crit.distinct(true);
+            TypedQuery<GenomeRef> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            throw new BinningDAOException(e);
+        }
         return ret;
     }
 
@@ -98,6 +123,8 @@ public class GenomeRefDAOImpl extends BaseDAOImpl<GenomeRef, Integer> implements
         return ret;
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    @javax.transaction.Transactional
     @Override
     public synchronized Integer save(GenomeRef entity) throws BinningDAOException {
         logger.debug("ENTERING save(GenomeRef)");

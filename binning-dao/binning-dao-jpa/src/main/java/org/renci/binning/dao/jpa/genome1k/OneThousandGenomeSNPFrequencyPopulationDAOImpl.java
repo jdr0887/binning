@@ -2,8 +2,10 @@ package org.renci.binning.dao.jpa.genome1k;
 
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.genome1k.OneThousandGenomeSNPFrequencyPopulationDAO;
 import org.renci.binning.dao.genome1k.model.OneThousandGenomeSNPFrequencyPopulation;
@@ -11,10 +13,12 @@ import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { OneThousandGenomeSNPFrequencyPopulationDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class OneThousandGenomeSNPFrequencyPopulationDAOImpl extends BaseDAOImpl<OneThousandGenomeSNPFrequencyPopulation, Long>
         implements OneThousandGenomeSNPFrequencyPopulationDAO {
 

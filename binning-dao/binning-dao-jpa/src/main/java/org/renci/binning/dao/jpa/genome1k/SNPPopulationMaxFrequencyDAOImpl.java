@@ -3,6 +3,7 @@ package org.renci.binning.dao.jpa.genome1k;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,22 +11,25 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.genome1k.SNPPopulationMaxFrequencyDAO;
 import org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequency;
 import org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequencyPK;
-import org.renci.binning.dao.jpa.BaseDAOImpl;
-import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequencyPK_;
 import org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequency_;
+import org.renci.binning.dao.jpa.BaseDAOImpl;
+import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { SNPPopulationMaxFrequencyDAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class SNPPopulationMaxFrequencyDAOImpl extends BaseDAOImpl<SNPPopulationMaxFrequency, SNPPopulationMaxFrequencyPK>
         implements SNPPopulationMaxFrequencyDAO {
 

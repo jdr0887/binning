@@ -2,8 +2,10 @@ package org.renci.binning.dao.jpa.refseq;
 
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 
+import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
 import org.renci.binning.dao.refseq.Variants_48_2_DAO;
@@ -11,10 +13,12 @@ import org.renci.binning.dao.refseq.model.Variants_48_2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(readOnly = true)
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
+@OsgiServiceProvider(classes = { Variants_48_2_DAO.class })
+@javax.transaction.Transactional(javax.transaction.Transactional.TxType.SUPPORTS)
+@Singleton
 public class Variants_48_2_DAOImpl extends BaseDAOImpl<Variants_48_2, Long> implements Variants_48_2_DAO {
 
     private static final Logger logger = LoggerFactory.getLogger(Variants_48_2_DAOImpl.class);
