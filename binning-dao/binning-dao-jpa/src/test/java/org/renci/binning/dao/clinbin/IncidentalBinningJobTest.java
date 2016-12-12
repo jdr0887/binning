@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.IncidentalBinningJobDAO;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 

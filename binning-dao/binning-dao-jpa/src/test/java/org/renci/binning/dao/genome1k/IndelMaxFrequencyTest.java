@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.genome1k.IndelMaxFrequencyDAO;
 import org.renci.binning.dao.genome1k.model.IndelMaxFrequency;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 

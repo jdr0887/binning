@@ -10,7 +10,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.refseq.TranscriptMapsDAOImpl;
 import org.renci.binning.dao.refseq.model.TranscriptMaps;
 import org.renci.binning.dao.refseq.model.TranscriptMapsExons;

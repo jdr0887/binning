@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.dao.var.LocatedVariantDAO;
 import org.renci.binning.dao.var.model.LocatedVariant;
 
 public class LocatedVariantTest {

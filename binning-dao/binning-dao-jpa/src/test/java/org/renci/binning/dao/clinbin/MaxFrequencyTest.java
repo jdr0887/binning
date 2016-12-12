@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.MaxFrequencyDAO;
 import org.renci.binning.dao.clinbin.model.MaxFrequency;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 import org.renci.binning.dao.refseq.Variants_61_2_DAO;

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.BinResultsFinalDiagnosticDAO;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 

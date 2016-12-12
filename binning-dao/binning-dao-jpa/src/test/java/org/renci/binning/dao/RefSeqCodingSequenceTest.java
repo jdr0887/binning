@@ -10,7 +10,6 @@ import javax.persistence.Persistence;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.refseq.RefSeqCodingSequenceDAOImpl;
 import org.renci.binning.dao.refseq.model.RefSeqCodingSequence;
 import org.renci.binning.dao.refseq.model.RegionGroup;

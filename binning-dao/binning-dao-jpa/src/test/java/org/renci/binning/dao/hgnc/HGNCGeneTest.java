@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.hgnc.HGNCGeneDAO;
 import org.renci.binning.dao.hgnc.model.HGNCGene;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 

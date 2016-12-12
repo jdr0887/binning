@@ -13,7 +13,6 @@ import org.renci.binning.dao.exac.model.MaxVariantFrequency;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 import org.renci.binning.dao.ref.model.GenomeRef;
 import org.renci.binning.dao.ref.model.GenomeRefSeq;
-import org.renci.binning.dao.refseq.Variants_61_2_DAO;
 import org.renci.binning.dao.refseq.model.VariantEffect;
 import org.renci.binning.dao.refseq.model.Variants_61_2;
 import org.renci.binning.dao.refseq.model.Variants_61_2PK;

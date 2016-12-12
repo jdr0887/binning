@@ -11,7 +11,6 @@ import javax.persistence.Persistence;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.annotation.model.AnnotationGeneExternalIds;
 import org.renci.binning.dao.jpa.annotation.AnnotationGeneExternalIdsDAOImpl;
 import org.renci.binning.dao.jpa.refseq.RefSeqGeneDAOImpl;

@@ -4,20 +4,24 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.DiagnosticBinningJobDAO;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
+import org.renci.binning.dao.jpa.clinbin.DXDAOImpl;
+import org.renci.binning.dao.jpa.clinbin.DiagnosticBinningJobDAOImpl;
 
 public class DiagnosticBinningJobDAOTest {
 
     @Test
     public void testSave() throws BinningDAOException {
-        BinningDAOManager daoMgr = BinningDAOManager.getInstance();
+        // BinningDAOManager daoMgr = BinningDAOManager.getInstance();
 
         // Arrays.asList("NA12878", "NA12891", "NA12892").forEach(a -> {
         // try {
@@ -37,13 +41,26 @@ public class DiagnosticBinningJobDAOTest {
         // }
         // });
 
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("binning_test", null);
+        EntityManager em = emf.createEntityManager();
+
         DiagnosticBinningJob job = new DiagnosticBinningJob();
-        job.setDx(daoMgr.getDAOBean().getDXDAO().findById(46));
+        DXDAOImpl dxDAO = new DXDAOImpl();
+        dxDAO.setEntityManager(em);
+
+        job.setDx(dxDAO.findById(46));
         job.setGender("F");
         job.setListVersion(40);
         job.setStudy("GS");
         job.setParticipant("jdr-test");
-        daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findByExample(job);
+
+        DiagnosticBinningJobDAOImpl diagnosticBinningJobDAO = new DiagnosticBinningJobDAOImpl();
+        diagnosticBinningJobDAO.setEntityManager(em);
+
+        diagnosticBinningJobDAO.findByExample(job);
+
+        em.close();
+        emf.close();
 
         // job.setId(diagnosticBinningJobDAO.save(job));
 

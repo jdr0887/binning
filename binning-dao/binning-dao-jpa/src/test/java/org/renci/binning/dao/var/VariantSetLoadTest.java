@@ -8,8 +8,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.dao.var.AssemblyDAO;
-import org.renci.binning.dao.var.VariantSetLoadDAO;
 import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.VariantSet;
 import org.renci.binning.dao.var.model.VariantSetLoad;

@@ -5,7 +5,6 @@ import java.util.List;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.dao.ref.GenomeRefSeqDAO;
 import org.renci.binning.dao.ref.model.GenomeRefSeq;
 
 public class GenomeRefSeqTest {

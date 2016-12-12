@@ -2,7 +2,6 @@ package org.renci.binning.dao.clinbin;
 
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.DXExonsDAO;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 
 public class DXExonsDAOTest {
