@@ -1,6 +1,6 @@
 package org.renci.binning.diagnostic.gs.commands;
 
-import static org.renci.binning.Constants.BINNING_HOME;
+import static org.renci.binning.core.Constants.BINNING_HOME;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -47,7 +47,7 @@ public class LoadVCFAction implements Action {
             binningDAOBeanService.getDiagnosticBinningJobDAO().save(binningJob);
 
             String binningHome = System.getenv(BINNING_HOME);
-            
+
             ExecutorService es = Executors.newSingleThreadExecutor();
             es.submit(new LoadVCFCallable(binningDAOBeanService, binningJob, binningHome));
             es.shutdown();

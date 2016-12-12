@@ -5,9 +5,10 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.renci.binning.dao.BinningDAOBeanService;
@@ -24,6 +25,9 @@ public class ListJobsAction implements Action {
     @Reference
     private BinningDAOBeanService binningDAOBeanService;
 
+    @Option(name = "--dxId", description = "DX Identifier", required = false, multiValued = false)
+    private Integer dxId;
+
     public ListJobsAction() {
         super();
     }
@@ -34,6 +38,9 @@ public class ListJobsAction implements Action {
 
         DiagnosticBinningJob example = new DiagnosticBinningJob();
         example.setStudy("GS");
+        if (dxId != null) {
+            example.setDx(binningDAOBeanService.getDXDAO().findById(dxId));
+        }
 
         List<DiagnosticBinningJob> foundBinningJobs = binningDAOBeanService.getDiagnosticBinningJobDAO().findByExample(example);
         StringBuilder sb = new StringBuilder();
@@ -69,6 +76,14 @@ public class ListJobsAction implements Action {
             System.out.println(formatter.toString());
         }
         return null;
+    }
+
+    public Integer getDxId() {
+        return dxId;
+    }
+
+    public void setDxId(Integer dxId) {
+        this.dxId = dxId;
     }
 
 }

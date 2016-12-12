@@ -20,31 +20,22 @@ public class DiagnosticGeneScreenServiceTest {
     @Test
     public void testSubmit() {
 
-        try {
-            List<Object> providers = new ArrayList<>();
-            JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-            mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-            provider.setMapper(mapper);
-            providers.add(provider);
+        List<Object> providers = new ArrayList<>();
+        JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        provider.setMapper(mapper);
+        providers.add(provider);
 
-            String restServiceURL = String.format("http://%1$s:%2$d/cxf/%3$s/%3$sService", "localhost", 8181, "DiagnosticGeneScreen");
+        String restServiceURL = String.format("http://%1$s:%2$d/cxf/%3$s/%3$sService", "localhost", 8181, "DiagnosticGeneScreen");
 
-            WebClient client = WebClient.create(restServiceURL, providers).type(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON);
+        WebClient client = WebClient.create(restServiceURL, providers).type(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
-            DiagnosticBinningJobInfo info = new DiagnosticBinningJobInfo("jdr-test", "M", 46, 40);
-
-            String jsonInString = mapper.writeValueAsString(info);
-            System.out.println(jsonInString);
-            // Response response = client.path("submit").post(jsonInString);
-            Response response = client.path("submit").post(info);
-            String id = response.readEntity(String.class);
-            System.out.println(id);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        DiagnosticBinningJobInfo info = new DiagnosticBinningJobInfo("jdr-test", "M", 46, 40);
+        Response response = client.path("submit").post(info);
+        String id = response.readEntity(String.class);
+        System.out.println(id);
 
     }
 

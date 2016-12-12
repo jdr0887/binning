@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.renci.binning.BinningExecutorService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.renci.binning.core.BinningExecutorService;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
