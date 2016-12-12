@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.renci.binning.BinningException;
-import org.renci.binning.IRODSUtils;
+import org.renci.binning.core.BinningException;
+import org.renci.binning.core.IRODSUtils;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 import org.renci.binning.dao.ref.model.GenomeRef;
 import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.incidental.AbstractLoadVCFCallable;
+import org.renci.binning.core.incidental.AbstractLoadVCFCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

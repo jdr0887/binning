@@ -2,13 +2,12 @@ package org.renci.binning.incidental.ncgenes.ws;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.renci.binning.BinningExecutorService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.renci.binning.core.BinningExecutorService;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinX;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
-import org.renci.binning.incidental.ncgenes.ws.IncidentalNCGenesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
