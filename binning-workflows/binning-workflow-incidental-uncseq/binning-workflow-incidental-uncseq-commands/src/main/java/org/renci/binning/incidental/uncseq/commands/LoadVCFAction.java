@@ -1,6 +1,6 @@
 package org.renci.binning.incidental.uncseq.commands;
 
-import static org.renci.binning.Constants.BINNING_HOME;
+import static org.renci.binning.core.Constants.BINNING_HOME;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;

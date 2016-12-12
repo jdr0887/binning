@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalX;
 import org.renci.binning.dao.clinbin.model.BinResultsFinalIncidentalXPK;
