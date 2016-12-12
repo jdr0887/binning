@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
-import org.renci.binning.BinningException;
-import org.renci.binning.GATKDepthInterval;
-import org.renci.binning.IRODSUtils;
+import org.renci.binning.core.BinningException;
+import org.renci.binning.core.GATKDepthInterval;
+import org.renci.binning.core.IRODSUtils;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.diagnostic.AbstractLoadCoverageCallable;
+import org.renci.binning.core.diagnostic.AbstractLoadCoverageCallable;
 import org.renci.common.exec.BashExecutor;
 import org.renci.common.exec.CommandInput;
 import org.renci.common.exec.CommandOutput;
@@ -67,6 +67,13 @@ public class LoadCoverageCallable extends AbstractLoadCoverageCallable {
             throws BinningException {
 
         try {
+
+            List<String> existingIntervals = new ArrayList<>();
+            allIntervalSet.forEach(a -> {
+                existingIntervals
+                        .add(String.format("%s:%s-%s", a.getContig(), a.getStartPosition().toString(), a.getEndPosition().toString()));
+            });
+
             List<String> foundIntervals = new ArrayList<>();
 
             try (Reader in = new FileReader(depthFile)) {
@@ -85,7 +92,7 @@ public class LoadCoverageCallable extends AbstractLoadCoverageCallable {
                 foundIntervals.remove("Target");
             }
 
-            Collection<String> missingIntervals = CollectionUtils.disjunction(allIntervalSet, foundIntervals);
+            Collection<String> missingIntervals = CollectionUtils.disjunction(existingIntervals, foundIntervals);
 
             // fix exon coverage
             if (CollectionUtils.isNotEmpty(missingIntervals)) {
