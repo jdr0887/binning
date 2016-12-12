@@ -12,7 +12,6 @@ import org.renci.binning.dao.Persistable;
 
 @Entity
 @Table(schema = "clinbin", name = "diagnostic_status_type")
-@NamedQueries({ @NamedQuery(name = "clinbin.DiagnosticStatusType.findAll", query = "SELECT a FROM DiagnosticStatusType a") })
 public class DiagnosticStatusType implements Persistable {
 
     private static final long serialVersionUID = 4612957769574414877L;
