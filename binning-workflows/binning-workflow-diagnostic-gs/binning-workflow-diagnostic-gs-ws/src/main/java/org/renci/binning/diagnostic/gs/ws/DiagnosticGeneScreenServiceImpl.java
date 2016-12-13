@@ -46,8 +46,8 @@ public class DiagnosticGeneScreenServiceImpl implements DiagnosticGeneScreenServ
             } else {
                 binningJob.setId(binningDAOBeanService.getDiagnosticBinningJobDAO().save(binningJob));
             }
-            logger.info(binningJob.toString());
             info.setId(binningJob.getId());
+            logger.info(binningJob.toString());
 
             // DiagnosticGSTask task = new DiagnosticGSTask();
             // task.setBinningDAOBeanService(binningDAOBeanService);
@@ -56,6 +56,7 @@ public class DiagnosticGeneScreenServiceImpl implements DiagnosticGeneScreenServ
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
+            return Response.serverError().build();
         }
         return Response.ok(info).build();
     }

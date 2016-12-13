@@ -29,9 +29,11 @@ public class DiagnosticUNCSeqServiceImpl implements DiagnosticUNCSeqService {
     @Override
     public Response submit(DiagnosticBinningJobInfo info) {
         logger.debug("ENTERING submit(DiagnosticBinningJobInfo)");
+        logger.info(info.toString());
+
         DiagnosticBinningJob binningJob = new DiagnosticBinningJob();
         try {
-            binningJob.setStudy("GS");
+            binningJob.setStudy("UNCSeq Cancer Study");
             binningJob.setGender(info.getGender());
             binningJob.setParticipant(info.getParticipant());
             binningJob.setListVersion(info.getListVersion());
@@ -44,6 +46,7 @@ public class DiagnosticUNCSeqServiceImpl implements DiagnosticUNCSeqService {
             } else {
                 binningJob.setId(binningDAOBeanService.getDiagnosticBinningJobDAO().save(binningJob));
             }
+            info.setId(binningJob.getId());
             logger.info(binningJob.toString());
 
             // DiagnosticGSTask task = new DiagnosticGSTask();
@@ -53,6 +56,7 @@ public class DiagnosticUNCSeqServiceImpl implements DiagnosticUNCSeqService {
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
+            return Response.serverError().build();
         }
         return Response.ok(info).build();
     }

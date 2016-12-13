@@ -29,9 +29,10 @@ public class IncidentalUNCSeqServiceImpl implements IncidentalUNCSeqService {
     @Override
     public Response submit(IncidentalBinningJobInfo info) {
         logger.debug("ENTERING submit(IncidentalBinningJobInfo)");
+        logger.info(info.toString());
         IncidentalBinningJob binningJob = new IncidentalBinningJob();
         try {
-            binningJob.setStudy("GS");
+            binningJob.setStudy("UNCSeq Cancer Study");
             binningJob.setGender(info.getGender());
             binningJob.setParticipant(info.getParticipant());
             binningJob.setListVersion(info.getListVersion());
@@ -44,6 +45,7 @@ public class IncidentalUNCSeqServiceImpl implements IncidentalUNCSeqService {
             } else {
                 binningJob.setId(binningDAOBeanService.getIncidentalBinningJobDAO().save(binningJob));
             }
+            info.setId(binningJob.getId());
             logger.info(binningJob.toString());
 
             // DiagnosticGSTask task = new DiagnosticGSTask();
@@ -53,6 +55,7 @@ public class IncidentalUNCSeqServiceImpl implements IncidentalUNCSeqService {
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
+            return Response.serverError().build();
         }
         return Response.ok(info).build();
     }

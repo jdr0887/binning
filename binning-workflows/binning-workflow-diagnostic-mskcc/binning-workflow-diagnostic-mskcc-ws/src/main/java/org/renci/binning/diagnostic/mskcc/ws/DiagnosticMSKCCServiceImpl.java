@@ -29,9 +29,10 @@ public class DiagnosticMSKCCServiceImpl implements DiagnosticMSKCCService {
     @Override
     public Response submit(DiagnosticBinningJobInfo info) {
         logger.debug("ENTERING submit(DiagnosticBinningJobInfo)");
+        logger.info(info.toString());
         DiagnosticBinningJob binningJob = new DiagnosticBinningJob();
         try {
-            binningJob.setStudy("GS");
+            binningJob.setStudy("MSKCC");
             binningJob.setGender(info.getGender());
             binningJob.setParticipant(info.getParticipant());
             binningJob.setListVersion(info.getListVersion());
@@ -44,6 +45,7 @@ public class DiagnosticMSKCCServiceImpl implements DiagnosticMSKCCService {
             } else {
                 binningJob.setId(binningDAOBeanService.getDiagnosticBinningJobDAO().save(binningJob));
             }
+            info.setId(binningJob.getId());
             logger.info(binningJob.toString());
 
             // DiagnosticGSTask task = new DiagnosticGSTask();
@@ -53,6 +55,7 @@ public class DiagnosticMSKCCServiceImpl implements DiagnosticMSKCCService {
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
+            return Response.serverError().build();
         }
         return Response.ok(info).build();
     }
