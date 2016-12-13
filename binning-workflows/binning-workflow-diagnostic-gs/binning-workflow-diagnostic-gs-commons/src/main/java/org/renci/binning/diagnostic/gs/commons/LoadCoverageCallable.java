@@ -17,11 +17,11 @@ import org.renci.binning.core.BinningException;
 import org.renci.binning.core.GATKDepthInterval;
 import org.renci.binning.core.IRODSUtils;
 import org.renci.binning.core.SAMToolsDepthInterval;
+import org.renci.binning.core.diagnostic.AbstractLoadCoverageCallable;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.core.diagnostic.AbstractLoadCoverageCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

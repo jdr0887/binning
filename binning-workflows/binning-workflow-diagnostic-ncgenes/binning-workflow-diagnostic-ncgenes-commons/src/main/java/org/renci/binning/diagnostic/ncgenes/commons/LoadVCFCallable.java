@@ -8,13 +8,13 @@ import java.util.Set;
 
 import org.renci.binning.core.BinningException;
 import org.renci.binning.core.IRODSUtils;
+import org.renci.binning.core.diagnostic.AbstractLoadVCFCallable;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 import org.renci.binning.dao.ref.model.GenomeRef;
 import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.core.diagnostic.AbstractLoadVCFCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

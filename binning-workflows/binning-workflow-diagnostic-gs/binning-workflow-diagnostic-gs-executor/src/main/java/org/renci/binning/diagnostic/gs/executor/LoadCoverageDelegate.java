@@ -43,8 +43,8 @@ public class LoadCoverageDelegate implements JavaDelegate {
             binningJob.setStatus(daoBean.getDiagnosticStatusTypeDAO().findById("Coverage loading"));
             daoBean.getDiagnosticBinningJobDAO().save(binningJob);
 
-            Executors.newSingleThreadExecutor().submit(new LoadCoverageCallable(daoBean, binningJob, variables.get(BINNING_HOME).toString()))
-                    .get();
+            Executors.newSingleThreadExecutor()
+                    .submit(new LoadCoverageCallable(daoBean, binningJob, variables.get(BINNING_HOME).toString())).get();
 
             binningJob.setStatus(daoBean.getDiagnosticStatusTypeDAO().findById("Coverage loaded"));
             daoBean.getDiagnosticBinningJobDAO().save(binningJob);

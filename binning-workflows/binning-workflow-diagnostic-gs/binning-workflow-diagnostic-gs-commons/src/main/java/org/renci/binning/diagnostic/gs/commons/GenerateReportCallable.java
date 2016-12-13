@@ -2,11 +2,11 @@ package org.renci.binning.diagnostic.gs.commons;
 
 import java.util.concurrent.Executors;
 
+import org.renci.binning.core.diagnostic.AbstractGenerateReportCallable;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.core.diagnostic.AbstractGenerateReportCallable;
 
 public class GenerateReportCallable extends AbstractGenerateReportCallable {
 
