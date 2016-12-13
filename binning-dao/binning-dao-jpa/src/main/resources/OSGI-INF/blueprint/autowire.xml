@@ -51,6 +51,8 @@
   </bean>
   <bean id="incidentalResultVersionXDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalResultVersionXDAOImpl"
     ext:field-injection="true"></bean>
+  <bean id="incidentalStatusTypeDAOImpl" class="org.renci.binning.dao.jpa.clinbin.IncidentalStatusTypeDAOImpl" ext:field-injection="true">
+  </bean>
   <bean id="maxFrequencyDAOImpl" class="org.renci.binning.dao.jpa.clinbin.MaxFrequencyDAOImpl" ext:field-injection="true"></bean>
   <bean id="maxFrequencySourceDAOImpl" class="org.renci.binning.dao.jpa.clinbin.MaxFrequencySourceDAOImpl" ext:field-injection="true"></bean>
   <bean id="missingHaplotypeDAOImpl" class="org.renci.binning.dao.jpa.clinbin.MissingHaplotypeDAOImpl" ext:field-injection="true"></bean>
@@ -131,6 +133,7 @@
     <property name="incidentalBinningJobDAO" ref="incidentalBinningJobDAOImpl" />
     <property name="incidentalBinXDAO" ref="incidentalBinXDAOImpl" />
     <property name="incidentalResultVersionXDAO" ref="incidentalResultVersionXDAOImpl" />
+    <property name="incidentalStatusTypeDAO" ref="incidentalStatusTypeDAOImpl" />
     <property name="maxFrequencyDAO" ref="maxFrequencyDAOImpl" />
     <property name="maxFrequencySourceDAO" ref="maxFrequencySourceDAOImpl" />
     <property name="missingHaplotypeDAO" ref="missingHaplotypeDAOImpl" />
@@ -205,6 +208,7 @@
   <service ref="incidentalBinningJobDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinningJobDAO" />
   <service ref="incidentalBinXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalBinXDAO" />
   <service ref="incidentalResultVersionXDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalResultVersionXDAO" />
+  <service ref="incidentalStatusTypeDAOImpl" interface="org.renci.binning.dao.clinbin.IncidentalStatusTypeDAO" />
   <service ref="maxFrequencyDAOImpl" interface="org.renci.binning.dao.clinbin.MaxFrequencyDAO" />
   <service ref="maxFrequencySourceDAOImpl" interface="org.renci.binning.dao.clinbin.MaxFrequencySourceDAO" />
   <service ref="missingHaplotypeDAOImpl" interface="org.renci.binning.dao.clinbin.MissingHaplotypeDAO" />
