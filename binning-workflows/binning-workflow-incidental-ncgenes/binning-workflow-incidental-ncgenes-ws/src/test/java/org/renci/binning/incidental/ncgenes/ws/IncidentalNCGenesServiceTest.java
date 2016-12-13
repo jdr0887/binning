@@ -33,7 +33,7 @@ public class IncidentalNCGenesServiceTest {
 
         WebClient client = WebClient.create(restServiceURL, providers).type(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
 
-        IncidentalBinningJobInfo info = new IncidentalBinningJobInfo("jdr-test", "M", 46, 40);
+        IncidentalBinningJobInfo info = new IncidentalBinningJobInfo("jdr-test", "M", 10, 13);
         Response response = client.path("submit").post(info);
         String id = response.readEntity(String.class);
         System.out.println(id);
@@ -46,7 +46,7 @@ public class IncidentalNCGenesServiceTest {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
             mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-            IncidentalBinningJobInfo info = new IncidentalBinningJobInfo("jdr-test", "M", 46, 40);
+            IncidentalBinningJobInfo info = new IncidentalBinningJobInfo("jdr-test", "M", 10, 13);
             String jsonInString = mapper.writeValueAsString(info);
             System.out.println(jsonInString);
         } catch (JsonProcessingException e) {
