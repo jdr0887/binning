@@ -5,6 +5,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.renci.binning.core.diagnostic.DiagnosticBinningJobInfo;
 
 @Path("/DiagnosticNCGenesService/")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -12,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 public interface DiagnosticNCGenesService {
 
     @POST
-    @Path("/submit/")
-    public Integer submit(String participant, String gender, Integer dxId, Integer listVersion);
+    @Path("/submit")
+    public Response submit(DiagnosticBinningJobInfo info);
 
 }

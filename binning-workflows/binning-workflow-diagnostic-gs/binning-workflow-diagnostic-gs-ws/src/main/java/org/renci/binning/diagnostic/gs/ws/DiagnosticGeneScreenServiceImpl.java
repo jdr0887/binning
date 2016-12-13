@@ -6,6 +6,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.renci.binning.core.BinningExecutorService;
+import org.renci.binning.core.diagnostic.DiagnosticBinningJobInfo;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;

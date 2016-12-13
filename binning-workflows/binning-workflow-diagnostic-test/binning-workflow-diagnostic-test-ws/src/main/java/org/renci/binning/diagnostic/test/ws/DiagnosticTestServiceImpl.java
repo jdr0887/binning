@@ -2,8 +2,11 @@ package org.renci.binning.diagnostic.test.ws;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.renci.binning.core.BinningExecutorService;
+import org.renci.binning.core.diagnostic.DiagnosticBinningJobInfo;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
@@ -24,16 +27,16 @@ public class DiagnosticTestServiceImpl implements DiagnosticTestService {
     }
 
     @Override
-    public Integer submit(String participant, String gender, Integer dxId, Integer listVersion) {
-        logger.debug("ENTERING submit(String, String, Integer, Integer)");
+    public Response submit(DiagnosticBinningJobInfo info) {
+        logger.debug("ENTERING submit(DiagnosticBinningJobInfo)");
         DiagnosticBinningJob binningJob = new DiagnosticBinningJob();
         try {
             binningJob.setStudy("GS");
-            binningJob.setGender(gender);
-            binningJob.setParticipant(participant);
-            binningJob.setListVersion(listVersion);
+            binningJob.setGender(info.getGender());
+            binningJob.setParticipant(info.getParticipant());
+            binningJob.setListVersion(info.getListVersion());
             binningJob.setStatus(binningDAOBeanService.getDiagnosticStatusTypeDAO().findById("Requested"));
-            DX dx = binningDAOBeanService.getDXDAO().findById(dxId);
+            DX dx = binningDAOBeanService.getDXDAO().findById(info.getDxId());
             binningJob.setDx(dx);
             List<DiagnosticBinningJob> foundBinningJobs = binningDAOBeanService.getDiagnosticBinningJobDAO().findByExample(binningJob);
             if (CollectionUtils.isNotEmpty(foundBinningJobs)) {
@@ -51,7 +54,7 @@ public class DiagnosticTestServiceImpl implements DiagnosticTestService {
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
         }
-        return binningJob.getId();
+        return Response.ok(info).build();
     }
 
     public BinningExecutorService getBinningExecutorService() {

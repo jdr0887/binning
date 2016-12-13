@@ -2,8 +2,11 @@ package org.renci.binning.incidental.uncseq.ws;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.renci.binning.core.BinningExecutorService;
+import org.renci.binning.core.incidental.IncidentalBinningJobInfo;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinX;
@@ -24,16 +27,16 @@ public class IncidentalUNCSeqServiceImpl implements IncidentalUNCSeqService {
     }
 
     @Override
-    public Integer submit(String participant, String gender, Integer incidentalBinId, Integer listVersion) {
-        logger.debug("ENTERING submit(String, String, Integer, Integer)");
+    public Response submit(IncidentalBinningJobInfo info) {
+        logger.debug("ENTERING submit(IncidentalBinningJobInfo)");
         IncidentalBinningJob binningJob = new IncidentalBinningJob();
         try {
             binningJob.setStudy("GS");
-            binningJob.setGender(gender);
-            binningJob.setParticipant(participant);
-            binningJob.setListVersion(listVersion);
+            binningJob.setGender(info.getGender());
+            binningJob.setParticipant(info.getParticipant());
+            binningJob.setListVersion(info.getListVersion());
             binningJob.setStatus(binningDAOBeanService.getIncidentalStatusTypeDAO().findById("Requested"));
-            IncidentalBinX incidentalBin = binningDAOBeanService.getIncidentalBinXDAO().findById(incidentalBinId);
+            IncidentalBinX incidentalBin = binningDAOBeanService.getIncidentalBinXDAO().findById(info.getIncidentalBinId());
             binningJob.setIncidentalBinX(incidentalBin);
             List<IncidentalBinningJob> foundBinningJobs = binningDAOBeanService.getIncidentalBinningJobDAO().findByExample(binningJob);
             if (CollectionUtils.isNotEmpty(foundBinningJobs)) {
@@ -51,7 +54,7 @@ public class IncidentalUNCSeqServiceImpl implements IncidentalUNCSeqService {
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
         }
-        return binningJob.getId();
+        return Response.ok(info).build();
     }
 
     public BinningExecutorService getBinningExecutorService() {
