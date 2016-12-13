@@ -12,7 +12,8 @@ public interface MaxVariantFrequencyDAO extends BaseDAO<MaxVariantFrequency, Lon
 
     public List<MaxVariantFrequency> findByLocatedVariantId(Long locVarId) throws BinningDAOException;
 
-    public List<MaxVariantFrequency> findByLocatedVariantIdAndFrequencyThreshold(Long locVarId, Double threshold) throws BinningDAOException;
+    public List<MaxVariantFrequency> findByLocatedVariantIdAndFrequencyThreshold(Long locVarId, Double threshold)
+            throws BinningDAOException;
 
     public List<MaxVariantFrequency> findByGeneNameAndMaxAlleleFrequency(String name, Double threshold) throws BinningDAOException;
 

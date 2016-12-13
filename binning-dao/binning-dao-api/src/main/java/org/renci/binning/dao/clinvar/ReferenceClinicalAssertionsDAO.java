@@ -8,7 +8,8 @@ import org.renci.binning.dao.clinvar.model.ReferenceClinicalAssertions;
 
 public interface ReferenceClinicalAssertionsDAO extends BaseDAO<ReferenceClinicalAssertions, Long> {
 
-    public List<ReferenceClinicalAssertions> findDiagnostic(Long dxId, String participant, Integer resultVersion) throws BinningDAOException;
+    public List<ReferenceClinicalAssertions> findDiagnostic(Long dxId, String participant, Integer resultVersion)
+            throws BinningDAOException;
 
     public List<ReferenceClinicalAssertions> findIncidental(Long incidentalBinId, String participant, Integer resultVersion)
             throws BinningDAOException;

@@ -897,8 +897,8 @@ public class Variants_61_2Factory {
         return locationType;
     }
 
-    private static Integer getFeatureId(BinningDAOBeanService daoBean, String refseqVersion, TranscriptMaps tMap, Integer transcriptPosition)
-            throws BinningDAOException {
+    private static Integer getFeatureId(BinningDAOBeanService daoBean, String refseqVersion, TranscriptMaps tMap,
+            Integer transcriptPosition) throws BinningDAOException {
         List<Feature> featureList = daoBean.getFeatureDAO().findByRefSeqVersionAndTranscriptId(refseqVersion,
                 tMap.getTranscript().getVersionId());
         Integer ret = null;

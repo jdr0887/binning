@@ -8,7 +8,8 @@ import org.renci.binning.dao.refseq.model.TranscriptMapsExons;
 
 public interface TranscriptMapsExonsDAO extends BaseDAO<TranscriptMapsExons, Integer> {
 
-    public List<TranscriptMapsExons> findByGenomeRefIdAndRefSeqVersion(Integer genomeRefId, String refSeqVersion) throws BinningDAOException;
+    public List<TranscriptMapsExons> findByGenomeRefIdAndRefSeqVersion(Integer genomeRefId, String refSeqVersion)
+            throws BinningDAOException;
 
     public List<TranscriptMapsExons> findByGenomeRefIdAndRefSeqVersionAndAccession(Integer genomeRefId, String refSeqVersion,
             String accession) throws BinningDAOException;

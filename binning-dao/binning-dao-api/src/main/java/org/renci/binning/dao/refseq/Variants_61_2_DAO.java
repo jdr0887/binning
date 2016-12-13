@@ -41,7 +41,8 @@ public interface Variants_61_2_DAO extends BaseDAO<Variants_61_2, Variants_61_2P
     public List<Variants_61_2> findUncertainSignificance(Integer hgmdVersion, Integer dxId, Integer diagnosticListVersion)
             throws BinningDAOException;
 
-    public List<Variants_61_2> findLikelyBenign(Integer hgmdVersion, Integer dxId, Integer diagnosticListVersion) throws BinningDAOException;
+    public List<Variants_61_2> findLikelyBenign(Integer hgmdVersion, Integer dxId, Integer diagnosticListVersion)
+            throws BinningDAOException;
 
     public List<Variants_61_2> findAlmostCertainlyBenign(Integer hgmdVersion, Integer dxId, Integer diagnosticListVersion)
             throws BinningDAOException;
