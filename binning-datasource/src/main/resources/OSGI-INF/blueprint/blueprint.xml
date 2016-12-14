@@ -30,7 +30,7 @@
     </cm:default-properties>
   </cm:property-placeholder>
 
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+  <bean id="binningDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
     <property name="driverClassName" value="${driverClassName}" />
     <property name="url" value="${url}" />
     <property name="username" value="${username}" />
@@ -44,7 +44,7 @@
   </bean>
 
   <bean id="connectionFactory" class="org.apache.commons.dbcp.DataSourceConnectionFactory">
-    <argument ref="dataSource" />
+    <argument ref="binningDS" />
   </bean>
 
   <bean id="connectionPool" class="org.apache.commons.pool.impl.GenericObjectPool">
