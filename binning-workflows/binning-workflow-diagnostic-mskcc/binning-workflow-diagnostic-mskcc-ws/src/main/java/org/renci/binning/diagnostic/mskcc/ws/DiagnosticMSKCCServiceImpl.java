@@ -11,6 +11,7 @@ import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.binning.diagnostic.mskcc.executor.DiagnosticMSKCCTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +49,7 @@ public class DiagnosticMSKCCServiceImpl implements DiagnosticMSKCCService {
             info.setId(binningJob.getId());
             logger.info(binningJob.toString());
 
-            // DiagnosticGSTask task = new DiagnosticGSTask();
-            // task.setBinningDAOBeanService(binningDAOBeanService);
-            // task.setBinningJob(binningJob);
-            // binningExecutorService.getExecutor().submit(task);
+            binningExecutorService.getExecutor().submit(new DiagnosticMSKCCTask(binningJob.getId()));
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
