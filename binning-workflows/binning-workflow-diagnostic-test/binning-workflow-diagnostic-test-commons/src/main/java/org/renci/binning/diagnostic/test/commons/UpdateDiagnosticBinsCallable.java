@@ -17,6 +17,12 @@ public class UpdateDiagnosticBinsCallable extends AbstractUpdateDiagnosticBinsCa
         super(daoBean, binningJob);
     }
 
+    @Override
+    public Void call() throws BinningException {
+        logger.info("ENTERING call()");
+        return null;
+    }
+
     public static void main(String[] args) {
         try {
             BinningDAOManager daoMgr = BinningDAOManager.getInstance();

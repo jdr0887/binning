@@ -155,6 +155,12 @@ public class LoadCoverageCallable extends AbstractLoadCoverageCallable {
 
     }
 
+    @Override
+    public Void call() throws BinningException {
+        logger.info("ENTERING call()");
+        return null;
+    }
+
     private File runGATKDepthOfCoverageJob(File bamFile, Integer listVersion) throws BinningException {
         String referenceSequence = "/projects/mapseq/data/references/BUILD.37.1/bwa061sam0118/BUILD.37.1.sorted.shortid.fa";
         CommandInput commandInput = new CommandInput(String.format(

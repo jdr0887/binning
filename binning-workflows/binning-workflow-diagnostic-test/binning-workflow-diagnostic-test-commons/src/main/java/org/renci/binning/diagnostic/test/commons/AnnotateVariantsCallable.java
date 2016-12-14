@@ -1,11 +1,14 @@
 package org.renci.binning.diagnostic.test.commons;
 
+import java.util.List;
+
 import org.renci.binning.core.BinningException;
 import org.renci.binning.core.diagnostic.AbstractAnnotateVariantsCallable;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.jpa.BinningDAOManager;
+import org.renci.binning.dao.refseq.model.Variants_61_2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,12 @@ public class AnnotateVariantsCallable extends AbstractAnnotateVariantsCallable {
 
     public AnnotateVariantsCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super(daoBean, binningJob);
+    }
+
+    @Override
+    public List<Variants_61_2> call() throws BinningException {
+        logger.info("ENTERING call()");
+        return null;
     }
 
     // exists for testing

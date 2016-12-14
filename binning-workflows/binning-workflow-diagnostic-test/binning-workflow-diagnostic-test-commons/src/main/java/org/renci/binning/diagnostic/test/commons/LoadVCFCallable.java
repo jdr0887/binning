@@ -82,6 +82,13 @@ public class LoadVCFCallable extends AbstractLoadVCFCallable {
         return vcfFile;
     }
 
+    @Override
+    public Void call() throws BinningException {
+        logger.info("ENTERING call()");
+
+        return null;
+    }
+
     public static void main(String[] args) {
         try {
             BinningDAOManager daoMgr = BinningDAOManager.getInstance();
