@@ -2,7 +2,6 @@ package org.renci.binning.dao.clinbin.model;
 
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +17,6 @@ import org.renci.binning.dao.Persistable;
 
 @Entity
 @Table(schema = "clinbin", name = "dx", uniqueConstraints = { @UniqueConstraint(columnNames = { "dx_name" }) })
-@Cacheable
 public class DX implements Persistable {
 
     private static final long serialVersionUID = 7208210752522886524L;
