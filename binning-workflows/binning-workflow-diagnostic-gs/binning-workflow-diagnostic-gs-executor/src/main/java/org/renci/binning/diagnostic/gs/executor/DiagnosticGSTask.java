@@ -5,15 +5,12 @@ import static org.renci.binning.core.Constants.BINNING_HOME;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
-import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +18,15 @@ public class DiagnosticGSTask implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(DiagnosticGSTask.class);
 
-    private BinningDAOBeanService binningDAOBeanService;
-
-    private DiagnosticBinningJob binningJob;
+    private Integer binningJobId;
 
     public DiagnosticGSTask() {
         super();
+    }
+
+    public DiagnosticGSTask(Integer binningJobId) {
+        super();
+        this.binningJobId = binningJobId;
     }
 
     @Override
@@ -34,31 +34,25 @@ public class DiagnosticGSTask implements Runnable {
         logger.debug("ENTERING run()");
 
         try {
+            BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
 
-            ProcessEngine processEngine = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("activiti.cfg.xml")
-                    .buildProcessEngine();
+            ServiceReference<RepositoryService> repositoryServiceReference = bundleContext.getServiceReference(RepositoryService.class);
+            RepositoryService repositoryService = bundleContext.getService(repositoryServiceReference);
 
-            RepositoryService repositoryService = processEngine.getRepositoryService();
+            ServiceReference<RuntimeService> runtimeServiceReference = bundleContext.getServiceReference(RuntimeService.class);
+            RuntimeService runtimeService = bundleContext.getService(runtimeServiceReference);
 
-            repositoryService.createDeployment().addClasspathResource("org/renci/canvas/binning/diagnostic.bpmn20.xml").deploy();
-            RuntimeService runtimeService = processEngine.getRuntimeService();
+            repositoryService.createDeployment().addClasspathResource("org/renci/binning/diagnostic/gs/executor/gs.bpmn20.xml").deploy();
 
             Map<String, Object> variables = new HashMap<String, Object>();
-            variables.put("job", binningJob);
+            variables.put("binningJobId", binningJobId);
             variables.put("irods.home", "/projects/mapseq/apps/irods-4.2.0/icommands");
             // variables.put("process.data.dir", "/opt/Bin2/process_data");
 
             String binningHome = System.getenv(BINNING_HOME);
             variables.put(BINNING_HOME, binningHome);
 
-            ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("diagnostic_binning", variables);
-            // repositoryService.deleteDeployment(deployment.getId());
-
-            HistoryService historyService = processEngine.getHistoryService();
-            HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
-                    .processInstanceId(processInstance.getId()).singleResult();
-            logger.info("Process instance end time: {}", historicProcessInstance.getEndTime());
-            processEngine.close();
+            ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("gs_diagnostic_binning", variables);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,20 +60,12 @@ public class DiagnosticGSTask implements Runnable {
 
     }
 
-    public BinningDAOBeanService getBinningDAOBeanService() {
-        return binningDAOBeanService;
+    public Integer getBinningJobId() {
+        return binningJobId;
     }
 
-    public void setBinningDAOBeanService(BinningDAOBeanService binningDAOBeanService) {
-        this.binningDAOBeanService = binningDAOBeanService;
-    }
-
-    public DiagnosticBinningJob getBinningJob() {
-        return binningJob;
-    }
-
-    public void setBinningJob(DiagnosticBinningJob binningJob) {
-        this.binningJob = binningJob;
+    public void setBinningJobId(Integer binningJobId) {
+        this.binningJobId = binningJobId;
     }
 
 }

@@ -5,7 +5,6 @@ import static org.renci.binning.core.Constants.BINNING_HOME;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.runtime.ProcessInstance;

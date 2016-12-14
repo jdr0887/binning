@@ -5,13 +5,12 @@ import static org.renci.binning.core.Constants.BINNING_HOME;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,22 +18,11 @@ public class DiagnosticNCGenesTask implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(DiagnosticNCGenesTask.class);
 
-    private BinningDAOBeanService binningDAOBeanService;
+    private Integer binningJobId;
 
-    private DiagnosticBinningJob binningJob;
-
-    private ProcessEngine processEngine;
-
-    public DiagnosticNCGenesTask() {
+    public DiagnosticNCGenesTask(Integer binningJobId) {
         super();
-    }
-
-    public DiagnosticNCGenesTask(BinningDAOBeanService binningDAOBeanService, DiagnosticBinningJob binningJob,
-            ProcessEngine processEngine) {
-        super();
-        this.binningDAOBeanService = binningDAOBeanService;
-        this.binningJob = binningJob;
-        this.processEngine = processEngine;
+        this.binningJobId = binningJobId;
     }
 
     @Override
@@ -42,16 +30,19 @@ public class DiagnosticNCGenesTask implements Runnable {
         logger.debug("ENTERING run()");
 
         try {
-            RepositoryService repositoryService = processEngine.getRepositoryService();
-            RuntimeService runtimeService = processEngine.getRuntimeService();
-            HistoryService historyService = processEngine.getHistoryService();
+            BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+
+            ServiceReference<RepositoryService> repositoryServiceReference = bundleContext.getServiceReference(RepositoryService.class);
+            RepositoryService repositoryService = bundleContext.getService(repositoryServiceReference);
+
+            ServiceReference<RuntimeService> runtimeServiceReference = bundleContext.getServiceReference(RuntimeService.class);
+            RuntimeService runtimeService = bundleContext.getService(runtimeServiceReference);
 
             repositoryService.createDeployment().addClasspathResource("org/renci/binning/diagnostic/ncgenes/executor/ncgenes.bpmn20.xml")
                     .deploy();
 
             Map<String, Object> variables = new HashMap<String, Object>();
-            variables.put("daoBean", binningDAOBeanService);
-            variables.put("job", binningJob);
+            variables.put("binningJobId", binningJobId);
             variables.put("irods.home", "/projects/mapseq/apps/irods-4.2.0/icommands");
             // variables.put("process.data.dir", "/opt/Bin2/process_data");
 
@@ -66,28 +57,12 @@ public class DiagnosticNCGenesTask implements Runnable {
 
     }
 
-    public BinningDAOBeanService getBinningDAOBeanService() {
-        return binningDAOBeanService;
+    public Integer getBinningJobId() {
+        return binningJobId;
     }
 
-    public void setBinningDAOBeanService(BinningDAOBeanService binningDAOBeanService) {
-        this.binningDAOBeanService = binningDAOBeanService;
-    }
-
-    public DiagnosticBinningJob getBinningJob() {
-        return binningJob;
-    }
-
-    public void setBinningJob(DiagnosticBinningJob binningJob) {
-        this.binningJob = binningJob;
-    }
-
-    public ProcessEngine getProcessEngine() {
-        return processEngine;
-    }
-
-    public void setProcessEngine(ProcessEngine processEngine) {
-        this.processEngine = processEngine;
+    public void setBinningJobId(Integer binningJobId) {
+        this.binningJobId = binningJobId;
     }
 
 }
