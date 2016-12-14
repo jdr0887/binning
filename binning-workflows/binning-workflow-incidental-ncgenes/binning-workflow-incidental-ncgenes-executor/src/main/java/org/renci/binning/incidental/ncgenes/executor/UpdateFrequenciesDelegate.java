@@ -8,6 +8,9 @@ import java.util.concurrent.Executors;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
 import org.apache.commons.collections4.CollectionUtils;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
@@ -29,22 +32,21 @@ public class UpdateFrequenciesDelegate implements JavaDelegate {
         logger.debug("ENTERING execute(DelegateExecution)");
         Map<String, Object> variables = execution.getVariables();
 
-        BinningDAOBeanService daoBean = null;
-        Object o = variables.get("daoBean");
-        if (o != null && o instanceof BinningDAOBeanService) {
-            daoBean = (BinningDAOBeanService) o;
-        }
+        BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+        ServiceReference<BinningDAOBeanService> daoBeanServiceReference = bundleContext.getServiceReference(BinningDAOBeanService.class);
+        BinningDAOBeanService daoBean = bundleContext.getService(daoBeanServiceReference);
 
-        IncidentalBinningJob binningJob = null;
-        o = variables.get("job");
-        if (o != null && o instanceof IncidentalBinningJob) {
-            binningJob = (IncidentalBinningJob) o;
+        Integer binningJobId = null;
+        Object o = variables.get("binningJobId");
+        if (o != null && o instanceof Integer) {
+            binningJobId = (Integer) o;
         }
-        logger.info(binningJob.toString());
 
         try {
+            IncidentalBinningJob binningJob = daoBean.getIncidentalBinningJobDAO().findById(binningJobId);
             binningJob.setStatus(daoBean.getIncidentalStatusTypeDAO().findById("Updating frequency table"));
             daoBean.getIncidentalBinningJobDAO().save(binningJob);
+            logger.info(binningJob.toString());
 
             List<MaxFrequency> results = Executors.newSingleThreadExecutor().submit(new UpdateFrequenciesCallable(daoBean, binningJob))
                     .get();
@@ -57,15 +59,19 @@ public class UpdateFrequenciesDelegate implements JavaDelegate {
                 }
             }
 
+            binningJob = daoBean.getIncidentalBinningJobDAO().findById(binningJobId);
             binningJob.setStatus(daoBean.getIncidentalStatusTypeDAO().findById("Updated frequency table"));
             daoBean.getIncidentalBinningJobDAO().save(binningJob);
+            logger.info(binningJob.toString());
 
         } catch (Exception e) {
             try {
+                IncidentalBinningJob binningJob = daoBean.getIncidentalBinningJobDAO().findById(binningJobId);
                 binningJob.setStop(new Date());
                 binningJob.setFailureMessage(e.getMessage());
                 binningJob.setStatus(daoBean.getIncidentalStatusTypeDAO().findById("Failed"));
                 daoBean.getIncidentalBinningJobDAO().save(binningJob);
+                logger.info(binningJob.toString());
             } catch (BinningDAOException e1) {
                 e1.printStackTrace();
             }
