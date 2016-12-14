@@ -1,5 +1,6 @@
 package org.renci.binning.dao.clinbin.model;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -10,6 +11,7 @@ import org.renci.binning.dao.Persistable;
 
 @Entity
 @Table(schema = "clinbin", name = "diagnostic_status_type")
+@Cacheable
 public class DiagnosticStatusType implements Persistable {
 
     private static final long serialVersionUID = 4612957769574414877L;
