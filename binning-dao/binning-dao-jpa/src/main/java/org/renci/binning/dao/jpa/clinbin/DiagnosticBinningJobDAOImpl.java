@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.DiagnosticBinningJobDAO;
-import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DX_;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob_;
@@ -109,8 +108,6 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
         return ret;
     }
 
-    @org.springframework.transaction.annotation.Transactional
-    @javax.transaction.Transactional
     @Override
     public List<DiagnosticBinningJob> findByExample(DiagnosticBinningJob binningJob) throws BinningDAOException {
         logger.debug("ENTERING findByExample(DiagnosticBinningJob)");
@@ -138,10 +135,6 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             }
 
             if (binningJob.getDx() != null) {
-                Join<DiagnosticBinningJob, DX> diagnosticBinningJobDXJoin = root.join(DiagnosticBinningJob_.dx);
-                logger.info("is join null: {}", diagnosticBinningJobDXJoin == null);
-                logger.info("is expression null: {}", diagnosticBinningJobDXJoin.get(DX_.id));
-                logger.info("is dxid null: {}", binningJob.getDx().getId() == null);
                 predicates.add(critBuilder.equal(root.join(DiagnosticBinningJob_.dx).get(DX_.id), binningJob.getDx().getId()));
             }
 
@@ -163,6 +156,7 @@ public class DiagnosticBinningJobDAOImpl extends BaseDAOImpl<DiagnosticBinningJo
             logger.error("entity is null");
             return null;
         }
+
         if (!getEntityManager().contains(entity) && entity.getId() != null) {
             entity = getEntityManager().merge(entity);
         } else {
