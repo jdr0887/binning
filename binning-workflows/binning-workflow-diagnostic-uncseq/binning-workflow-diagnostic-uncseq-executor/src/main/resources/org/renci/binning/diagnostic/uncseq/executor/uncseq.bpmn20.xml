@@ -5,13 +5,13 @@
   <process id="uncseq_diagnostic_binning" name="UNCSeqDiagnosticBinning">
 
     <startEvent id="start" />
-    <serviceTask id="initialize" activiti:class="org.renci.canvas.binning.diagnostic.InitializeDelegate" />
-    <serviceTask id="loadVCF" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.LoadVCFDelegate" />
-    <serviceTask id="annotateVariants" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.AnnotateVariantsDelegate" />
-    <serviceTask id="updateFrequencies" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.UpdateFrequenciesDelegate" />
-    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.UpdateDiagnosticBinsDelegate" />
-    <serviceTask id="generateReport" activiti:class="org.renci.canvas.binning.diagnostic.uncseq.GenerateReportDelegate" />
-    <serviceTask id="finalize" activiti:class="org.renci.canvas.binning.diagnostic.FinalizeDelegate" />
+    <serviceTask id="initialize" activiti:class="org.renci.binning.core.diagnostic.InitializeDelegate" />
+    <serviceTask id="loadVCF" activiti:class="org.renci.binning.diagnostic.uncseq.executor.LoadVCFDelegate" />
+    <serviceTask id="annotateVariants" activiti:class="org.renci.binning.diagnostic.uncseq.executor.AnnotateVariantsDelegate" />
+    <serviceTask id="updateFrequencies" activiti:class="org.renci.binning.diagnostic.uncseq.executor.UpdateFrequenciesDelegate" />
+    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.binning.diagnostic.uncseq.executor.UpdateDiagnosticBinsDelegate" />
+    <serviceTask id="generateReport" activiti:class="org.renci.binning.diagnostic.uncseq.executor.GenerateReportDelegate" />
+    <serviceTask id="finalize" activiti:class="org.renci.binning.core.diagnostic.FinalizeDelegate" />
     <endEvent id="end" />
 
     <sequenceFlow sourceRef="start" targetRef="initialize" />

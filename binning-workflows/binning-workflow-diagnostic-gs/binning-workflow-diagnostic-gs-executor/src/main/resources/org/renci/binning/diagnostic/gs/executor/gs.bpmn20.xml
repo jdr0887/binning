@@ -5,14 +5,14 @@
   <process id="gs_diagnostic_binning" name="GSDiagnosticBinning">
 
     <startEvent id="start" />
-    <serviceTask id="initialize" activiti:class="org.renci.binning.diagnostic.InitializeDelegate" />
-    <serviceTask id="loadVCF" activiti:class="org.renci.binning.diagnostic.gs.LoadVCFDelegate" />
-    <serviceTask id="loadCoverage" activiti:class="org.renci.binning.diagnostic.gs.LoadCoverageDelegate" />
-    <serviceTask id="annotateVariants" activiti:class="org.renci.binning.diagnostic.gs.AnnotateVariantsDelegate" />
-    <serviceTask id="updateFrequencies" activiti:class="org.renci.binning.diagnostic.gs.UpdateFrequenciesDelegate" />
-    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.binning.diagnostic.gs.UpdateDiagnosticBinsDelegate" />
-    <serviceTask id="generateReport" activiti:class="org.renci.binning.diagnostic.gs.GenerateReportDelegate" />
-    <serviceTask id="finalize" activiti:class="org.renci.binning.diagnostic.FinalizeDelegate" />
+    <serviceTask id="initialize" activiti:class="org.renci.binning.core.diagnostic.InitializeDelegate" />
+    <serviceTask id="loadVCF" activiti:class="org.renci.binning.diagnostic.gs.executor.LoadVCFDelegate" />
+    <serviceTask id="loadCoverage" activiti:class="org.renci.binning.diagnostic.gs.executor.LoadCoverageDelegate" />
+    <serviceTask id="annotateVariants" activiti:class="org.renci.binning.diagnostic.gs.executor.AnnotateVariantsDelegate" />
+    <serviceTask id="updateFrequencies" activiti:class="org.renci.binning.diagnostic.gs.executor.UpdateFrequenciesDelegate" />
+    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.binning.diagnostic.gs.executor.UpdateDiagnosticBinsDelegate" />
+    <serviceTask id="generateReport" activiti:class="org.renci.binning.diagnostic.gs.executor.GenerateReportDelegate" />
+    <serviceTask id="finalize" activiti:class="org.renci.binning.core.diagnostic.FinalizeDelegate" />
     <endEvent id="end" />
 
     <sequenceFlow sourceRef="start" targetRef="initialize" />

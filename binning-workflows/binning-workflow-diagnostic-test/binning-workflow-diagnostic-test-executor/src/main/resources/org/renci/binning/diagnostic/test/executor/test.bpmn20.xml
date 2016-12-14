@@ -5,23 +5,25 @@
   <process id="test_diagnostic_binning" name="TestDiagnosticBinning">
 
     <startEvent id="start" />
-    <serviceTask id="init" activiti:class="org.renci.canvas.binning.diagnostic.InitDelegate" />
-    <serviceTask id="loadVCF" activiti:class="org.renci.canvas.binning.diagnostic.test.LoadVCFDelegate" />
-    <serviceTask id="loadCoverage" activiti:class="org.renci.canvas.binning.diagnostic.test.LoadCoverageDelegate" />
-    <serviceTask id="annotateVariants" activiti:class="org.renci.canvas.binning.diagnostic.test.AnnotateVariantsDelegate" />
-    <serviceTask id="updateFrequencies" activiti:class="org.renci.canvas.binning.diagnostic.test.UpdateFrequenciesDelegate" />
-    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.canvas.binning.diagnostic.test.UpdateDiagnosticBinsDelegate" />
-    <serviceTask id="generateReport" activiti:class="org.renci.canvas.binning.diagnostic.GenerateReportDelegate" />
+    <serviceTask id="initialize" activiti:class="org.renci.binning.core.diagnostic.InitializeDelegate" />
+    <serviceTask id="loadVCF" activiti:class="org.renci.binning.diagnostic.test.executor.LoadVCFDelegate" />
+    <serviceTask id="loadCoverage" activiti:class="org.renci.binning.diagnostic.test.executor.LoadCoverageDelegate" />
+    <serviceTask id="annotateVariants" activiti:class="org.renci.binning.diagnostic.test.executor.AnnotateVariantsDelegate" />
+    <serviceTask id="updateFrequencies" activiti:class="org.renci.binning.diagnostic.test.executor.UpdateFrequenciesDelegate" />
+    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.binning.diagnostic.test.executor.UpdateDiagnosticBinsDelegate" />
+    <serviceTask id="generateReport" activiti:class="org.renci.binning.diagnostic.test.executor.GenerateReportDelegate" />
+    <serviceTask id="finalize" activiti:class="org.renci.binning.core.diagnostic.FinalizeDelegate" />
     <endEvent id="end" />
 
-    <sequenceFlow sourceRef="start" targetRef="init" />
-    <sequenceFlow sourceRef="init" targetRef="loadVCF" />
+    <sequenceFlow sourceRef="start" targetRef="initialize" />
+    <sequenceFlow sourceRef="initialize" targetRef="loadVCF" />
     <sequenceFlow sourceRef="loadVCF" targetRef="loadCoverage" />
     <sequenceFlow sourceRef="loadCoverage" targetRef="annotateVariants" />
     <sequenceFlow sourceRef="annotateVariants" targetRef="updateFrequencies" />
     <sequenceFlow sourceRef="updateFrequencies" targetRef="updateDiagnosticBins" />
     <sequenceFlow sourceRef="updateDiagnosticBins" targetRef="generateReport" />
-    <sequenceFlow sourceRef="generateReport" targetRef="end" />
+    <sequenceFlow sourceRef="generateReport" targetRef="finalize" />
+    <sequenceFlow sourceRef="finalize" targetRef="end" />
 
   </process>
 

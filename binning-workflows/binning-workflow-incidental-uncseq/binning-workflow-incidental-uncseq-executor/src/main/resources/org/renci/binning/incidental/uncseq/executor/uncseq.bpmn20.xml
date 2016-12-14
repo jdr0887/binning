@@ -5,13 +5,13 @@
   <process id="uncseq_incidental_binning" name="UNCSeqIncidentalBinning">
 
     <startEvent id="start" />
-    <serviceTask id="init" activiti:class="org.renci.canvas.binning.incidental.InitializationDelegate" />
-    <serviceTask id="loadVCF" activiti:class="org.renci.canvas.binning.incidental.uncseq.LoadVCFDelegate" />
-    <serviceTask id="annotateVariants" activiti:class="org.renci.canvas.binning.incidental.uncseq.AnnotateVariantsDelegate" />
-    <serviceTask id="updateFrequencies" activiti:class="org.renci.canvas.binning.incidental.uncseq.UpdateFrequenciesDelegate" />
-    <serviceTask id="loadMissing" activiti:class="org.renci.canvas.binning.incidental.uncseq.LoadMissingDelegate" />
-    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.canvas.binning.incidental.uncseq.UpdateIncidentalBinsDelegate" />
-    <serviceTask id="finalize" activiti:class="org.renci.canvas.binning.incidental.FinalizeDelegate" />
+    <serviceTask id="init" activiti:class="org.renci.binning.incidental.InitializationDelegate" />
+    <serviceTask id="loadVCF" activiti:class="org.renci.binning.incidental.uncseq.executor.LoadVCFDelegate" />
+    <serviceTask id="annotateVariants" activiti:class="org.renci.binning.incidental.uncseq.executor.AnnotateVariantsDelegate" />
+    <serviceTask id="updateFrequencies" activiti:class="org.renci.binning.incidental.uncseq.executor.UpdateFrequenciesDelegate" />
+    <serviceTask id="loadMissing" activiti:class="org.renci.binning.incidental.uncseq.executor.LoadMissingDelegate" />
+    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.binning.incidental.uncseq.executor.UpdateIncidentalBinsDelegate" />
+    <serviceTask id="finalize" activiti:class="org.renci.binning.incidental.FinalizeDelegate" />
     <endEvent id="end" />
 
     <sequenceFlow sourceRef="start" targetRef="init" />

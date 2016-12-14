@@ -5,13 +5,13 @@
   <process id="ncgenes_incidental_binning" name="NCGenesIncidentalBinning">
 
     <startEvent id="start" />
-    <serviceTask id="init" activiti:class="org.renci.canvas.binning.incidental.InitializationDelegate" />
-    <serviceTask id="loadVCF" activiti:class="org.renci.canvas.binning.incidental.ncgenes.LoadVCFDelegate" />
-    <serviceTask id="annotateVariants" activiti:class="org.renci.canvas.binning.incidental.ncgenes.AnnotateVariantsDelegate" />
-    <serviceTask id="updateFrequencies" activiti:class="org.renci.canvas.binning.incidental.ncgenes.UpdateFrequenciesDelegate" />
-    <serviceTask id="loadMissing" activiti:class="org.renci.canvas.binning.incidental.ncgenes.LoadMissingDelegate" />
-    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.canvas.binning.incidental.ncgenes.UpdateIncidentalBinsDelegate" />
-    <serviceTask id="finalize" activiti:class="org.renci.canvas.binning.incidental.FinalizeDelegate" />
+    <serviceTask id="init" activiti:class="org.renci.binning.core.incidental.InitializationDelegate" />
+    <serviceTask id="loadVCF" activiti:class="org.renci.binning.incidental.ncgenes.executor.LoadVCFDelegate" />
+    <serviceTask id="annotateVariants" activiti:class="org.renci.binning.incidental.ncgenes.executor.AnnotateVariantsDelegate" />
+    <serviceTask id="updateFrequencies" activiti:class="org.renci.binning.incidental.ncgenes.executor.UpdateFrequenciesDelegate" />
+    <serviceTask id="loadMissing" activiti:class="org.renci.binning.incidental.ncgenes.executor.LoadMissingDelegate" />
+    <serviceTask id="updateDiagnosticBins" activiti:class="org.renci.binning.incidental.ncgenes.executor.UpdateIncidentalBinsDelegate" />
+    <serviceTask id="finalize" activiti:class="org.renci.binning.core.incidental.FinalizeDelegate" />
     <endEvent id="end" />
 
     <sequenceFlow sourceRef="start" targetRef="init" />
