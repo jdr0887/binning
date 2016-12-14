@@ -102,6 +102,14 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-test</groupId>
+      <artifactId>binning-workflow-diagnostic-test-features</artifactId>
+      <classifier>features</classifier>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>    
+    <dependency>
       <groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-uncseq</groupId>
       <artifactId>binning-workflow-diagnostic-uncseq-features</artifactId>
       <classifier>features</classifier>
@@ -209,6 +217,7 @@
 	    <feature>binning-workflow-diagnostic-gs</feature>
 	    <feature>binning-workflow-diagnostic-mskcc</feature>
 	    <feature>binning-workflow-diagnostic-ncgenes</feature>
+	    <feature>binning-workflow-diagnostic-test</feature>	    
 	    <feature>binning-workflow-diagnostic-uncseq</feature>
 	    <feature>binning-workflow-incidental-ncgenes</feature>
 	    <feature>binning-workflow-incidental-uncseq</feature>
