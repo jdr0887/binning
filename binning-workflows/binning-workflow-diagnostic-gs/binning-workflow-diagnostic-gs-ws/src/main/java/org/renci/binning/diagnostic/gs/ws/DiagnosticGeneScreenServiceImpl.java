@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.activiti.engine.ProcessEngine;
 import org.apache.commons.collections4.CollectionUtils;
 import org.renci.binning.core.BinningExecutorService;
 import org.renci.binning.core.diagnostic.DiagnosticBinningJobInfo;
@@ -11,6 +12,7 @@ import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.binning.diagnostic.gs.executor.DiagnosticGSTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +51,7 @@ public class DiagnosticGeneScreenServiceImpl implements DiagnosticGeneScreenServ
             info.setId(binningJob.getId());
             logger.info(binningJob.toString());
 
-            // DiagnosticGSTask task = new DiagnosticGSTask();
-            // task.setBinningDAOBeanService(binningDAOBeanService);
-            // task.setBinningJob(binningJob);
-            // binningExecutorService.getExecutor().submit(task);
+            binningExecutorService.getExecutor().submit(new DiagnosticGSTask(binningJob.getId()));
 
         } catch (BinningDAOException e) {
             logger.error(e.getMessage(), e);
