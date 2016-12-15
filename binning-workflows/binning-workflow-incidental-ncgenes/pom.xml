@@ -19,11 +19,6 @@
       </dependency>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes</groupId>
-	<artifactId>binning-workflow-incidental-ncgenes-ws-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-	<groupId>org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes</groupId>
 	<artifactId>binning-workflow-incidental-ncgenes-executor</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
       </dependency>      

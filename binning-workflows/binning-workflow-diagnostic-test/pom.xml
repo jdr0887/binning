@@ -19,11 +19,6 @@
       </dependency>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-test</groupId>
-	<artifactId>binning-workflow-diagnostic-test-ws-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-test</groupId>
 	<artifactId>binning-workflow-diagnostic-test-executor</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
       </dependency>      
