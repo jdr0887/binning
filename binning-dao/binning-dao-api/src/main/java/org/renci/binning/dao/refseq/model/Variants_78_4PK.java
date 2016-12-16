@@ -118,7 +118,7 @@ public class Variants_78_4PK implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "Variants_61_2PK [locatedVariant=%s, genomeRefSeq=%s, position=%s, variantType=%s, transcript=%s, locationType=%s, variantEffect=%s, mapNumber=%s]",
+                "Variants_78_4PK [locatedVariant=%s, genomeRefSeq=%s, position=%s, variantType=%s, transcript=%s, locationType=%s, variantEffect=%s, mapNumber=%s]",
                 locatedVariant, genomeRefSeq, position, variantType, transcript, locationType, variantEffect, mapNumber);
     }
 
