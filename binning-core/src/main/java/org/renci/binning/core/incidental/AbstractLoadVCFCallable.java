@@ -17,7 +17,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.renci.binning.core.BinningException;
 import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
 import org.renci.binning.dao.ref.model.GenomeRef;
 import org.renci.binning.dao.ref.model.GenomeRefSeq;
@@ -64,7 +63,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     public abstract String getStudyName();
 
-    public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningDAOException;
+    public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningException;
 
     public AbstractLoadVCFCallable(BinningDAOBeanService daoBean, IncidentalBinningJob binningJob) {
         super();
@@ -458,8 +457,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                                 }
 
-                            } catch (BinningDAOException e) {
-                                e.printStackTrace();
+                            } catch (Exception e) {
+                                logger.error(e.getMessage(), e);
                             }
 
                         }
