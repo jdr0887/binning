@@ -1,5 +1,6 @@
 package org.renci.binning.dao.var.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,9 +16,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.renci.binning.dao.Persistable;
+
 @Entity
 @Table(schema = "var", name = "canonical_allele")
-public class CanonicalAllele {
+public class CanonicalAllele implements Persistable {
+
+    private static final long serialVersionUID = 3662167618944075302L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "canonical_allele_canonical_allele_id_seq")
@@ -25,12 +30,13 @@ public class CanonicalAllele {
     @Column(name = "canonical_allele_id")
     private Integer id;
 
-    @ManyToMany(targetEntity = LocatedVariant.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = LocatedVariant.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(schema = "var", name = "allele_map", joinColumns = @JoinColumn(name = "canonical_allele_id"), inverseJoinColumns = @JoinColumn(name = "loc_var_id"))
     private Set<LocatedVariant> locatedVariants;
 
     public CanonicalAllele() {
         super();
+        locatedVariants = new HashSet<>();
     }
 
     public Integer getId() {
