@@ -11,6 +11,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.jpa.BaseDAOImpl;
@@ -102,7 +103,7 @@ public class GenomeRefSeqDAOImpl extends BaseDAOImpl<GenomeRefSeq, String> imple
 
     @Override
     public List<GenomeRefSeq> findByRefIdAndContigAndSeqType(Integer refId, String contig, String seqType) throws BinningDAOException {
-        List<GenomeRefSeq> ret = new ArrayList<GenomeRefSeq>();
+        List<GenomeRefSeq> ret = new ArrayList<>();
         try {
             CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
             CriteriaQuery<GenomeRefSeq> crit = critBuilder.createQuery(getPersistentClass());
@@ -111,6 +112,34 @@ public class GenomeRefSeqDAOImpl extends BaseDAOImpl<GenomeRefSeq, String> imple
             predicates.add(critBuilder.equal(root.get(GenomeRefSeq_.contig), contig));
             predicates.add(critBuilder.equal(root.get(GenomeRefSeq_.seqType), seqType));
             predicates.add(critBuilder.equal(root.join(GenomeRefSeq_.genomeRefs).get(GenomeRef_.id), refId));
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            crit.distinct(true);
+            TypedQuery<GenomeRefSeq> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            throw new BinningDAOException(e);
+        }
+        return ret;
+    }
+
+    @Override
+    public List<GenomeRefSeq> findByRefIdAndContigAndSeqTypeAndAccessionPrefix(Integer refId, String contig, String seqType, String prefix)
+            throws BinningDAOException {
+        List<GenomeRefSeq> ret = new ArrayList<>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<GenomeRefSeq> crit = critBuilder.createQuery(getPersistentClass());
+            Root<GenomeRefSeq> root = crit.from(getPersistentClass());
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            predicates.add(critBuilder.equal(root.get(GenomeRefSeq_.contig), contig));
+            predicates.add(critBuilder.equal(root.get(GenomeRefSeq_.seqType), seqType));
+            predicates.add(critBuilder.equal(root.join(GenomeRefSeq_.genomeRefs).get(GenomeRef_.id), refId));
+            if (StringUtils.isNotEmpty(prefix)) {
+                if (!prefix.endsWith("%")) {
+                    prefix += "%";
+                }
+                predicates.add(critBuilder.like(root.get(GenomeRefSeq_.verAccession), prefix));
+            }
             crit.where(predicates.toArray(new Predicate[predicates.size()]));
             crit.distinct(true);
             TypedQuery<GenomeRefSeq> query = getEntityManager().createQuery(crit);

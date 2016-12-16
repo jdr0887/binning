@@ -18,6 +18,9 @@ public interface GenomeRefSeqDAO extends BaseDAO<GenomeRefSeq, String> {
 
     public List<GenomeRefSeq> findByRefIdAndContigAndSeqType(Integer refId, String contig, String seqType) throws BinningDAOException;
 
+    public List<GenomeRefSeq> findByRefIdAndContigAndSeqTypeAndAccessionPrefix(Integer refId, String contig, String seqType, String prefix)
+            throws BinningDAOException;
+
     public String save(GenomeRefSeq genomeRef) throws BinningDAOException;
 
 }
