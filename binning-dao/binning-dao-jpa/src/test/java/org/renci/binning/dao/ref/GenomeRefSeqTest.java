@@ -25,4 +25,12 @@ public class GenomeRefSeqTest {
         genomeRefSeqList.forEach(a -> System.out.println(a.toString()));
     }
 
+    @Test
+    public void testFindByRefIdAndContigAndSeqType() throws BinningDAOException {
+        BinningDAOManager daoMgr = BinningDAOManager.getInstance();
+        GenomeRefSeqDAO genomeRefSeqDAO = daoMgr.getDAOBean().getGenomeRefSeqDAO();
+        List<GenomeRefSeq> genomeRefSeqList = genomeRefSeqDAO.findByRefIdAndContigAndSeqTypeAndAccessionPrefix(4, "1", "Chromosome", "NC_");
+        genomeRefSeqList.forEach(a -> System.out.println(a.toString()));
+    }
+
 }
