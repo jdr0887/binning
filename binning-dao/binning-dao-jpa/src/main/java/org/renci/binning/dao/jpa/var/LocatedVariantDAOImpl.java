@@ -29,6 +29,7 @@ import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant_;
 import org.renci.binning.dao.var.model.Assembly_;
+import org.renci.binning.dao.var.model.CanonicalAllele_;
 import org.renci.binning.dao.var.model.LocatedVariant;
 import org.renci.binning.dao.var.model.LocatedVariant_;
 import org.renci.binning.dao.var.model.VariantType;
@@ -205,6 +206,27 @@ public class LocatedVariantDAOImpl extends BaseDAOImpl<LocatedVariant, Long> imp
                         locatedVariant.getGenomeRefSeq().getVerAccession()));
             }
 
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            TypedQuery<LocatedVariant> query = getEntityManager().createQuery(crit);
+            OpenJPAQuery<LocatedVariant> openjpaQuery = OpenJPAPersistence.cast(query);
+            openjpaQuery.getFetchPlan().addFetchGroup("includeManyToOnes");
+            ret.addAll(openjpaQuery.getResultList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
+    public List<LocatedVariant> findByCanonicalAlleleId(Integer canonicalAlleleId) throws BinningDAOException {
+        logger.debug("ENTERING findByCanonicalAlleleId(Integer)");
+        List<LocatedVariant> ret = new ArrayList<>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<LocatedVariant> crit = critBuilder.createQuery(getPersistentClass());
+            Root<LocatedVariant> root = crit.from(getPersistentClass());
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            predicates.add(critBuilder.equal(root.join(LocatedVariant_.canonicalAlleles).get(CanonicalAllele_.id), canonicalAlleleId));
             crit.where(predicates.toArray(new Predicate[predicates.size()]));
             TypedQuery<LocatedVariant> query = getEntityManager().createQuery(crit);
             OpenJPAQuery<LocatedVariant> openjpaQuery = OpenJPAPersistence.cast(query);
