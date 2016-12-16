@@ -151,8 +151,8 @@
     <class>org.renci.binning.dao.refseq.model.Variants_48_2PK</class>
     <class>org.renci.binning.dao.refseq.model.Variants_61_2</class>
     <class>org.renci.binning.dao.refseq.model.Variants_61_2PK</class>
-    <!-- <class>org.renci.binning.dao.refseq.model.Variants_78_4</class> -->
-    <!-- <class>org.renci.binning.dao.refseq.model.Variants_78_4PK</class> -->
+    <class>org.renci.binning.dao.refseq.model.Variants_78_4</class>
+    <class>org.renci.binning.dao.refseq.model.Variants_78_4PK</class>
     <class>org.renci.binning.dao.var.model.Assembly</class>
     <class>org.renci.binning.dao.var.model.AssemblyLocation</class>
     <class>org.renci.binning.dao.var.model.AssemblyLocationPK</class>
@@ -160,7 +160,7 @@
     <class>org.renci.binning.dao.var.model.AssemblyLocatedVariantPK</class>
     <class>org.renci.binning.dao.var.model.AssemblyLocatedVariantQC</class>
     <class>org.renci.binning.dao.var.model.AssemblyLocatedVariantQCPK</class>
-    <!-- <class>org.renci.binning.dao.var.model.CanonicalAllele</class> -->
+    <class>org.renci.binning.dao.var.model.CanonicalAllele</class>
     <class>org.renci.binning.dao.var.model.Lab</class>
     <class>org.renci.binning.dao.var.model.Library</class>
     <class>org.renci.binning.dao.var.model.LocatedVariant</class>
