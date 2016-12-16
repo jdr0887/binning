@@ -17,7 +17,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.renci.binning.core.BinningException;
 import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.ref.model.GenomeRef;
 import org.renci.binning.dao.ref.model.GenomeRefSeq;
@@ -27,6 +26,7 @@ import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariantPK;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariantQC;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariantQCPK;
+import org.renci.binning.dao.var.model.CanonicalAllele;
 import org.renci.binning.dao.var.model.Lab;
 import org.renci.binning.dao.var.model.Library;
 import org.renci.binning.dao.var.model.LocatedVariant;
@@ -64,7 +64,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     public abstract String getStudyName();
 
-    public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningDAOException;
+    public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningException;
 
     public AbstractLoadVCFCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super();
@@ -397,11 +397,48 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
                                     foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
                                     if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                        locatedVariant = foundLocatedVariants.get(0);
+                                        liftOverLocatedVariant = foundLocatedVariants.get(0);
                                     } else {
-                                        locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                        liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
                                     }
-                                    logger.info(locatedVariant.toString());
+                                    logger.info(liftOverLocatedVariant.toString());
+
+                                    CanonicalAllele canonicalAllele = null;
+                                    // first try to find CanonicalAllele by LocatedVariant
+                                    List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                                            .findByLocatedVariantId(locatedVariant.getId());
+                                    if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                                        canonicalAllele = foundCanonicalAlleles.get(0);
+                                    }
+
+                                    // if not found, try to find CanonicalAllele by liftover LocatedVariant
+                                    if (canonicalAllele == null) {
+                                        List<CanonicalAllele> foundCanonicalAllelesByLiftOverLocatedVariant = daoBean
+                                                .getCanonicalAlleleDAO().findByLocatedVariantId(liftOverLocatedVariant.getId());
+                                        if (CollectionUtils.isNotEmpty(foundCanonicalAllelesByLiftOverLocatedVariant)) {
+                                            canonicalAllele = foundCanonicalAlleles.get(0);
+                                        }
+                                    }
+
+                                    // if still null, it doesn't exist...so create it
+                                    if (canonicalAllele == null) {
+                                        canonicalAllele = new CanonicalAllele();
+                                        daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                                        canonicalAllele.getLocatedVariants().add(locatedVariant);
+                                        canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                                        daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                                    } else {
+
+                                        if (!canonicalAllele.getLocatedVariants().contains(locatedVariant)) {
+                                            canonicalAllele.getLocatedVariants().add(locatedVariant);
+                                        }
+
+                                        if (!canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
+                                            canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                                        }
+                                        daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+
+                                    }
 
                                     Integer dp = genotype.getDP();
                                     int[] ad = genotype.getAD();
@@ -458,7 +495,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                                 }
 
-                            } catch (BinningDAOException e) {
+                            } catch (Exception e) {
+                                logger.error(e.getMessage(), e);
                                 e.printStackTrace();
                             }
 
@@ -472,7 +510,13 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 VariantSetLoad variantSetLoad = new VariantSetLoad();
                 variantSetLoad.setLoadFilename(vcfFile.getAbsolutePath());
                 variantSetLoad.setLoadProgramName(getClass().getName());
-                variantSetLoad.setLoadProgramVersion(ResourceBundle.getBundle("org/renci/canvas/binning/canvas").getString("version"));
+
+                // BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+                // Bundle bundle = bundleContext.getBundle();
+                // String version = bundle.getVersion().toString();
+                String version = ResourceBundle.getBundle("org/renci/binning/binning").getString("version");
+
+                variantSetLoad.setLoadProgramVersion(version);
                 variantSetLoad.setVariantSet(assembly.getVariantSet());
 
                 List<VariantSetLoad> foundVariantSetLoads = daoBean.getVariantSetLoadDAO().findByExample(variantSetLoad);
