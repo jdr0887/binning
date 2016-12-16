@@ -98,10 +98,12 @@
   <bean id="variantEffectDAOImpl" class="org.renci.binning.dao.jpa.refseq.VariantEffectDAOImpl" ext:field-injection="true"></bean>
   <bean id="variants_48_2_DAOImpl" class="org.renci.binning.dao.jpa.refseq.Variants_48_2_DAOImpl" ext:field-injection="true"></bean>
   <bean id="variants_61_2_DAOImpl" class="org.renci.binning.dao.jpa.refseq.Variants_61_2_DAOImpl" ext:field-injection="true"></bean>
+  <bean id="variants_78_4_DAOImpl" class="org.renci.binning.dao.jpa.refseq.Variants_78_4_DAOImpl" ext:field-injection="true"></bean>
   <bean id="assemblyDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyDAOImpl" ext:field-injection="true"></bean>
   <bean id="assemblyLocatedVariantDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyLocatedVariantDAOImpl" ext:field-injection="true"></bean>
   <bean id="assemblyLocatedVariantQCDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyLocatedVariantQCDAOImpl" ext:field-injection="true"></bean>
   <bean id="assemblyLocationDAOImpl" class="org.renci.binning.dao.jpa.var.AssemblyLocationDAOImpl" ext:field-injection="true"></bean>
+  <bean id="canonicalAlleleDAOImpl" class="org.renci.binning.dao.jpa.var.CanonicalAlleleDAOImpl" ext:field-injection="true"></bean>
   <bean id="labDAOImpl" class="org.renci.binning.dao.jpa.var.LabDAOImpl" ext:field-injection="true"></bean>
   <bean id="libraryDAOImpl" class="org.renci.binning.dao.jpa.var.LibraryDAOImpl" ext:field-injection="true"></bean>
   <bean id="locatedVariantDAOImpl" class="org.renci.binning.dao.jpa.var.LocatedVariantDAOImpl" ext:field-injection="true"></bean>
@@ -173,10 +175,12 @@
     <property name="variantEffectDAO" ref="variantEffectDAOImpl" />
     <property name="variants_48_2_DAO" ref="variants_48_2_DAOImpl" />
     <property name="variants_61_2_DAO" ref="variants_61_2_DAOImpl" />
+    <property name="variants_78_4_DAO" ref="variants_78_4_DAOImpl" />
     <property name="assemblyDAO" ref="assemblyDAOImpl" />
     <property name="assemblyLocatedVariantDAO" ref="assemblyLocatedVariantDAOImpl" />
     <property name="assemblyLocatedVariantQCDAO" ref="assemblyLocatedVariantQCDAOImpl" />
     <property name="assemblyLocationDAO" ref="assemblyLocationDAOImpl" />
+    <property name="canonicalAlleleDAO" ref="canonicalAlleleDAOImpl" />
     <property name="labDAO" ref="labDAOImpl" />
     <property name="libraryDAO" ref="libraryDAOImpl" />
     <property name="locatedVariantDAO" ref="locatedVariantDAOImpl" />
@@ -248,10 +252,12 @@
   <service ref="variantEffectDAOImpl" interface="org.renci.binning.dao.refseq.VariantEffectDAO" />
   <service ref="variants_48_2_DAOImpl" interface="org.renci.binning.dao.refseq.Variants_48_2_DAO" />
   <service ref="variants_61_2_DAOImpl" interface="org.renci.binning.dao.refseq.Variants_61_2_DAO" />
+  <service ref="variants_78_4_DAOImpl" interface="org.renci.binning.dao.refseq.Variants_78_4_DAO" />
   <service ref="assemblyDAOImpl" interface="org.renci.binning.dao.var.AssemblyDAO" />
   <service ref="assemblyLocatedVariantDAOImpl" interface="org.renci.binning.dao.var.AssemblyLocatedVariantDAO" />
   <service ref="assemblyLocatedVariantQCDAOImpl" interface="org.renci.binning.dao.var.AssemblyLocatedVariantQCDAO" />
   <service ref="assemblyLocationDAOImpl" interface="org.renci.binning.dao.var.AssemblyLocationDAO" />
+  <service ref="canonicalAlleleDAOImpl" interface="org.renci.binning.dao.var.CanonicalAlleleDAO" />
   <service ref="labDAOImpl" interface="org.renci.binning.dao.var.LabDAO" />
   <service ref="libraryDAOImpl" interface="org.renci.binning.dao.var.LibraryDAO" />
   <service ref="locatedVariantDAOImpl" interface="org.renci.binning.dao.var.LocatedVariantDAO" />
