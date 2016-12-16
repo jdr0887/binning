@@ -66,6 +66,7 @@ import org.renci.binning.dao.var.AssemblyDAO;
 import org.renci.binning.dao.var.AssemblyLocatedVariantDAO;
 import org.renci.binning.dao.var.AssemblyLocatedVariantQCDAO;
 import org.renci.binning.dao.var.AssemblyLocationDAO;
+import org.renci.binning.dao.var.CanonicalAlleleDAO;
 import org.renci.binning.dao.var.LabDAO;
 import org.renci.binning.dao.var.LibraryDAO;
 import org.renci.binning.dao.var.LocatedVariantDAO;
@@ -269,6 +270,9 @@ public class BinningDAOBeanServiceImpl implements BinningDAOBeanService {
 
     @Autowired
     private AssemblyLocatedVariantQCDAO assemblyLocatedVariantQCDAO;
+
+    @Autowired
+    private CanonicalAlleleDAO canonicalAlleleDAO;
 
     @Autowired
     private LabDAO labDAO;
@@ -511,8 +515,8 @@ public class BinningDAOBeanServiceImpl implements BinningDAOBeanService {
         return HGMDLocatedVariantDAO;
     }
 
-    public void setHGMDLocatedVariantDAO(HGMDLocatedVariantDAO HGMDLocatedVariantDAO) {
-        this.HGMDLocatedVariantDAO = HGMDLocatedVariantDAO;
+    public void setHGMDLocatedVariantDAO(HGMDLocatedVariantDAO hGMDLocatedVariantDAO) {
+        HGMDLocatedVariantDAO = hGMDLocatedVariantDAO;
     }
 
     public IncidentalBinningJobDAO getIncidentalBinningJobDAO() {
@@ -811,6 +815,14 @@ public class BinningDAOBeanServiceImpl implements BinningDAOBeanService {
 
     public void setAssemblyLocatedVariantQCDAO(AssemblyLocatedVariantQCDAO assemblyLocatedVariantQCDAO) {
         this.assemblyLocatedVariantQCDAO = assemblyLocatedVariantQCDAO;
+    }
+
+    public CanonicalAlleleDAO getCanonicalAlleleDAO() {
+        return canonicalAlleleDAO;
+    }
+
+    public void setCanonicalAlleleDAO(CanonicalAlleleDAO canonicalAlleleDAO) {
+        this.canonicalAlleleDAO = canonicalAlleleDAO;
     }
 
     public LabDAO getLabDAO() {

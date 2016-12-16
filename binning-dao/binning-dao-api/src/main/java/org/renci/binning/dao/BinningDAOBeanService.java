@@ -65,6 +65,7 @@ import org.renci.binning.dao.var.AssemblyDAO;
 import org.renci.binning.dao.var.AssemblyLocatedVariantDAO;
 import org.renci.binning.dao.var.AssemblyLocatedVariantQCDAO;
 import org.renci.binning.dao.var.AssemblyLocationDAO;
+import org.renci.binning.dao.var.CanonicalAlleleDAO;
 import org.renci.binning.dao.var.LabDAO;
 import org.renci.binning.dao.var.LibraryDAO;
 import org.renci.binning.dao.var.LocatedVariantDAO;
@@ -338,6 +339,10 @@ public interface BinningDAOBeanService {
     public AssemblyLocationDAO getAssemblyLocationDAO();
 
     public void setAssemblyLocationDAO(AssemblyLocationDAO assemblyLocationDAO);
+
+    public CanonicalAlleleDAO getCanonicalAlleleDAO();
+
+    public void setCanonicalAlleleDAO(CanonicalAlleleDAO canonicalAlleleDAO);
 
     public LabDAO getLabDAO();
 
