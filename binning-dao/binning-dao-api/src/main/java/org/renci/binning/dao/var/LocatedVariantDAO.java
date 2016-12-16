@@ -16,6 +16,8 @@ public interface LocatedVariantDAO extends BaseDAO<LocatedVariant, Long> {
 
     public List<LocatedVariant> findByAssemblyId(Integer assemblyId) throws BinningDAOException;
 
+    public List<LocatedVariant> findByCanonicalAlleleId(Integer canonicalAlleleId) throws BinningDAOException;
+
     public Long save(LocatedVariant locatedVariant) throws BinningDAOException;
 
     public void delete(LocatedVariant entity) throws BinningDAOException;
