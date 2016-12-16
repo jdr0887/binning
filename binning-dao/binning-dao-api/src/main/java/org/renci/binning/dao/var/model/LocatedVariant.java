@@ -1,6 +1,7 @@
 package org.renci.binning.dao.var.model;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -88,6 +90,9 @@ public class LocatedVariant implements Persistable {
 
     @OneToMany(mappedBy = "locatedVariant", fetch = FetchType.LAZY)
     private List<HGMDLocatedVariant> hgmdLocatedVariants;
+
+    @ManyToMany(mappedBy = "locatedVariants")
+    private Set<CanonicalAllele> canonicalAlleles;
 
     public LocatedVariant() {
         super();
@@ -215,6 +220,14 @@ public class LocatedVariant implements Persistable {
 
     public void setHgmdLocatedVariants(List<HGMDLocatedVariant> hgmdLocatedVariants) {
         this.hgmdLocatedVariants = hgmdLocatedVariants;
+    }
+
+    public Set<CanonicalAllele> getCanonicalAlleles() {
+        return canonicalAlleles;
+    }
+
+    public void setCanonicalAlleles(Set<CanonicalAllele> canonicalAlleles) {
+        this.canonicalAlleles = canonicalAlleles;
     }
 
     @Override
