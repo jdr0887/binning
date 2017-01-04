@@ -62,7 +62,7 @@ public class LoadVCFCallable extends AbstractLoadVCFCallable {
         logger.debug("ENTERING liftOver(LocatedVariant)");
         LocatedVariant ret;
         try {
-            File chainFile = new File(binningDirectory, "hg19ToHg38.over.chain.gz");
+            File chainFile = new File(String.format("%s/liftOver", System.getProperty("karaf.data")), "hg19ToHg38.over.chain.gz");
             GenomeRef build38GenomeRef = getDaoBean().getGenomeRefDAO().findById(4);
             LiftOver liftOver = new LiftOver(chainFile);
             Interval interval = new Interval(String.format("chr%s", locatedVariant.getGenomeRefSeq().getContig()),
