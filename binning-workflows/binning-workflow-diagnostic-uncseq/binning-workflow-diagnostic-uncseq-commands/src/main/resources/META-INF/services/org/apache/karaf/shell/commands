@@ -1,4 +1,5 @@
 org.renci.binning.diagnostic.uncseq.commands.AnnotateVariantsAction
+org.renci.binning.diagnostic.uncseq.commands.CreateBinningJobAction
 org.renci.binning.diagnostic.uncseq.commands.GenerateReportAction
 org.renci.binning.diagnostic.uncseq.commands.LoadVCFAction
 org.renci.binning.diagnostic.uncseq.commands.UpdateDiagnosticBinsAction

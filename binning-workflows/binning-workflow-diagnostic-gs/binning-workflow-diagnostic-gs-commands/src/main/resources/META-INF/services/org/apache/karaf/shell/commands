@@ -1,4 +1,5 @@
 org.renci.binning.diagnostic.gs.commands.AnnotateVariantsAction
+org.renci.binning.diagnostic.gs.commands.CreateBinningJobAction
 org.renci.binning.diagnostic.gs.commands.GenerateReportAction
 org.renci.binning.diagnostic.gs.commands.ListJobsAction
 org.renci.binning.diagnostic.gs.commands.LoadCoverageAction

@@ -1,4 +1,5 @@
 org.renci.binning.diagnostic.mskcc.commands.AnnotateVariantsAction
+org.renci.binning.diagnostic.mskcc.commands.CreateBinningJobAction
 org.renci.binning.diagnostic.mskcc.commands.GenerateReportAction
 org.renci.binning.diagnostic.mskcc.commands.LoadVCFAction
 org.renci.binning.diagnostic.mskcc.commands.UpdateDiagnosticBinsAction
