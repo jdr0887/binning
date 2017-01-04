@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning.binning-workflows</groupId>
     <artifactId>binning-workflow-diagnostic-gs</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
   </parent>
   <name>Binning :: Workflow :: Diagnostic Gene Screen :: Commands</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs</groupId>
   <artifactId>binning-workflow-diagnostic-gs-commands</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
