@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
   </parent>
   <name>Binning :: Workflows</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning</groupId>
   <artifactId>binning-workflows</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.2</version>
   <packaging>pom</packaging>
   <modules>
     <module>binning-workflow-diagnostic-gs</module>
