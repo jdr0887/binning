@@ -70,23 +70,41 @@ public class Report implements Persistable {
     @Column(name = "n_analyzed_var")
     private Integer numberOfAnalyzedVariants;
 
-    @Column(name = "n_analyzed_class_1")
-    private Integer numberOfKnownPathenogenic;
+    @Column(name = "n_analyzed_hgmd_class_1")
+    private Integer numberOfHGMDKnownPathenogenic;
 
-    @Column(name = "n_analyzed_class_2")
-    private Integer numberOfLikelyPathenogenic;
+    @Column(name = "n_analyzed_hgmd_class_2")
+    private Integer numberOfHGMDLikelyPathenogenic;
 
-    @Column(name = "n_analyzed_class_3")
-    private Integer numberOfPossiblyPathenogenic;
+    @Column(name = "n_analyzed_hgmd_class_3")
+    private Integer numberOfHGMDPossiblyPathenogenic;
 
-    @Column(name = "n_analyzed_class_4")
-    private Integer numberOfVariantsOfUncertainSignificance;
+    @Column(name = "n_analyzed_hgmd_class_4")
+    private Integer numberOfHGMDVariantsOfUncertainSignificance;
 
-    @Column(name = "n_analyzed_class_5")
-    private Integer numberOfLikelyBenign;
+    @Column(name = "n_analyzed_hgmd_class_5")
+    private Integer numberOfHGMDLikelyBenign;
 
-    @Column(name = "n_analyzed_class_6")
-    private Integer numberOfAlmostCertainlyBenign;
+    @Column(name = "n_analyzed_hgmd_class_6")
+    private Integer numberOfHGMDAlmostCertainlyBenign;
+
+    @Column(name = "n_analyzed_clinvar_class_1")
+    private Integer numberOfClinVarKnownPathenogenic;
+
+    @Column(name = "n_analyzed_clinvar_class_2")
+    private Integer numberOfClinVarLikelyPathenogenic;
+
+    @Column(name = "n_analyzed_clinvar_class_3")
+    private Integer numberOfClinVarPossiblyPathenogenic;
+
+    @Column(name = "n_analyzed_clinvar_class_4")
+    private Integer numberOfClinVarVariantsOfUncertainSignificance;
+
+    @Column(name = "n_analyzed_clinvar_class_5")
+    private Integer numberOfClinVarLikelyBenign;
+
+    @Column(name = "n_analyzed_clinvar_class_6")
+    private Integer numberOfClinVarAlmostCertainlyBenign;
 
     public Report() {
         super();
@@ -249,65 +267,115 @@ public class Report implements Persistable {
         this.numberOfAnalyzedVariants = numberOfAnalyzedVariants;
     }
 
-    public Integer getNumberOfKnownPathenogenic() {
-        return numberOfKnownPathenogenic;
+    public Integer getNumberOfHGMDKnownPathenogenic() {
+        return numberOfHGMDKnownPathenogenic;
     }
 
-    public void setNumberOfKnownPathenogenic(Integer numberOfKnownPathenogenic) {
-        this.numberOfKnownPathenogenic = numberOfKnownPathenogenic;
+    public void setNumberOfHGMDKnownPathenogenic(Integer numberOfHGMDKnownPathenogenic) {
+        this.numberOfHGMDKnownPathenogenic = numberOfHGMDKnownPathenogenic;
     }
 
-    public Integer getNumberOfLikelyPathenogenic() {
-        return numberOfLikelyPathenogenic;
+    public Integer getNumberOfHGMDLikelyPathenogenic() {
+        return numberOfHGMDLikelyPathenogenic;
     }
 
-    public void setNumberOfLikelyPathenogenic(Integer numberOfLikelyPathenogenic) {
-        this.numberOfLikelyPathenogenic = numberOfLikelyPathenogenic;
+    public void setNumberOfHGMDLikelyPathenogenic(Integer numberOfHGMDLikelyPathenogenic) {
+        this.numberOfHGMDLikelyPathenogenic = numberOfHGMDLikelyPathenogenic;
     }
 
-    public Integer getNumberOfPossiblyPathenogenic() {
-        return numberOfPossiblyPathenogenic;
+    public Integer getNumberOfHGMDPossiblyPathenogenic() {
+        return numberOfHGMDPossiblyPathenogenic;
     }
 
-    public void setNumberOfPossiblyPathenogenic(Integer numberOfPossiblyPathenogenic) {
-        this.numberOfPossiblyPathenogenic = numberOfPossiblyPathenogenic;
+    public void setNumberOfHGMDPossiblyPathenogenic(Integer numberOfHGMDPossiblyPathenogenic) {
+        this.numberOfHGMDPossiblyPathenogenic = numberOfHGMDPossiblyPathenogenic;
     }
 
-    public Integer getNumberOfVariantsOfUncertainSignificance() {
-        return numberOfVariantsOfUncertainSignificance;
+    public Integer getNumberOfHGMDVariantsOfUncertainSignificance() {
+        return numberOfHGMDVariantsOfUncertainSignificance;
     }
 
-    public void setNumberOfVariantsOfUncertainSignificance(Integer numberOfVariantsOfUncertainSignificance) {
-        this.numberOfVariantsOfUncertainSignificance = numberOfVariantsOfUncertainSignificance;
+    public void setNumberOfHGMDVariantsOfUncertainSignificance(Integer numberOfHGMDVariantsOfUncertainSignificance) {
+        this.numberOfHGMDVariantsOfUncertainSignificance = numberOfHGMDVariantsOfUncertainSignificance;
     }
 
-    public Integer getNumberOfLikelyBenign() {
-        return numberOfLikelyBenign;
+    public Integer getNumberOfHGMDLikelyBenign() {
+        return numberOfHGMDLikelyBenign;
     }
 
-    public void setNumberOfLikelyBenign(Integer numberOfLikelyBenign) {
-        this.numberOfLikelyBenign = numberOfLikelyBenign;
+    public void setNumberOfHGMDLikelyBenign(Integer numberOfHGMDLikelyBenign) {
+        this.numberOfHGMDLikelyBenign = numberOfHGMDLikelyBenign;
     }
 
-    public Integer getNumberOfAlmostCertainlyBenign() {
-        return numberOfAlmostCertainlyBenign;
+    public Integer getNumberOfHGMDAlmostCertainlyBenign() {
+        return numberOfHGMDAlmostCertainlyBenign;
     }
 
-    public void setNumberOfAlmostCertainlyBenign(Integer numberOfAlmostCertainlyBenign) {
-        this.numberOfAlmostCertainlyBenign = numberOfAlmostCertainlyBenign;
+    public void setNumberOfHGMDAlmostCertainlyBenign(Integer numberOfHGMDAlmostCertainlyBenign) {
+        this.numberOfHGMDAlmostCertainlyBenign = numberOfHGMDAlmostCertainlyBenign;
+    }
+
+    public Integer getNumberOfClinVarKnownPathenogenic() {
+        return numberOfClinVarKnownPathenogenic;
+    }
+
+    public void setNumberOfClinVarKnownPathenogenic(Integer numberOfClinVarKnownPathenogenic) {
+        this.numberOfClinVarKnownPathenogenic = numberOfClinVarKnownPathenogenic;
+    }
+
+    public Integer getNumberOfClinVarLikelyPathenogenic() {
+        return numberOfClinVarLikelyPathenogenic;
+    }
+
+    public void setNumberOfClinVarLikelyPathenogenic(Integer numberOfClinVarLikelyPathenogenic) {
+        this.numberOfClinVarLikelyPathenogenic = numberOfClinVarLikelyPathenogenic;
+    }
+
+    public Integer getNumberOfClinVarPossiblyPathenogenic() {
+        return numberOfClinVarPossiblyPathenogenic;
+    }
+
+    public void setNumberOfClinVarPossiblyPathenogenic(Integer numberOfClinVarPossiblyPathenogenic) {
+        this.numberOfClinVarPossiblyPathenogenic = numberOfClinVarPossiblyPathenogenic;
+    }
+
+    public Integer getNumberOfClinVarVariantsOfUncertainSignificance() {
+        return numberOfClinVarVariantsOfUncertainSignificance;
+    }
+
+    public void setNumberOfClinVarVariantsOfUncertainSignificance(Integer numberOfClinVarVariantsOfUncertainSignificance) {
+        this.numberOfClinVarVariantsOfUncertainSignificance = numberOfClinVarVariantsOfUncertainSignificance;
+    }
+
+    public Integer getNumberOfClinVarLikelyBenign() {
+        return numberOfClinVarLikelyBenign;
+    }
+
+    public void setNumberOfClinVarLikelyBenign(Integer numberOfClinVarLikelyBenign) {
+        this.numberOfClinVarLikelyBenign = numberOfClinVarLikelyBenign;
+    }
+
+    public Integer getNumberOfClinVarAlmostCertainlyBenign() {
+        return numberOfClinVarAlmostCertainlyBenign;
+    }
+
+    public void setNumberOfClinVarAlmostCertainlyBenign(Integer numberOfClinVarAlmostCertainlyBenign) {
+        this.numberOfClinVarAlmostCertainlyBenign = numberOfClinVarAlmostCertainlyBenign;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "Report [key=%s, totalVariants=%s, numberOfCodingLocatedVariants=%s, numberOfNonCodingLocatedVariants=%s, numberOfTransriptDepLocatedVariants=%s, numberOfSubstitutionTypes=%s, numberOfIndelTypes=%s, numberOfIntergenicVariantEffects=%s, numberOfIntronicVariantEffects=%s, numberOfUntranslatedVariantEffects=%s, numberOfSynonymousVariantEffects=%s, numberOfMissenseVariantEffects=%s, numberOfNonShiftIndelVariantEffects=%s, numberOfShiftIndelVariantEffects=%s, numberOfNonsenseVariantEffects=%s, numberOfStoplossVariantEffects=%s, numberOfSpliceVariantEffects=%s, numberOfOtherVariantEffects=%s, numberOfAnalyzedVariants=%s, numberOfKnownPathenogenic=%s, numberOfLikelyPathenogenic=%s, numberOfPossiblyPathenogenic=%s, numberOfVariantsOfUncertainSignificance=%s, numberOfLikelyBenign=%s, numberOfAlmostCertainlyBenign=%s]",
+                "Report [key=%s, totalVariants=%s, numberOfCodingLocatedVariants=%s, numberOfNonCodingLocatedVariants=%s, numberOfTransriptDepLocatedVariants=%s, numberOfSubstitutionTypes=%s, numberOfIndelTypes=%s, numberOfIntergenicVariantEffects=%s, numberOfIntronicVariantEffects=%s, numberOfUntranslatedVariantEffects=%s, numberOfSynonymousVariantEffects=%s, numberOfMissenseVariantEffects=%s, numberOfNonShiftIndelVariantEffects=%s, numberOfShiftIndelVariantEffects=%s, numberOfNonsenseVariantEffects=%s, numberOfStoplossVariantEffects=%s, numberOfSpliceVariantEffects=%s, numberOfOtherVariantEffects=%s, numberOfAnalyzedVariants=%s, numberOfHGMDKnownPathenogenic=%s, numberOfHGMDLikelyPathenogenic=%s, numberOfHGMDPossiblyPathenogenic=%s, numberOfHGMDVariantsOfUncertainSignificance=%s, numberOfHGMDLikelyBenign=%s, numberOfHGMDAlmostCertainlyBenign=%s, numberOfClinVarKnownPathenogenic=%s, numberOfClinVarLikelyPathenogenic=%s, numberOfClinVarPossiblyPathenogenic=%s, numberOfClinVarVariantsOfUncertainSignificance=%s, numberOfClinVarLikelyBenign=%s, numberOfClinVarAlmostCertainlyBenign=%s]",
                 key, totalVariants, numberOfCodingLocatedVariants, numberOfNonCodingLocatedVariants, numberOfTransriptDepLocatedVariants,
                 numberOfSubstitutionTypes, numberOfIndelTypes, numberOfIntergenicVariantEffects, numberOfIntronicVariantEffects,
                 numberOfUntranslatedVariantEffects, numberOfSynonymousVariantEffects, numberOfMissenseVariantEffects,
                 numberOfNonShiftIndelVariantEffects, numberOfShiftIndelVariantEffects, numberOfNonsenseVariantEffects,
                 numberOfStoplossVariantEffects, numberOfSpliceVariantEffects, numberOfOtherVariantEffects, numberOfAnalyzedVariants,
-                numberOfKnownPathenogenic, numberOfLikelyPathenogenic, numberOfPossiblyPathenogenic,
-                numberOfVariantsOfUncertainSignificance, numberOfLikelyBenign, numberOfAlmostCertainlyBenign);
+                numberOfHGMDKnownPathenogenic, numberOfHGMDLikelyPathenogenic, numberOfHGMDPossiblyPathenogenic,
+                numberOfHGMDVariantsOfUncertainSignificance, numberOfHGMDLikelyBenign, numberOfHGMDAlmostCertainlyBenign,
+                numberOfClinVarKnownPathenogenic, numberOfClinVarLikelyPathenogenic, numberOfClinVarPossiblyPathenogenic,
+                numberOfClinVarVariantsOfUncertainSignificance, numberOfClinVarLikelyBenign, numberOfClinVarAlmostCertainlyBenign);
     }
 
     @Override
@@ -315,21 +383,30 @@ public class Report implements Persistable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result + ((numberOfAlmostCertainlyBenign == null) ? 0 : numberOfAlmostCertainlyBenign.hashCode());
         result = prime * result + ((numberOfAnalyzedVariants == null) ? 0 : numberOfAnalyzedVariants.hashCode());
+        result = prime * result + ((numberOfClinVarAlmostCertainlyBenign == null) ? 0 : numberOfClinVarAlmostCertainlyBenign.hashCode());
+        result = prime * result + ((numberOfClinVarKnownPathenogenic == null) ? 0 : numberOfClinVarKnownPathenogenic.hashCode());
+        result = prime * result + ((numberOfClinVarLikelyBenign == null) ? 0 : numberOfClinVarLikelyBenign.hashCode());
+        result = prime * result + ((numberOfClinVarLikelyPathenogenic == null) ? 0 : numberOfClinVarLikelyPathenogenic.hashCode());
+        result = prime * result + ((numberOfClinVarPossiblyPathenogenic == null) ? 0 : numberOfClinVarPossiblyPathenogenic.hashCode());
+        result = prime * result + ((numberOfClinVarVariantsOfUncertainSignificance == null) ? 0
+                : numberOfClinVarVariantsOfUncertainSignificance.hashCode());
         result = prime * result + ((numberOfCodingLocatedVariants == null) ? 0 : numberOfCodingLocatedVariants.hashCode());
+        result = prime * result + ((numberOfHGMDAlmostCertainlyBenign == null) ? 0 : numberOfHGMDAlmostCertainlyBenign.hashCode());
+        result = prime * result + ((numberOfHGMDKnownPathenogenic == null) ? 0 : numberOfHGMDKnownPathenogenic.hashCode());
+        result = prime * result + ((numberOfHGMDLikelyBenign == null) ? 0 : numberOfHGMDLikelyBenign.hashCode());
+        result = prime * result + ((numberOfHGMDLikelyPathenogenic == null) ? 0 : numberOfHGMDLikelyPathenogenic.hashCode());
+        result = prime * result + ((numberOfHGMDPossiblyPathenogenic == null) ? 0 : numberOfHGMDPossiblyPathenogenic.hashCode());
+        result = prime * result
+                + ((numberOfHGMDVariantsOfUncertainSignificance == null) ? 0 : numberOfHGMDVariantsOfUncertainSignificance.hashCode());
         result = prime * result + ((numberOfIndelTypes == null) ? 0 : numberOfIndelTypes.hashCode());
         result = prime * result + ((numberOfIntergenicVariantEffects == null) ? 0 : numberOfIntergenicVariantEffects.hashCode());
         result = prime * result + ((numberOfIntronicVariantEffects == null) ? 0 : numberOfIntronicVariantEffects.hashCode());
-        result = prime * result + ((numberOfKnownPathenogenic == null) ? 0 : numberOfKnownPathenogenic.hashCode());
-        result = prime * result + ((numberOfLikelyBenign == null) ? 0 : numberOfLikelyBenign.hashCode());
-        result = prime * result + ((numberOfLikelyPathenogenic == null) ? 0 : numberOfLikelyPathenogenic.hashCode());
         result = prime * result + ((numberOfMissenseVariantEffects == null) ? 0 : numberOfMissenseVariantEffects.hashCode());
         result = prime * result + ((numberOfNonCodingLocatedVariants == null) ? 0 : numberOfNonCodingLocatedVariants.hashCode());
         result = prime * result + ((numberOfNonShiftIndelVariantEffects == null) ? 0 : numberOfNonShiftIndelVariantEffects.hashCode());
         result = prime * result + ((numberOfNonsenseVariantEffects == null) ? 0 : numberOfNonsenseVariantEffects.hashCode());
         result = prime * result + ((numberOfOtherVariantEffects == null) ? 0 : numberOfOtherVariantEffects.hashCode());
-        result = prime * result + ((numberOfPossiblyPathenogenic == null) ? 0 : numberOfPossiblyPathenogenic.hashCode());
         result = prime * result + ((numberOfShiftIndelVariantEffects == null) ? 0 : numberOfShiftIndelVariantEffects.hashCode());
         result = prime * result + ((numberOfSpliceVariantEffects == null) ? 0 : numberOfSpliceVariantEffects.hashCode());
         result = prime * result + ((numberOfStoplossVariantEffects == null) ? 0 : numberOfStoplossVariantEffects.hashCode());
@@ -337,8 +414,6 @@ public class Report implements Persistable {
         result = prime * result + ((numberOfSynonymousVariantEffects == null) ? 0 : numberOfSynonymousVariantEffects.hashCode());
         result = prime * result + ((numberOfTransriptDepLocatedVariants == null) ? 0 : numberOfTransriptDepLocatedVariants.hashCode());
         result = prime * result + ((numberOfUntranslatedVariantEffects == null) ? 0 : numberOfUntranslatedVariantEffects.hashCode());
-        result = prime * result
-                + ((numberOfVariantsOfUncertainSignificance == null) ? 0 : numberOfVariantsOfUncertainSignificance.hashCode());
         result = prime * result + ((totalVariants == null) ? 0 : totalVariants.hashCode());
         return result;
     }
@@ -357,20 +432,75 @@ public class Report implements Persistable {
                 return false;
         } else if (!key.equals(other.key))
             return false;
-        if (numberOfAlmostCertainlyBenign == null) {
-            if (other.numberOfAlmostCertainlyBenign != null)
-                return false;
-        } else if (!numberOfAlmostCertainlyBenign.equals(other.numberOfAlmostCertainlyBenign))
-            return false;
         if (numberOfAnalyzedVariants == null) {
             if (other.numberOfAnalyzedVariants != null)
                 return false;
         } else if (!numberOfAnalyzedVariants.equals(other.numberOfAnalyzedVariants))
             return false;
+        if (numberOfClinVarAlmostCertainlyBenign == null) {
+            if (other.numberOfClinVarAlmostCertainlyBenign != null)
+                return false;
+        } else if (!numberOfClinVarAlmostCertainlyBenign.equals(other.numberOfClinVarAlmostCertainlyBenign))
+            return false;
+        if (numberOfClinVarKnownPathenogenic == null) {
+            if (other.numberOfClinVarKnownPathenogenic != null)
+                return false;
+        } else if (!numberOfClinVarKnownPathenogenic.equals(other.numberOfClinVarKnownPathenogenic))
+            return false;
+        if (numberOfClinVarLikelyBenign == null) {
+            if (other.numberOfClinVarLikelyBenign != null)
+                return false;
+        } else if (!numberOfClinVarLikelyBenign.equals(other.numberOfClinVarLikelyBenign))
+            return false;
+        if (numberOfClinVarLikelyPathenogenic == null) {
+            if (other.numberOfClinVarLikelyPathenogenic != null)
+                return false;
+        } else if (!numberOfClinVarLikelyPathenogenic.equals(other.numberOfClinVarLikelyPathenogenic))
+            return false;
+        if (numberOfClinVarPossiblyPathenogenic == null) {
+            if (other.numberOfClinVarPossiblyPathenogenic != null)
+                return false;
+        } else if (!numberOfClinVarPossiblyPathenogenic.equals(other.numberOfClinVarPossiblyPathenogenic))
+            return false;
+        if (numberOfClinVarVariantsOfUncertainSignificance == null) {
+            if (other.numberOfClinVarVariantsOfUncertainSignificance != null)
+                return false;
+        } else if (!numberOfClinVarVariantsOfUncertainSignificance.equals(other.numberOfClinVarVariantsOfUncertainSignificance))
+            return false;
         if (numberOfCodingLocatedVariants == null) {
             if (other.numberOfCodingLocatedVariants != null)
                 return false;
         } else if (!numberOfCodingLocatedVariants.equals(other.numberOfCodingLocatedVariants))
+            return false;
+        if (numberOfHGMDAlmostCertainlyBenign == null) {
+            if (other.numberOfHGMDAlmostCertainlyBenign != null)
+                return false;
+        } else if (!numberOfHGMDAlmostCertainlyBenign.equals(other.numberOfHGMDAlmostCertainlyBenign))
+            return false;
+        if (numberOfHGMDKnownPathenogenic == null) {
+            if (other.numberOfHGMDKnownPathenogenic != null)
+                return false;
+        } else if (!numberOfHGMDKnownPathenogenic.equals(other.numberOfHGMDKnownPathenogenic))
+            return false;
+        if (numberOfHGMDLikelyBenign == null) {
+            if (other.numberOfHGMDLikelyBenign != null)
+                return false;
+        } else if (!numberOfHGMDLikelyBenign.equals(other.numberOfHGMDLikelyBenign))
+            return false;
+        if (numberOfHGMDLikelyPathenogenic == null) {
+            if (other.numberOfHGMDLikelyPathenogenic != null)
+                return false;
+        } else if (!numberOfHGMDLikelyPathenogenic.equals(other.numberOfHGMDLikelyPathenogenic))
+            return false;
+        if (numberOfHGMDPossiblyPathenogenic == null) {
+            if (other.numberOfHGMDPossiblyPathenogenic != null)
+                return false;
+        } else if (!numberOfHGMDPossiblyPathenogenic.equals(other.numberOfHGMDPossiblyPathenogenic))
+            return false;
+        if (numberOfHGMDVariantsOfUncertainSignificance == null) {
+            if (other.numberOfHGMDVariantsOfUncertainSignificance != null)
+                return false;
+        } else if (!numberOfHGMDVariantsOfUncertainSignificance.equals(other.numberOfHGMDVariantsOfUncertainSignificance))
             return false;
         if (numberOfIndelTypes == null) {
             if (other.numberOfIndelTypes != null)
@@ -386,21 +516,6 @@ public class Report implements Persistable {
             if (other.numberOfIntronicVariantEffects != null)
                 return false;
         } else if (!numberOfIntronicVariantEffects.equals(other.numberOfIntronicVariantEffects))
-            return false;
-        if (numberOfKnownPathenogenic == null) {
-            if (other.numberOfKnownPathenogenic != null)
-                return false;
-        } else if (!numberOfKnownPathenogenic.equals(other.numberOfKnownPathenogenic))
-            return false;
-        if (numberOfLikelyBenign == null) {
-            if (other.numberOfLikelyBenign != null)
-                return false;
-        } else if (!numberOfLikelyBenign.equals(other.numberOfLikelyBenign))
-            return false;
-        if (numberOfLikelyPathenogenic == null) {
-            if (other.numberOfLikelyPathenogenic != null)
-                return false;
-        } else if (!numberOfLikelyPathenogenic.equals(other.numberOfLikelyPathenogenic))
             return false;
         if (numberOfMissenseVariantEffects == null) {
             if (other.numberOfMissenseVariantEffects != null)
@@ -426,11 +541,6 @@ public class Report implements Persistable {
             if (other.numberOfOtherVariantEffects != null)
                 return false;
         } else if (!numberOfOtherVariantEffects.equals(other.numberOfOtherVariantEffects))
-            return false;
-        if (numberOfPossiblyPathenogenic == null) {
-            if (other.numberOfPossiblyPathenogenic != null)
-                return false;
-        } else if (!numberOfPossiblyPathenogenic.equals(other.numberOfPossiblyPathenogenic))
             return false;
         if (numberOfShiftIndelVariantEffects == null) {
             if (other.numberOfShiftIndelVariantEffects != null)
@@ -466,11 +576,6 @@ public class Report implements Persistable {
             if (other.numberOfUntranslatedVariantEffects != null)
                 return false;
         } else if (!numberOfUntranslatedVariantEffects.equals(other.numberOfUntranslatedVariantEffects))
-            return false;
-        if (numberOfVariantsOfUncertainSignificance == null) {
-            if (other.numberOfVariantsOfUncertainSignificance != null)
-                return false;
-        } else if (!numberOfVariantsOfUncertainSignificance.equals(other.numberOfVariantsOfUncertainSignificance))
             return false;
         if (totalVariants == null) {
             if (other.totalVariants != null)
