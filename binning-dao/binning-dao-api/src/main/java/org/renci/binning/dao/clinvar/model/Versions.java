@@ -12,12 +12,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.renci.binning.dao.Persistable;
 import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.binning.dao.clinbin.model.IncidentalResultVersionX;
 
 @Entity
 @Table(schema = "clinvar", name = "versions")
-public class Versions {
+public class Versions implements Persistable {
+
+    private static final long serialVersionUID = -2775533597974578674L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "versions_clinvar_version_id_seq")
