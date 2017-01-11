@@ -44,18 +44,33 @@ public abstract class AbstractGenerateReportCallable implements Callable<Report>
             Long analyzedVariantsCount = daoBean.getBinResultsFinalDiagnosticDAO().findAnalyzedVariantsCount(binningJob.getParticipant());
             report.setNumberOfAnalyzedVariants(analyzedVariantsCount.intValue());
 
-            report.setNumberOfKnownPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
-                    .findByAssemblyIdAndDiseaseClassId(binningJob.getAssembly().getId(), 1).intValue());
-            report.setNumberOfLikelyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
-                    .findByAssemblyIdAndDiseaseClassId(binningJob.getAssembly().getId(), 2).intValue());
-            report.setNumberOfPossiblyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
-                    .findByAssemblyIdAndDiseaseClassId(binningJob.getAssembly().getId(), 3).intValue());
-            report.setNumberOfVariantsOfUncertainSignificance(daoBean.getBinResultsFinalDiagnosticDAO()
-                    .findByAssemblyIdAndDiseaseClassId(binningJob.getAssembly().getId(), 4).intValue());
-            report.setNumberOfLikelyBenign(daoBean.getBinResultsFinalDiagnosticDAO()
-                    .findByAssemblyIdAndDiseaseClassId(binningJob.getAssembly().getId(), 5).intValue());
-            report.setNumberOfAlmostCertainlyBenign(daoBean.getBinResultsFinalDiagnosticDAO()
-                    .findByAssemblyIdAndDiseaseClassId(binningJob.getAssembly().getId(), 6).intValue());
+            // hgmd
+            report.setNumberOfHGMDKnownPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 1).intValue());
+            report.setNumberOfHGMDLikelyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 2).intValue());
+            report.setNumberOfHGMDPossiblyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 3).intValue());
+            report.setNumberOfHGMDVariantsOfUncertainSignificance(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 4).intValue());
+            report.setNumberOfHGMDLikelyBenign(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 5).intValue());
+            report.setNumberOfHGMDAlmostCertainlyBenign(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 6).intValue());
+
+            // clinvar
+            report.setNumberOfClinVarKnownPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 1).intValue());
+            report.setNumberOfClinVarLikelyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 2).intValue());
+            report.setNumberOfClinVarPossiblyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 3).intValue());
+            report.setNumberOfClinVarVariantsOfUncertainSignificance(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 4).intValue());
+            report.setNumberOfClinVarLikelyBenign(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 5).intValue());
+            report.setNumberOfClinVarAlmostCertainlyBenign(daoBean.getBinResultsFinalDiagnosticDAO()
+                    .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 6).intValue());
 
             // location types
             report.setNumberOfTransriptDepLocatedVariants(

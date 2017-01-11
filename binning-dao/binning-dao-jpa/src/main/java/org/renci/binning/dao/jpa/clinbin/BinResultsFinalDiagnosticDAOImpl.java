@@ -49,6 +49,59 @@ public class BinResultsFinalDiagnosticDAOImpl extends BaseDAOImpl<BinResultsFina
     }
 
     @Override
+    public List<BinResultsFinalDiagnostic> findByKeyAndHGMDDiseaseClassId(BinResultsFinalDiagnosticPK key, Integer diseaseClassId)
+            throws BinningDAOException {
+        logger.debug("ENTERING findByKeyAndHGMDDiseaseClassId(BinResultsFinalDiagnosticPK, Integer)");
+        List<BinResultsFinalDiagnostic> ret = new ArrayList<>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<BinResultsFinalDiagnostic> crit = critBuilder.createQuery(getPersistentClass());
+            Root<BinResultsFinalDiagnostic> root = crit.from(getPersistentClass());
+
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            predicates.add(critBuilder.equal(root.get(BinResultsFinalDiagnostic_.key), key));
+            predicates.add(critBuilder.equal(root.get(BinResultsFinalDiagnostic_.hgmdDiseaseClass).get(DiseaseClass_.id), diseaseClassId));
+
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            crit.distinct(true);
+
+            TypedQuery<BinResultsFinalDiagnostic> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
+    public List<BinResultsFinalDiagnostic> findByKeyAndClinVarDiseaseClassId(BinResultsFinalDiagnosticPK key, Integer diseaseClassId)
+            throws BinningDAOException {
+        logger.debug("ENTERING findByKeyAndHGMDDiseaseClassId(BinResultsFinalDiagnosticPK, Integer)");
+        List<BinResultsFinalDiagnostic> ret = new ArrayList<>();
+        try {
+            CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<BinResultsFinalDiagnostic> crit = critBuilder.createQuery(getPersistentClass());
+            Root<BinResultsFinalDiagnostic> root = crit.from(getPersistentClass());
+
+            List<Predicate> predicates = new ArrayList<Predicate>();
+
+            predicates.add(critBuilder.equal(root.get(BinResultsFinalDiagnostic_.key), key));
+            predicates
+                    .add(critBuilder.equal(root.get(BinResultsFinalDiagnostic_.clinvarDiseaseClass).get(DiseaseClass_.id), diseaseClassId));
+
+            crit.where(predicates.toArray(new Predicate[predicates.size()]));
+            crit.distinct(true);
+
+            TypedQuery<BinResultsFinalDiagnostic> query = getEntityManager().createQuery(crit);
+            ret.addAll(query.getResultList());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
     public List<BinResultsFinalDiagnostic> findByLocatedVariantId(Long locatedVariantId) throws BinningDAOException {
         logger.debug("ENTERING findByLocatedVariantId(Long)");
         List<BinResultsFinalDiagnostic> ret = new ArrayList<>();
@@ -126,14 +179,30 @@ public class BinResultsFinalDiagnosticDAOImpl extends BaseDAOImpl<BinResultsFina
     }
 
     @Override
-    public Long findByAssemblyIdAndDiseaseClassId(Integer assemblyId, Integer diseaseClassId) throws BinningDAOException {
+    public Long findByAssemblyIdAndHGMDDiseaseClassId(Integer assemblyId, Integer diseaseClassId) throws BinningDAOException {
         logger.debug("ENTERING findByAssemblyIdAndDiseaseClassId(Integer, Integer)");
         CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> crit = critBuilder.createQuery(Long.class);
         Root<BinResultsFinalDiagnostic> root = crit.from(getPersistentClass());
         List<Predicate> predicates = new ArrayList<Predicate>();
         predicates.add(critBuilder.equal(root.get(BinResultsFinalDiagnostic_.key).get(BinResultsFinalDiagnosticPK_.assembly), assemblyId));
-        predicates.add(critBuilder.equal(root.join(BinResultsFinalDiagnostic_.diseaseClass).get(DiseaseClass_.id), diseaseClassId));
+        predicates.add(critBuilder.equal(root.join(BinResultsFinalDiagnostic_.hgmdDiseaseClass).get(DiseaseClass_.id), diseaseClassId));
+        crit.select(critBuilder.countDistinct(root.get(BinResultsFinalDiagnostic_.key).get(BinResultsFinalDiagnosticPK_.locatedVariant)));
+        crit.where(predicates.toArray(new Predicate[predicates.size()]));
+        TypedQuery<Long> query = getEntityManager().createQuery(crit);
+        Long ret = query.getSingleResult();
+        return ret;
+    }
+
+    @Override
+    public Long findByAssemblyIdAndClinVarDiseaseClassId(Integer assemblyId, Integer diseaseClassId) throws BinningDAOException {
+        logger.debug("ENTERING findByAssemblyIdAndDiseaseClassId(Integer, Integer)");
+        CriteriaBuilder critBuilder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> crit = critBuilder.createQuery(Long.class);
+        Root<BinResultsFinalDiagnostic> root = crit.from(getPersistentClass());
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        predicates.add(critBuilder.equal(root.get(BinResultsFinalDiagnostic_.key).get(BinResultsFinalDiagnosticPK_.assembly), assemblyId));
+        predicates.add(critBuilder.equal(root.join(BinResultsFinalDiagnostic_.clinvarDiseaseClass).get(DiseaseClass_.id), diseaseClassId));
         crit.select(critBuilder.countDistinct(root.get(BinResultsFinalDiagnostic_.key).get(BinResultsFinalDiagnosticPK_.locatedVariant)));
         crit.where(predicates.toArray(new Predicate[predicates.size()]));
         TypedQuery<Long> query = getEntityManager().createQuery(crit);

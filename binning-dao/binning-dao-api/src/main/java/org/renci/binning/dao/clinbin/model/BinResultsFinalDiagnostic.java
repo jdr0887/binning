@@ -58,8 +58,12 @@ public class BinResultsFinalDiagnostic implements Persistable {
     private VariantEffect variantEffect;
 
     @ManyToOne
-    @JoinColumn(name = "class_id")
-    private DiseaseClass diseaseClass;
+    @JoinColumn(name = "hgmd_class_id")
+    private DiseaseClass hgmdDiseaseClass;
+
+    @ManyToOne
+    @JoinColumn(name = "clinvar_class_id")
+    private DiseaseClass clinvarDiseaseClass;
 
     @Column(name = "chromosome", length = 15)
     private String chromosome;
@@ -109,8 +113,17 @@ public class BinResultsFinalDiagnostic implements Persistable {
     @Column(name = "gene_id")
     private Integer geneId;
 
-    @Column(name = "acc_num", length = 100)
-    private String accessionNumber;
+    @Column(name = "hgmd_acc_num", length = 100)
+    private String hgmdAccessionNumber;
+
+    @Column(name = "hgmd_tag", length = 5)
+    private String hgmdTag;
+
+    @Column(name = "clinvar_accesion", length = 20)
+    private String clinvarAccession;
+
+    @Column(name = "clinvar_assertion", length = 100)
+    private String clinvarAssertion;
 
     @Column(name = "max_allele_freq")
     private Double maxAlleleFrequency;
@@ -182,9 +195,6 @@ public class BinResultsFinalDiagnostic implements Persistable {
     @Column(name = "strand", length = 1)
     private String strand;
 
-    @Column(name = "tag", length = 5)
-    private String tag;
-
     @Column(name = "ncg_alt_f")
     private Double NCGenesAlternateFrequency;
 
@@ -200,13 +210,15 @@ public class BinResultsFinalDiagnostic implements Persistable {
         this.key = key;
     }
 
-    public BinResultsFinalDiagnostic(BinResultsFinalDiagnosticPK key, Variants_61_2 variant, DiseaseClass diseaseClass,
-            MaxFrequency maxFrequency, DiagnosticGene diagnosticGene, HGMDLocatedVariant hgmdLocatedVariant,
-            AssemblyLocatedVariant assemblyLocatedVariant, AssemblyLocatedVariantQC assemblyLocatedVariantQC,
-            NCGenesFrequencies ncgenesFrequencies, SNPMappingAgg snpMappingAgg, UnimportantExon unimportantExon) {
+    public BinResultsFinalDiagnostic(BinResultsFinalDiagnosticPK key, Variants_61_2 variant, DiseaseClass hgmdDiseaseClass,
+            DiseaseClass clinvarDiseaseClass, MaxFrequency maxFrequency, DiagnosticGene diagnosticGene,
+            HGMDLocatedVariant hgmdLocatedVariant, AssemblyLocatedVariant assemblyLocatedVariant,
+            AssemblyLocatedVariantQC assemblyLocatedVariantQC, NCGenesFrequencies ncgenesFrequencies, SNPMappingAgg snpMappingAgg,
+            UnimportantExon unimportantExon) {
         this(key);
-        // diseaseClass can't be null
-        this.diseaseClass = diseaseClass;
+
+        this.clinvarDiseaseClass = clinvarDiseaseClass;
+        this.hgmdDiseaseClass = hgmdDiseaseClass;
 
         // variant can't be null
         this.chromosome = variant.getKey().getGenomeRefSeq();
@@ -236,8 +248,8 @@ public class BinResultsFinalDiagnostic implements Persistable {
         this.variantEffect = variant.getVariantEffect();
 
         if (hgmdLocatedVariant != null) {
-            this.accessionNumber = hgmdLocatedVariant.getKey().getAccession();
-            this.tag = hgmdLocatedVariant.getTag();
+            this.hgmdAccessionNumber = hgmdLocatedVariant.getKey().getAccession();
+            this.hgmdTag = hgmdLocatedVariant.getTag();
         }
 
         if (assemblyLocatedVariant != null) {
@@ -337,12 +349,20 @@ public class BinResultsFinalDiagnostic implements Persistable {
         this.variantEffect = variantEffect;
     }
 
-    public DiseaseClass getDiseaseClass() {
-        return diseaseClass;
+    public DiseaseClass getHgmdDiseaseClass() {
+        return hgmdDiseaseClass;
     }
 
-    public void setDiseaseClass(DiseaseClass diseaseClass) {
-        this.diseaseClass = diseaseClass;
+    public void setHgmdDiseaseClass(DiseaseClass hgmdDiseaseClass) {
+        this.hgmdDiseaseClass = hgmdDiseaseClass;
+    }
+
+    public DiseaseClass getClinvarDiseaseClass() {
+        return clinvarDiseaseClass;
+    }
+
+    public void setClinvarDiseaseClass(DiseaseClass clinvarDiseaseClass) {
+        this.clinvarDiseaseClass = clinvarDiseaseClass;
     }
 
     public String getChromosome() {
@@ -473,12 +493,36 @@ public class BinResultsFinalDiagnostic implements Persistable {
         this.geneId = geneId;
     }
 
-    public String getAccessionNumber() {
-        return accessionNumber;
+    public String getHgmdAccessionNumber() {
+        return hgmdAccessionNumber;
     }
 
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
+    public void setHgmdAccessionNumber(String hgmdAccessionNumber) {
+        this.hgmdAccessionNumber = hgmdAccessionNumber;
+    }
+
+    public String getHgmdTag() {
+        return hgmdTag;
+    }
+
+    public void setHgmdTag(String hgmdTag) {
+        this.hgmdTag = hgmdTag;
+    }
+
+    public String getClinvarAccession() {
+        return clinvarAccession;
+    }
+
+    public void setClinvarAccession(String clinvarAccession) {
+        this.clinvarAccession = clinvarAccession;
+    }
+
+    public String getClinvarAssertion() {
+        return clinvarAssertion;
+    }
+
+    public void setClinvarAssertion(String clinvarAssertion) {
+        this.clinvarAssertion = clinvarAssertion;
     }
 
     public Double getMaxAlleleFrequency() {
@@ -657,14 +701,6 @@ public class BinResultsFinalDiagnostic implements Persistable {
         this.strand = strand;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     public Double getNCGenesAlternateFrequency() {
         return NCGenesAlternateFrequency;
     }
@@ -684,12 +720,13 @@ public class BinResultsFinalDiagnostic implements Persistable {
     @Override
     public String toString() {
         return String.format(
-                "BinResultsFinalDiagnostic [key=%s, chromosome=%s, position=%s, type=%s, refseqGene=%s, hgncGene=%s, transcriptPosition=%s, codingSequencePosition=%s, aminoAcidStart=%s, aminoAcidEnd=%s, originalAminoAcid=%s, finalAminoAcid=%s, frameshift=%s, inframe=%s, intronExonDistance=%s, nummaps=%s, geneId=%s, accessionNumber=%s, maxAlleleFrequency=%s, referenceAllele=%s, alternateAllele=%s, hgvsGenomic=%s, hgvsCodingSequence=%s, hgvsTranscript=%s, hgvsProtein=%s, depth=%s, qd=%s, readPosRankSum=%s, fracReadsWithDels=%s, hrun=%s, strandScore=%s, refDepth=%s, altDepth=%s, homozygous=%s, genotypeQual=%s, tier=%s, inheritance=%s, rsId=%s, exonTruncationCount=%s, strand=%s, tag=%s, NCGenesAlternateFrequency=%s, NCGenesHWEP=%s]",
+                "BinResultsFinalDiagnostic [key=%s, chromosome=%s, position=%s, type=%s, refseqGene=%s, hgncGene=%s, transcriptPosition=%s, codingSequencePosition=%s, aminoAcidStart=%s, aminoAcidEnd=%s, originalAminoAcid=%s, finalAminoAcid=%s, frameshift=%s, inframe=%s, intronExonDistance=%s, nummaps=%s, geneId=%s, hgmdAccessionNumber=%s, hgmdTag=%s, clinvarAccession=%s, clinvarAssertion=%s, maxAlleleFrequency=%s, referenceAllele=%s, alternateAllele=%s, hgvsGenomic=%s, hgvsCodingSequence=%s, hgvsTranscript=%s, hgvsProtein=%s, depth=%s, qd=%s, readPosRankSum=%s, fracReadsWithDels=%s, hrun=%s, strandScore=%s, refDepth=%s, altDepth=%s, homozygous=%s, genotypeQual=%s, tier=%s, inheritance=%s, rsId=%s, exonTruncationCount=%s, strand=%s, NCGenesAlternateFrequency=%s, NCGenesHWEP=%s]",
                 key, chromosome, position, type, refseqGene, hgncGene, transcriptPosition, codingSequencePosition, aminoAcidStart,
-                aminoAcidEnd, originalAminoAcid, finalAminoAcid, frameshift, inframe, intronExonDistance, nummaps, geneId, accessionNumber,
-                maxAlleleFrequency, referenceAllele, alternateAllele, hgvsGenomic, hgvsCodingSequence, hgvsTranscript, hgvsProtein, depth,
-                qd, readPosRankSum, fracReadsWithDels, hrun, strandScore, refDepth, altDepth, homozygous, genotypeQual, tier, inheritance,
-                rsId, exonTruncationCount, strand, tag, NCGenesAlternateFrequency, NCGenesHWEP);
+                aminoAcidEnd, originalAminoAcid, finalAminoAcid, frameshift, inframe, intronExonDistance, nummaps, geneId,
+                hgmdAccessionNumber, hgmdTag, clinvarAccession, clinvarAssertion, maxAlleleFrequency, referenceAllele, alternateAllele,
+                hgvsGenomic, hgvsCodingSequence, hgvsTranscript, hgvsProtein, depth, qd, readPosRankSum, fracReadsWithDels, hrun,
+                strandScore, refDepth, altDepth, homozygous, genotypeQual, tier, inheritance, rsId, exonTruncationCount, strand,
+                NCGenesAlternateFrequency, NCGenesHWEP);
     }
 
     @Override
@@ -698,12 +735,13 @@ public class BinResultsFinalDiagnostic implements Persistable {
         int result = 1;
         result = prime * result + ((NCGenesAlternateFrequency == null) ? 0 : NCGenesAlternateFrequency.hashCode());
         result = prime * result + ((NCGenesHWEP == null) ? 0 : NCGenesHWEP.hashCode());
-        result = prime * result + ((accessionNumber == null) ? 0 : accessionNumber.hashCode());
         result = prime * result + ((altDepth == null) ? 0 : altDepth.hashCode());
         result = prime * result + ((alternateAllele == null) ? 0 : alternateAllele.hashCode());
         result = prime * result + ((aminoAcidEnd == null) ? 0 : aminoAcidEnd.hashCode());
         result = prime * result + ((aminoAcidStart == null) ? 0 : aminoAcidStart.hashCode());
         result = prime * result + ((chromosome == null) ? 0 : chromosome.hashCode());
+        result = prime * result + ((clinvarAccession == null) ? 0 : clinvarAccession.hashCode());
+        result = prime * result + ((clinvarAssertion == null) ? 0 : clinvarAssertion.hashCode());
         result = prime * result + ((codingSequencePosition == null) ? 0 : codingSequencePosition.hashCode());
         result = prime * result + ((depth == null) ? 0 : depth.hashCode());
         result = prime * result + ((exonTruncationCount == null) ? 0 : exonTruncationCount.hashCode());
@@ -712,6 +750,8 @@ public class BinResultsFinalDiagnostic implements Persistable {
         result = prime * result + ((frameshift == null) ? 0 : frameshift.hashCode());
         result = prime * result + ((geneId == null) ? 0 : geneId.hashCode());
         result = prime * result + ((genotypeQual == null) ? 0 : genotypeQual.hashCode());
+        result = prime * result + ((hgmdAccessionNumber == null) ? 0 : hgmdAccessionNumber.hashCode());
+        result = prime * result + ((hgmdTag == null) ? 0 : hgmdTag.hashCode());
         result = prime * result + ((hgncGene == null) ? 0 : hgncGene.hashCode());
         result = prime * result + ((hgvsCodingSequence == null) ? 0 : hgvsCodingSequence.hashCode());
         result = prime * result + ((hgvsGenomic == null) ? 0 : hgvsGenomic.hashCode());
@@ -735,7 +775,6 @@ public class BinResultsFinalDiagnostic implements Persistable {
         result = prime * result + ((rsId == null) ? 0 : rsId.hashCode());
         result = prime * result + ((strand == null) ? 0 : strand.hashCode());
         result = prime * result + ((strandScore == null) ? 0 : strandScore.hashCode());
-        result = prime * result + ((tag == null) ? 0 : tag.hashCode());
         result = prime * result + ((tier == null) ? 0 : tier.hashCode());
         result = prime * result + ((transcriptPosition == null) ? 0 : transcriptPosition.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -761,11 +800,6 @@ public class BinResultsFinalDiagnostic implements Persistable {
                 return false;
         } else if (!NCGenesHWEP.equals(other.NCGenesHWEP))
             return false;
-        if (accessionNumber == null) {
-            if (other.accessionNumber != null)
-                return false;
-        } else if (!accessionNumber.equals(other.accessionNumber))
-            return false;
         if (altDepth == null) {
             if (other.altDepth != null)
                 return false;
@@ -790,6 +824,16 @@ public class BinResultsFinalDiagnostic implements Persistable {
             if (other.chromosome != null)
                 return false;
         } else if (!chromosome.equals(other.chromosome))
+            return false;
+        if (clinvarAccession == null) {
+            if (other.clinvarAccession != null)
+                return false;
+        } else if (!clinvarAccession.equals(other.clinvarAccession))
+            return false;
+        if (clinvarAssertion == null) {
+            if (other.clinvarAssertion != null)
+                return false;
+        } else if (!clinvarAssertion.equals(other.clinvarAssertion))
             return false;
         if (codingSequencePosition == null) {
             if (other.codingSequencePosition != null)
@@ -830,6 +874,16 @@ public class BinResultsFinalDiagnostic implements Persistable {
             if (other.genotypeQual != null)
                 return false;
         } else if (!genotypeQual.equals(other.genotypeQual))
+            return false;
+        if (hgmdAccessionNumber == null) {
+            if (other.hgmdAccessionNumber != null)
+                return false;
+        } else if (!hgmdAccessionNumber.equals(other.hgmdAccessionNumber))
+            return false;
+        if (hgmdTag == null) {
+            if (other.hgmdTag != null)
+                return false;
+        } else if (!hgmdTag.equals(other.hgmdTag))
             return false;
         if (hgncGene == null) {
             if (other.hgncGene != null)
@@ -945,11 +999,6 @@ public class BinResultsFinalDiagnostic implements Persistable {
             if (other.strandScore != null)
                 return false;
         } else if (!strandScore.equals(other.strandScore))
-            return false;
-        if (tag == null) {
-            if (other.tag != null)
-                return false;
-        } else if (!tag.equals(other.tag))
             return false;
         if (tier == null) {
             if (other.tier != null)

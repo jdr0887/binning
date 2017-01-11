@@ -32,18 +32,18 @@ public class GenerateReportCallableTest {
                 .findAnalyzedVariantsCount(diagnosticBinningJob.getParticipant());
         report.setNumberOfAnalyzedVariants(analyzedVariantsCount.intValue());
 
-        report.setNumberOfKnownPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
-                .findByAssemblyIdAndDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 1).intValue());
-        report.setNumberOfLikelyPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
-                .findByAssemblyIdAndDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 2).intValue());
-        report.setNumberOfPossiblyPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
-                .findByAssemblyIdAndDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 3).intValue());
-        report.setNumberOfVariantsOfUncertainSignificance(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
-                .findByAssemblyIdAndDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 4).intValue());
-        report.setNumberOfLikelyBenign(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
-                .findByAssemblyIdAndDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 5).intValue());
-        report.setNumberOfAlmostCertainlyBenign(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
-                .findByAssemblyIdAndDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 6).intValue());
+        report.setNumberOfHGMDKnownPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+                .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 1).intValue());
+        report.setNumberOfHGMDLikelyPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+                .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 2).intValue());
+        report.setNumberOfHGMDPossiblyPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+                .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 3).intValue());
+        report.setNumberOfHGMDVariantsOfUncertainSignificance(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+                .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 4).intValue());
+        report.setNumberOfHGMDLikelyBenign(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+                .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 5).intValue());
+        report.setNumberOfHGMDAlmostCertainlyBenign(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+                .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 6).intValue());
 
         // location types
         report.setNumberOfTransriptDepLocatedVariants(daoMgr.getDAOBean().getVariants_61_2_DAO()

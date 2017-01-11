@@ -22,6 +22,14 @@ public interface BinResultsFinalDiagnosticDAO extends BaseDAO<BinResultsFinalDia
 
     public List<BinResultsFinalDiagnostic> findByLocatedVariantId(Long locatedVariantId) throws BinningDAOException;
 
-    public Long findByAssemblyIdAndDiseaseClassId(Integer assemblyId, Integer diseaseClassId) throws BinningDAOException;
+    public Long findByAssemblyIdAndHGMDDiseaseClassId(Integer assemblyId, Integer diseaseClassId) throws BinningDAOException;
+
+    public Long findByAssemblyIdAndClinVarDiseaseClassId(Integer assemblyId, Integer diseaseClassId) throws BinningDAOException;
+
+    public List<BinResultsFinalDiagnostic> findByKeyAndHGMDDiseaseClassId(BinResultsFinalDiagnosticPK key, Integer diseaseClassId)
+            throws BinningDAOException;
+
+    public List<BinResultsFinalDiagnostic> findByKeyAndClinVarDiseaseClassId(BinResultsFinalDiagnosticPK key, Integer diseaseClassId)
+            throws BinningDAOException;
 
 }

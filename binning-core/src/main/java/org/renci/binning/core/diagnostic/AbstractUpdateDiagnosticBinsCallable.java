@@ -58,10 +58,23 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 logger.info(String.format("variants.size(): %d", variants.size()));
 
                 try {
-                    List<BinResultsFinalDiagnostic> knownPathogenic = BinResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(binningJob,
-                            variants);
-                    if (CollectionUtils.isNotEmpty(knownPathogenic)) {
-                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : knownPathogenic) {
+                    List<BinResultsFinalDiagnostic> hgmdKnownPathogenic = BinResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(daoBean,
+                            binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(hgmdKnownPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : hgmdKnownPathogenic) {
+                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findById(binResultsFinalDiagnostic.getKey());
+                            if (foundBinResultsFinalDiagnostic == null) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    List<BinResultsFinalDiagnostic> clinvarKnownPathogenic = BinResultsFinalDiagnosticFactory
+                            .findClinVarKnownPathogenic(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(clinvarKnownPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : clinvarKnownPathogenic) {
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
                                     .findById(binResultsFinalDiagnostic.getKey());
                             if (foundBinResultsFinalDiagnostic == null) {
@@ -75,10 +88,24 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 }
 
                 try {
-                    List<BinResultsFinalDiagnostic> likelyPathogenic = BinResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(binningJob,
-                            variants);
-                    if (CollectionUtils.isNotEmpty(likelyPathogenic)) {
-                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : likelyPathogenic) {
+                    List<BinResultsFinalDiagnostic> hgmdLikelyPathogenic = BinResultsFinalDiagnosticFactory
+                            .findHGMDLikelyPathogenic(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(hgmdLikelyPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : hgmdLikelyPathogenic) {
+                            logger.info(binResultsFinalDiagnostic.getKey().toString());
+                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findById(binResultsFinalDiagnostic.getKey());
+                            if (foundBinResultsFinalDiagnostic == null) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    List<BinResultsFinalDiagnostic> clinvarLikelyPathogenic = BinResultsFinalDiagnosticFactory
+                            .findHGMDLikelyPathogenic(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(clinvarLikelyPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : clinvarLikelyPathogenic) {
                             logger.info(binResultsFinalDiagnostic.getKey().toString());
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
                                     .findById(binResultsFinalDiagnostic.getKey());
@@ -94,7 +121,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
                 try {
                     List<BinResultsFinalDiagnostic> possiblyPathogenic = BinResultsFinalDiagnosticFactory
-                            .findHGMDPossiblyPathogenic(binningJob, variants);
+                            .findHGMDPossiblyPathogenic(daoBean, binningJob, variants);
                     if (CollectionUtils.isNotEmpty(possiblyPathogenic)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : possiblyPathogenic) {
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
@@ -111,7 +138,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
                 try {
                     List<BinResultsFinalDiagnostic> uncertainSignificance = BinResultsFinalDiagnosticFactory
-                            .findHGMDUncertainSignificance(binningJob, variants);
+                            .findHGMDUncertainSignificance(daoBean, binningJob, variants);
                     if (CollectionUtils.isNotEmpty(uncertainSignificance)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : uncertainSignificance) {
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
@@ -127,8 +154,8 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 }
 
                 try {
-                    List<BinResultsFinalDiagnostic> likelyBenign = BinResultsFinalDiagnosticFactory.findHGMDLikelyBenign(binningJob,
-                            variants);
+                    List<BinResultsFinalDiagnostic> likelyBenign = BinResultsFinalDiagnosticFactory.findHGMDLikelyBenign(daoBean,
+                            binningJob, variants);
                     if (CollectionUtils.isNotEmpty(likelyBenign)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : likelyBenign) {
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
@@ -145,7 +172,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
                 try {
                     List<BinResultsFinalDiagnostic> almostCertainlyBenign = BinResultsFinalDiagnosticFactory
-                            .findHGMDAlmostCertainlyBenign(binningJob, variants);
+                            .findHGMDAlmostCertainlyBenign(daoBean, binningJob, variants);
                     if (CollectionUtils.isNotEmpty(almostCertainlyBenign)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : almostCertainlyBenign) {
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
