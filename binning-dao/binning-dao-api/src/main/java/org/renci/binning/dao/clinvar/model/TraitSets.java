@@ -5,9 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.renci.binning.dao.Persistable;
+
 @Entity
 @Table(schema = "clinvar", name = "traitsets")
-public class TraitSets {
+public class TraitSets implements Persistable {
+
+    private static final long serialVersionUID = -936424977677968224L;
 
     @Id
     @Column(name = "trait_set_id")
