@@ -34,7 +34,13 @@ ALTER TABLE hgmd.hgmd_snp_t ALTER COLUMN tag TYPE varchar(5) USING tag::characte
 ALTER TABLE clinbin.diagnostic_binning_job ALTER COLUMN gender TYPE varchar(1);
 ALTER TABLE clinbin.incidental_binning_job ALTER COLUMN gender TYPE varchar(1);
 
-
+alter table clinbin.bin_results_final_diagnostic rename acc_num to hgmd_acc_num;
+alter table clinbin.bin_results_final_diagnostic rename tag to hgmd_tag;
+alter table clinbin.bin_results_final_diagnostic add column clinvar_accession varchar(20);
+alter table clinbin.bin_results_final_diagnostic add column clinvar_assertion varchar(100);
+alter table clinbin.bin_results_final_diagnostic rename class_id to hgmd_class_id;
+alter table clinbin.bin_results_final_diagnostic alter column hgmd_class_id drop not null;
+alter table clinbin.bin_results_final_diagnostic add column clinvar_class_id integer;
 
 ALTER TABLE clinbin.max_freq ALTER COLUMN max_allele_freq DROP NOT NULL;
 ALTER TABLE clinbin.max_freq ALTER COLUMN source DROP NOT NULL;
