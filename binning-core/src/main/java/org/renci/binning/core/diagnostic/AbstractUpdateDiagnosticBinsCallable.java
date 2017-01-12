@@ -58,58 +58,27 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 logger.info(String.format("variants.size(): %d", variants.size()));
 
                 try {
-                    List<BinResultsFinalDiagnostic> hgmdKnownPathogenic = BinResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(daoBean,
+                    // hgmd known pathogenic...disease class 1
+                    List<BinResultsFinalDiagnostic> knownPathogenic = BinResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(daoBean,
                             binningJob, variants);
-                    if (CollectionUtils.isNotEmpty(hgmdKnownPathogenic)) {
-                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : hgmdKnownPathogenic) {
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
+                    if (CollectionUtils.isNotEmpty(knownPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : knownPathogenic) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndHGMDDiseaseClassId(binResultsFinalDiagnostic.getKey(), 1);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
                                 logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
                                 daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
                             }
                         }
                     }
 
-                    List<BinResultsFinalDiagnostic> clinvarKnownPathogenic = BinResultsFinalDiagnosticFactory
-                            .findClinVarKnownPathogenic(daoBean, binningJob, variants);
-                    if (CollectionUtils.isNotEmpty(clinvarKnownPathogenic)) {
-                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : clinvarKnownPathogenic) {
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
-                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
-                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
-                            }
-                        }
-                    }
-                } catch (BinningDAOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-
-                try {
-                    List<BinResultsFinalDiagnostic> hgmdLikelyPathogenic = BinResultsFinalDiagnosticFactory
-                            .findHGMDLikelyPathogenic(daoBean, binningJob, variants);
-                    if (CollectionUtils.isNotEmpty(hgmdLikelyPathogenic)) {
-                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : hgmdLikelyPathogenic) {
-                            logger.info(binResultsFinalDiagnostic.getKey().toString());
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
-                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
-                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
-                            }
-                        }
-                    }
-
-                    List<BinResultsFinalDiagnostic> clinvarLikelyPathogenic = BinResultsFinalDiagnosticFactory
-                            .findHGMDLikelyPathogenic(daoBean, binningJob, variants);
-                    if (CollectionUtils.isNotEmpty(clinvarLikelyPathogenic)) {
-                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : clinvarLikelyPathogenic) {
-                            logger.info(binResultsFinalDiagnostic.getKey().toString());
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
+                    // clinvar known pathogenic...disease class 1
+                    knownPathogenic = BinResultsFinalDiagnosticFactory.findClinVarKnownPathogenic(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(knownPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : knownPathogenic) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndClinVarDiseaseClassId(binResultsFinalDiagnostic.getKey(), 1);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
                                 logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
                                 daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
                             }
@@ -120,13 +89,60 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 }
 
                 try {
+                    // hgmd likely pathogenic...disease class 2
+                    List<BinResultsFinalDiagnostic> likelyPathogenic = BinResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(daoBean,
+                            binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(likelyPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : likelyPathogenic) {
+                            logger.info(binResultsFinalDiagnostic.getKey().toString());
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndHGMDDiseaseClassId(binResultsFinalDiagnostic.getKey(), 2);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    // clinvar likely pathogenic...disease class 2
+                    likelyPathogenic = BinResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(likelyPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : likelyPathogenic) {
+                            logger.info(binResultsFinalDiagnostic.getKey().toString());
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndClinVarDiseaseClassId(binResultsFinalDiagnostic.getKey(), 2);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+                } catch (BinningDAOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+
+                try {
+                    // hgmd possibly pathogenic...disease class 3
                     List<BinResultsFinalDiagnostic> possiblyPathogenic = BinResultsFinalDiagnosticFactory
                             .findHGMDPossiblyPathogenic(daoBean, binningJob, variants);
                     if (CollectionUtils.isNotEmpty(possiblyPathogenic)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : possiblyPathogenic) {
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndHGMDDiseaseClassId(binResultsFinalDiagnostic.getKey(), 3);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    // clinvar possibly pathogenic...disease class 3
+                    possiblyPathogenic = BinResultsFinalDiagnosticFactory.findClinVarPossiblyPathogenic(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(possiblyPathogenic)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : possiblyPathogenic) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndClinVarDiseaseClassId(binResultsFinalDiagnostic.getKey(), 3);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
                                 logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
                                 daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
                             }
@@ -137,13 +153,28 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 }
 
                 try {
+                    // hgmd uncertain significance...disease class 4
                     List<BinResultsFinalDiagnostic> uncertainSignificance = BinResultsFinalDiagnosticFactory
                             .findHGMDUncertainSignificance(daoBean, binningJob, variants);
                     if (CollectionUtils.isNotEmpty(uncertainSignificance)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : uncertainSignificance) {
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndHGMDDiseaseClassId(binResultsFinalDiagnostic.getKey(), 4);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    // clinvar uncertain significance...disease class 4
+                    uncertainSignificance = BinResultsFinalDiagnosticFactory.findClinVarUncertainSignificance(daoBean, binningJob,
+                            variants);
+                    if (CollectionUtils.isNotEmpty(uncertainSignificance)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : uncertainSignificance) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndClinVarDiseaseClassId(binResultsFinalDiagnostic.getKey(), 4);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
                                 logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
                                 daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
                             }
@@ -154,13 +185,27 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 }
 
                 try {
+                    // hgmd likely benign...disease class 5
                     List<BinResultsFinalDiagnostic> likelyBenign = BinResultsFinalDiagnosticFactory.findHGMDLikelyBenign(daoBean,
                             binningJob, variants);
                     if (CollectionUtils.isNotEmpty(likelyBenign)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : likelyBenign) {
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndHGMDDiseaseClassId(binResultsFinalDiagnostic.getKey(), 5);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    // clinvar likely benign...disease class 5
+                    likelyBenign = BinResultsFinalDiagnosticFactory.findHGMDLikelyBenign(daoBean, binningJob, variants);
+                    if (CollectionUtils.isNotEmpty(likelyBenign)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : likelyBenign) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndClinVarDiseaseClassId(binResultsFinalDiagnostic.getKey(), 5);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
                                 logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
                                 daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
                             }
@@ -171,13 +216,28 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 }
 
                 try {
+                    // hgmd almost certainly benign...disease class 6
                     List<BinResultsFinalDiagnostic> almostCertainlyBenign = BinResultsFinalDiagnosticFactory
                             .findHGMDAlmostCertainlyBenign(daoBean, binningJob, variants);
                     if (CollectionUtils.isNotEmpty(almostCertainlyBenign)) {
                         for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : almostCertainlyBenign) {
-                            BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
-                                    .findById(binResultsFinalDiagnostic.getKey());
-                            if (foundBinResultsFinalDiagnostic == null) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndHGMDDiseaseClassId(binResultsFinalDiagnostic.getKey(), 6);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
+                                logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
+                                daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
+                            }
+                        }
+                    }
+
+                    // clinvar almost certainly benign...disease class 6
+                    almostCertainlyBenign = BinResultsFinalDiagnosticFactory.findClinVarAlmostCertainlyBenign(daoBean, binningJob,
+                            variants);
+                    if (CollectionUtils.isNotEmpty(almostCertainlyBenign)) {
+                        for (BinResultsFinalDiagnostic binResultsFinalDiagnostic : almostCertainlyBenign) {
+                            List<BinResultsFinalDiagnostic> foundBinResultsFinalDiagnostics = daoBean.getBinResultsFinalDiagnosticDAO()
+                                    .findByKeyAndClinVarDiseaseClassId(binResultsFinalDiagnostic.getKey(), 6);
+                            if (CollectionUtils.isEmpty(foundBinResultsFinalDiagnostics)) {
                                 logger.info("saving BinResultsFinalDiagnostic: {}", binResultsFinalDiagnostic.toString());
                                 daoBean.getBinResultsFinalDiagnosticDAO().save(binResultsFinalDiagnostic);
                             }
