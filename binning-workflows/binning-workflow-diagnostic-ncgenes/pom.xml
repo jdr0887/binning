@@ -2,25 +2,25 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning-workflows</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
   </parent>
   <name>Binning :: Workflow :: Diagnostic NCGenes</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows</groupId>
   <artifactId>binning-workflow-diagnostic-ncgenes</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
   <dependencyManagement>
     <dependencies>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-ncgenes</groupId>
 	<artifactId>binning-workflow-diagnostic-ncgenes-commons</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5-SNAPSHOT</version>
       </dependency>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-ncgenes</groupId>
 	<artifactId>binning-workflow-diagnostic-ncgenes-executor</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5-SNAPSHOT</version>
       </dependency>      
     </dependencies>
   </dependencyManagement>  

@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning.binning-workflows</groupId>
     <artifactId>binning-workflow-incidental-ncgenes</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
   </parent>
   <name>Binning :: Workflow :: Incidental NCGenes :: Commands</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows.binning-workflow-incidental-ncgenes</groupId>
   <artifactId>binning-workflow-incidental-ncgenes-commands</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
