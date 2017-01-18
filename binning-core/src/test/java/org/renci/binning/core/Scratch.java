@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
@@ -24,7 +25,10 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 import htsjdk.samtools.liftover.LiftOver;
@@ -160,11 +164,132 @@ public class Scratch {
 
     @Test
     public void testLiftOver() {
-        File chainFile = new File("/home/jdr0887/Downloads", "hg19ToHg38.over.chain.gz");
+        File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning-server/src/main/resources/data/liftOver",
+                "hg19ToHg38.over.chain.gz");
         LiftOver liftOver = new LiftOver(chainFile);
 
         Interval ret = liftOver.liftOver(new Interval("chr1", 16776377, 16776452));
         System.out.println(ret.toString());
+
+    }
+
+    @Test
+    public void convert37BedTo38Bed() {
+        File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning-server/src/main/resources/data/liftOver",
+                "hg19ToHg38.over.chain.gz");
+        LiftOver liftOver = new LiftOver(chainFile);
+
+        List<File> inputs = Arrays.asList(new File("/tmp", "agilent_v6_capture_region_pm_100.shortid.bed"),
+                new File("/tmp", "agilent_v5_capture_region_pm_100.shortid.bed"),
+                new File("/tmp", "agilent_v5_egl_capture_region_pm_100.shortid.bed"));
+
+        for (File input : inputs) {
+
+            File output = new File(input.getParentFile(), input.getName().replace(".bed", ".38.bed"));
+
+            try (FileReader fr = new FileReader(input);
+                    BufferedReader br = new BufferedReader(fr);
+                    FileWriter fw = new FileWriter(output);
+                    BufferedWriter bw = new BufferedWriter(fw)) {
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    List<String> row = Arrays.asList(line.split("\t"));
+
+                    String contig = row.get(0).replace("NC_", "");
+                    contig = contig.substring(0, contig.indexOf("."));
+
+                    String chromosome = contig;
+                    if ("000023".equals(chromosome)) {
+                        chromosome = "X";
+                    } else if ("000024".equals(chromosome)) {
+                        chromosome = "Y";
+                    } else {
+                        chromosome = Integer.valueOf(contig).toString();
+                    }
+
+                    String version = row.get(0);
+                    version = version.substring(version.indexOf(".") + 1, version.length());
+                    Integer ver = Integer.valueOf(version);
+                    ver++;
+
+                    Interval convertedRow = liftOver.liftOver(
+                            new Interval(String.format("chr%s", chromosome), Integer.valueOf(row.get(1)), Integer.valueOf(row.get(2))));
+
+                    if (convertedRow != null) {
+                        bw.write(String.format("NC_%06d.%2$d\t%3$d\t%4$d", Integer.valueOf(contig), ver, convertedRow.getStart(),
+                                convertedRow.getEnd()));
+                        bw.newLine();
+                        bw.flush();
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+    @Test
+    public void convertAnnotation37BedTo38Bed() {
+        File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning-server/src/main/resources/data/liftOver",
+                "hg19ToHg38.over.chain.gz");
+        LiftOver liftOver = new LiftOver(chainFile);
+
+        Collection<File> files = FileUtils.listFiles(new File("/tmp/NCNEXUS38"), FileFilterUtils.suffixFileFilter("bed"),
+                TrueFileFilter.INSTANCE);
+        // files.forEach(a -> System.out.println(a.getAbsolutePath()));
+        System.out.println(files.size());
+        for (File input : files) {
+
+            File output = new File(input.getParentFile(), input.getName().replace(".bed", ".38.bed"));
+
+            try (FileReader fr = new FileReader(input);
+                    BufferedReader br = new BufferedReader(fr);
+                    FileWriter fw = new FileWriter(output);
+                    BufferedWriter bw = new BufferedWriter(fw)) {
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    List<String> row = Arrays.asList(line.split("\t"));
+
+                    String contig = row.get(0).replace("NC_", "");
+                    contig = contig.substring(0, contig.indexOf("."));
+                    String chromosome = contig;
+                    if ("000023".equals(chromosome)) {
+                        chromosome = "X";
+                    } else if ("000024".equals(chromosome)) {
+                        chromosome = "Y";
+                    } else {
+                        chromosome = Integer.valueOf(contig).toString();
+                    }
+
+                    String version = row.get(0);
+                    version = version.substring(version.indexOf(".") + 1, version.length());
+                    Integer ver = Integer.valueOf(version);
+                    ver++;
+
+                    Interval convertedRow = liftOver.liftOver(
+                            new Interval(String.format("chr%s", chromosome), Integer.valueOf(row.get(1)), Integer.valueOf(row.get(2))));
+
+                    if (convertedRow != null) {
+                        bw.write(String.format("NC_%06d.%2$d\t%3$d\t%4$d", Integer.valueOf(contig), ver, convertedRow.getStart(),
+                                convertedRow.getEnd()));
+                        bw.newLine();
+                        bw.flush();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            input.delete();
+            output.renameTo(input);
+
+        }
 
     }
 
