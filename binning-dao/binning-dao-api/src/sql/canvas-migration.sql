@@ -42,6 +42,20 @@ alter table clinbin.bin_results_final_diagnostic rename class_id to hgmd_class_i
 alter table clinbin.bin_results_final_diagnostic alter column hgmd_class_id drop not null;
 alter table clinbin.bin_results_final_diagnostic add column clinvar_class_id integer;
 
+alter table clinbin.report rename n_analyzed_class_1 to n_analyzed_hgmd_class_1;
+alter table clinbin.report rename n_analyzed_class_2 to n_analyzed_hgmd_class_2;
+alter table clinbin.report rename n_analyzed_class_3 to n_analyzed_hgmd_class_3;
+alter table clinbin.report rename n_analyzed_class_4 to n_analyzed_hgmd_class_4;
+alter table clinbin.report rename n_analyzed_class_5 to n_analyzed_hgmd_class_5;
+alter table clinbin.report rename n_analyzed_class_6 to n_analyzed_hgmd_class_6;
+
+alter table clinbin.report add column n_analyzed_clinvar_class_1 integer;
+alter table clinbin.report add column n_analyzed_clinvar_class_2 integer;
+alter table clinbin.report add column n_analyzed_clinvar_class_3 integer;
+alter table clinbin.report add column n_analyzed_clinvar_class_4 integer;
+alter table clinbin.report add column n_analyzed_clinvar_class_5 integer;
+alter table clinbin.report add column n_analyzed_clinvar_class_6 integer;
+
 ALTER TABLE clinbin.max_freq ALTER COLUMN max_allele_freq DROP NOT NULL;
 ALTER TABLE clinbin.max_freq ALTER COLUMN source DROP NOT NULL;
 
