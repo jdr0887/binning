@@ -1,0 +1,15 @@
+<features name="binning-workflow-diagnostic-gs-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
+
+  <feature name="binning-workflow-diagnostic-gs" version="${project.version}" resolver="(obr)">
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs/binning-workflow-diagnostic-gs-commons/${project.version}</bundle>
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs/binning-workflow-diagnostic-gs-commands/${project.version}</bundle>    
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs/binning-workflow-diagnostic-gs-executor/${project.version}</bundle>
+    <bundle>mvn:org.renci.binning.binning-workflows.binning-workflow-diagnostic-gs/binning-workflow-diagnostic-gs-ws/${project.version}</bundle>
+  </feature>
+
+</features>
+
+
+
+
+
