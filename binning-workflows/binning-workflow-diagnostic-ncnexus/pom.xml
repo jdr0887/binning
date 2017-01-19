@@ -2,25 +2,25 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning-workflows</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.7</version>
   </parent>
   <name>Binning :: Workflow :: Diagnostic NCNEXUS</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows</groupId>
   <artifactId>binning-workflow-diagnostic-ncnexus</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.7</version>
   <packaging>pom</packaging>
   <dependencyManagement>
     <dependencies>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-ncnexus</groupId>
 	<artifactId>binning-workflow-diagnostic-ncnexus-commons</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
       </dependency>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-ncnexus</groupId>
 	<artifactId>binning-workflow-diagnostic-ncnexus-executor</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
       </dependency>      
     </dependencies>
   </dependencyManagement>

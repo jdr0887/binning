@@ -2,25 +2,25 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning-workflows</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.7</version>
   </parent>
   <name>Binning :: Workflow :: Diagnostic UNCSeq</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows</groupId>
   <artifactId>binning-workflow-diagnostic-uncseq</artifactId>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.7</version>
   <packaging>pom</packaging>
   <dependencyManagement>
     <dependencies>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-uncseq</groupId>
 	<artifactId>binning-workflow-diagnostic-uncseq-commons</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
       </dependency>
       <dependency>
 	<groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-uncseq</groupId>
 	<artifactId>binning-workflow-diagnostic-uncseq-executor</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
       </dependency>      
     </dependencies>
   </dependencyManagement>  
