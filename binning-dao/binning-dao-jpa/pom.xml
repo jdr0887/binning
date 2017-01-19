@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning-dao</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
   </parent>
   <name>Binning :: DAO :: JPA</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-dao</groupId>
   <artifactId>binning-dao-jpa</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>

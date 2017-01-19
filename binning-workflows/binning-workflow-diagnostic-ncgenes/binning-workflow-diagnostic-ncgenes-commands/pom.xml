@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning.binning-workflows</groupId>
     <artifactId>binning-workflow-diagnostic-ncgenes</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
   </parent>
   <name>Binning :: Workflow :: Diagnostic NCGenes :: Commands</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-ncgenes</groupId>
   <artifactId>binning-workflow-diagnostic-ncgenes-commands</artifactId>
-  <version>0.0.5</version>
+  <version>0.0.6-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
