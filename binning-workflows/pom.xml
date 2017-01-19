@@ -14,6 +14,7 @@
     <module>binning-workflow-diagnostic-gs</module>
     <module>binning-workflow-diagnostic-mskcc</module>
     <module>binning-workflow-diagnostic-ncgenes</module>
+    <module>binning-workflow-diagnostic-ncnexus</module>
     <module>binning-workflow-diagnostic-test</module>
     <module>binning-workflow-diagnostic-uncseq</module>
     <module>binning-workflow-incidental-ncgenes</module>
