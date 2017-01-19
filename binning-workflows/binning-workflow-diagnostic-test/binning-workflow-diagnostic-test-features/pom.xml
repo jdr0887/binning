@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning.binning-workflows</groupId>
     <artifactId>binning-workflow-diagnostic-test</artifactId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.6</version>
   </parent>
   <name>Binning :: Workflow :: Diagnostic Test :: Features</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning.binning-workflows.binning-workflow-diagnostic-test</groupId>
   <artifactId>binning-workflow-diagnostic-test-features</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.6</version>
   <packaging>pom</packaging>
   <build>
     <plugins>
