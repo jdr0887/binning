@@ -11,6 +11,7 @@ import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DX;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.binning.dao.clinbin.model.DiagnosticStatusType;
 import org.renci.binning.diagnostic.uncseq.executor.DiagnosticUNCSeqTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,19 @@ public class DiagnosticUNCSeqServiceImpl implements DiagnosticUNCSeqService {
             return Response.serverError().build();
         }
         return Response.ok(info).build();
+    }
+
+    @Override
+    public DiagnosticStatusType status(Integer binningJobId) {
+        logger.debug("ENTERING status(Integer)");
+        try {
+            DiagnosticBinningJob foundBinningJob = binningDAOBeanService.getDiagnosticBinningJobDAO().findById(binningJobId);
+            logger.info(foundBinningJob.toString());
+            return foundBinningJob.getStatus();
+        } catch (BinningDAOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public BinningExecutorService getBinningExecutorService() {

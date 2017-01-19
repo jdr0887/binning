@@ -9,8 +9,10 @@ import org.renci.binning.core.BinningExecutorService;
 import org.renci.binning.core.incidental.IncidentalBinningJobInfo;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
+import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.clinbin.model.IncidentalBinX;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
+import org.renci.binning.dao.clinbin.model.IncidentalStatusType;
 import org.renci.binning.incidental.ncgenes.executor.IncidentalNCGenesTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,19 @@ public class IncidentalNCGenesServiceImpl implements IncidentalNCGenesService {
             return Response.serverError().build();
         }
         return Response.ok(info).build();
+    }
+
+    @Override
+    public IncidentalStatusType status(Integer binningJobId) {
+        logger.debug("ENTERING status(Integer)");
+        try {
+            IncidentalBinningJob foundBinningJob = binningDAOBeanService.getIncidentalBinningJobDAO().findById(binningJobId);
+            logger.info(foundBinningJob.toString());
+            return foundBinningJob.getStatus();
+        } catch (BinningDAOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public BinningExecutorService getBinningExecutorService() {

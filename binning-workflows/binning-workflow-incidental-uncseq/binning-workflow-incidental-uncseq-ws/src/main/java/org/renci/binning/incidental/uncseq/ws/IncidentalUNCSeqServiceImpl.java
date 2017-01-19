@@ -11,6 +11,7 @@ import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.IncidentalBinX;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
+import org.renci.binning.dao.clinbin.model.IncidentalStatusType;
 import org.renci.binning.incidental.uncseq.executor.IncidentalUNCSeqTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,19 @@ public class IncidentalUNCSeqServiceImpl implements IncidentalUNCSeqService {
             return Response.serverError().build();
         }
         return Response.ok(info).build();
+    }
+
+    @Override
+    public IncidentalStatusType status(Integer binningJobId) {
+        logger.debug("ENTERING status(Integer)");
+        try {
+            IncidentalBinningJob foundBinningJob = binningDAOBeanService.getIncidentalBinningJobDAO().findById(binningJobId);
+            logger.info(foundBinningJob.toString());
+            return foundBinningJob.getStatus();
+        } catch (BinningDAOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public BinningExecutorService getBinningExecutorService() {
