@@ -58,6 +58,13 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     public GATKDepthInterval(String line) {
         super();
         String[] split = line.split("\t");
+
+        if (split.length == 4) {
+            this.contig = split[0];
+            this.startPosition = Integer.valueOf(split[1]);
+            this.endPosition = Integer.valueOf(split[2]);
+        }
+
         if (split.length == 1) {
             String target = split[0];
             Matcher m = targetPattern.matcher(target);
@@ -67,6 +74,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
                 this.endPosition = Integer.valueOf(m.group("end"));
             }
         }
+        
         if (split.length == 17) {
             String target = split[0];
             Matcher m = targetPattern.matcher(target);
