@@ -6,9 +6,16 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import org.renci.binning.dao.Persistable;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "DiagnosticStatusType", propOrder = {})
+@XmlRootElement(name = "diagnosticStatusType")
 @Entity
 @Table(schema = "clinbin", name = "diagnostic_status_type")
 @Cacheable
