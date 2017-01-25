@@ -449,6 +449,5 @@
     <module>binning-datasource</module>
     <module>binning-dao</module>
     <module>binning-features</module>    
-    <module>binning-workflows</module>        
   </modules>
 </project>
