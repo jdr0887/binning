@@ -61,6 +61,7 @@ import org.renci.binning.dao.refseq.TranscriptMapsExonsDAO;
 import org.renci.binning.dao.refseq.VariantEffectDAO;
 import org.renci.binning.dao.refseq.Variants_48_2_DAO;
 import org.renci.binning.dao.refseq.Variants_61_2_DAO;
+import org.renci.binning.dao.refseq.Variants_78_4_DAO;
 import org.renci.binning.dao.var.AssemblyDAO;
 import org.renci.binning.dao.var.AssemblyLocatedVariantDAO;
 import org.renci.binning.dao.var.AssemblyLocatedVariantQCDAO;
@@ -323,6 +324,10 @@ public interface BinningDAOBeanService {
     public Variants_61_2_DAO getVariants_61_2_DAO();
 
     public void setVariants_61_2_DAO(Variants_61_2_DAO variants_61_2_DAO);
+
+    public Variants_78_4_DAO getVariants_78_4_DAO();
+
+    public void setVariants_78_4_DAO(Variants_78_4_DAO variants_78_4_DAO);
 
     public AssemblyDAO getAssemblyDAO();
 
