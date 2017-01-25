@@ -164,12 +164,45 @@ public class Scratch {
 
     @Test
     public void testLiftOver() {
-        File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning-server/src/main/resources/data/liftOver",
-                "hg19ToHg38.over.chain.gz");
-        LiftOver liftOver = new LiftOver(chainFile);
 
-        Interval ret = liftOver.liftOver(new Interval("chr1", 16776377, 16776452));
-        System.out.println(ret.toString());
+        File output = new File("/tmp", "ic_snp_v2.38.list");
+
+        try (FileWriter fw = new FileWriter(output); BufferedWriter bw = new BufferedWriter(fw)) {
+
+            // NC_000001.10:186026474
+            // NC_000004.11:41673604
+            // NC_000005.9:112162854
+            // NC_000006.11:90661576
+            // NC_000009.11:79325558
+            // NC_000011.9:26677947
+            // NC_000013.10:23824783
+            // NC_000020.10:33584289
+
+            File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning-server/src/main/resources/data/liftOver",
+                    "hg19ToHg38.over.chain.gz");
+            LiftOver liftOver = new LiftOver(chainFile);
+
+            Interval ret = liftOver.liftOver(new Interval("chr1", 186026474, 186026474));
+            fw.write(String.format("%s:%d%n", "NC_000001.11", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr4", 41673604, 41673604));
+            fw.write(String.format("%s:%d%n", "NC_000004.12", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr5", 112162854, 112162854));
+            fw.write(String.format("%s:%d%n", "NC_000005.10", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr6", 90661576, 90661576));
+            fw.write(String.format("%s:%d%n", "NC_000006.12", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr9", 79325558, 79325558));
+            fw.write(String.format("%s:%d%n", "NC_000009.12", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr11", 26677947, 26677947));
+            fw.write(String.format("%s:%d%n", "NC_000011.10", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr13", 23824783, 23824783));
+            fw.write(String.format("%s:%d%n", "NC_000013.11", ret.getStart()));
+            ret = liftOver.liftOver(new Interval("chr20", 33584289, 33584289));
+            fw.write(String.format("%s:%d%n", "NC_000020.11", ret.getStart()));
+            fw.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
