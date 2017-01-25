@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.renci.binning.core.grch37.VariantsFactory;
 import org.renci.binning.dao.BinningDAOException;
 import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
@@ -97,10 +98,10 @@ public class AnnotateVariantsFromDiagnosticJobTest {
 
                                 Variants_61_2 variant = null;
                                 if (transcriptMapsExons == null) {
-                                    variant = Variants_61_2Factory.createIntronicVariant(daoMgr.getDAOBean(), refseqVersion, locatedVariant,
+                                    variant = VariantsFactory.createIntronicVariant(daoMgr.getDAOBean(), refseqVersion, locatedVariant,
                                             mapsList, tMap, transcriptMapsExonsList);
                                 } else {
-                                    variant = Variants_61_2Factory.createExonicVariant(daoMgr.getDAOBean(), refseqVersion, locatedVariant,
+                                    variant = VariantsFactory.createExonicVariant(daoMgr.getDAOBean(), refseqVersion, locatedVariant,
                                             mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                 }
                                 logger.info(variant.toString());
