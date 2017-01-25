@@ -9,7 +9,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.renci.binning.core.BinningException;
-import org.renci.binning.core.Variants_61_2Factory;
+import org.renci.binning.core.grch37.VariantsFactory;
 import org.renci.binning.dao.BinningDAOBeanService;
 import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
 import org.renci.binning.dao.clinbin.model.IncidentalResultVersionX;
@@ -117,7 +117,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                             Variants_61_2 variant = null;
 
                             if (transcriptMapsExons == null) {
-                                variant = Variants_61_2Factory.createIntronicVariant(daoBean, refseqVersion, locatedVariant, mapsList, tMap,
+                                variant = VariantsFactory.createIntronicVariant(daoBean, refseqVersion, locatedVariant, mapsList, tMap,
                                         transcriptMapsExonsList);
                             } else {
 
@@ -126,10 +126,10 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                                 && "-".equals(tMap.getStrand()))
                                                 || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                                         && "+".equals(tMap.getStrand())))) {
-                                    variant = Variants_61_2Factory.createBorderCrossingVariant(daoBean, refseqVersion, locatedVariant, tMap,
+                                    variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion, locatedVariant, tMap,
                                             mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                 } else {
-                                    variant = Variants_61_2Factory.createExonicVariant(daoBean, refseqVersion, locatedVariant, mapsList,
+                                    variant = VariantsFactory.createExonicVariant(daoBean, refseqVersion, locatedVariant, mapsList,
                                             transcriptMapsExonsList, transcriptMapsExons);
                                 }
 
@@ -188,7 +188,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                         .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                 tMap.getTranscript().getVersionId());
 
-                                Variants_61_2 variant = Variants_61_2Factory.createBorderCrossingVariant(daoBean, refseqVersion,
+                                Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
                                         locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                 variants.add(variant);
                             }
@@ -240,7 +240,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                     tMap.getTranscript().getVersionId());
 
-                                    Variants_61_2 variant = Variants_61_2Factory.createBorderCrossingVariant(daoBean, refseqVersion,
+                                    Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
                                             locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                     variants.add(variant);
                                 }
