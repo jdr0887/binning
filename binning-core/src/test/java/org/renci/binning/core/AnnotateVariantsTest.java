@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.junit.Test;
+import org.renci.binning.core.grch37.VariantsFactory;
 import org.renci.binning.dao.jpa.BinningDAOManager;
 import org.renci.binning.dao.refseq.model.TranscriptMaps;
 import org.renci.binning.dao.refseq.model.TranscriptMapsExons;
@@ -75,17 +76,17 @@ public class AnnotateVariantsTest {
                 Variants_61_2 variant = null;
 
                 if (transcriptMapsExons == null) {
-                    variant = Variants_61_2Factory.createIntronicVariant(daoMgr.getDAOBean(), "61", locatedVariant, mapsList, tMap,
+                    variant = VariantsFactory.createIntronicVariant(daoMgr.getDAOBean(), "61", locatedVariant, mapsList, tMap,
                             transcriptMapsExonsList);
                 } else {
 
                     if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
                             || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                     && "+".equals(tMap.getStrand()))) {
-                        variant = Variants_61_2Factory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant, tMap,
+                        variant = VariantsFactory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant, tMap,
                                 mapsList, transcriptMapsExonsList, transcriptMapsExons);
                     } else {
-                        variant = Variants_61_2Factory.createExonicVariant(daoMgr.getDAOBean(), "61", locatedVariant, mapsList,
+                        variant = VariantsFactory.createExonicVariant(daoMgr.getDAOBean(), "61", locatedVariant, mapsList,
                                 transcriptMapsExonsList, transcriptMapsExons);
                     }
 
@@ -141,7 +142,7 @@ public class AnnotateVariantsTest {
                     List<TranscriptMaps> mapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61", tMap.getTranscript().getVersionId());
 
-                    Variants_61_2 variant = Variants_61_2Factory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant,
+                    Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant,
                             tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                     variants.add(variant);
                 }
@@ -190,7 +191,7 @@ public class AnnotateVariantsTest {
                         List<TranscriptMaps> mapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
                                 .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61", tMap.getTranscript().getVersionId());
 
-                        Variants_61_2 variant = Variants_61_2Factory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant,
+                        Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant,
                                 tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                         variants.add(variant);
                     }
