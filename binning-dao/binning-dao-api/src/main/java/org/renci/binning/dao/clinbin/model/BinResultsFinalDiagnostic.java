@@ -15,6 +15,7 @@ import org.renci.binning.dao.hgmd.model.HGMDLocatedVariant;
 import org.renci.binning.dao.refseq.model.LocationType;
 import org.renci.binning.dao.refseq.model.VariantEffect;
 import org.renci.binning.dao.refseq.model.Variants_61_2;
+import org.renci.binning.dao.refseq.model.Variants_78_4;
 import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
 import org.renci.binning.dao.var.model.AssemblyLocatedVariantQC;
@@ -211,6 +212,89 @@ public class BinResultsFinalDiagnostic implements Persistable {
     }
 
     public BinResultsFinalDiagnostic(BinResultsFinalDiagnosticPK key, Variants_61_2 variant, DiseaseClass hgmdDiseaseClass,
+            DiseaseClass clinvarDiseaseClass, MaxFrequency maxFrequency, DiagnosticGene diagnosticGene,
+            HGMDLocatedVariant hgmdLocatedVariant, AssemblyLocatedVariant assemblyLocatedVariant,
+            AssemblyLocatedVariantQC assemblyLocatedVariantQC, NCGenesFrequencies ncgenesFrequencies, SNPMappingAgg snpMappingAgg,
+            UnimportantExon unimportantExon) {
+        this(key);
+
+        this.clinvarDiseaseClass = clinvarDiseaseClass;
+        this.hgmdDiseaseClass = hgmdDiseaseClass;
+
+        // variant can't be null
+        this.chromosome = variant.getKey().getGenomeRefSeq();
+        this.alternateAllele = variant.getAlternateAllele();
+        this.aminoAcidEnd = variant.getAminoAcidEnd();
+        this.aminoAcidStart = variant.getAminoAcidStart();
+        this.codingSequencePosition = variant.getCodingSequencePosition();
+        this.finalAminoAcid = variant.getFinalAminoAcid();
+        this.frameshift = variant.getFrameshift();
+        this.geneId = variant.getGene().getId();
+        this.hgncGene = variant.getHgncGene();
+        this.hgvsCodingSequence = variant.getHgvsCodingSequence();
+        this.hgvsGenomic = variant.getHgvsGenomic();
+        this.hgvsProtein = variant.getHgvsProtein();
+        this.hgvsTranscript = variant.getHgvsTranscript();
+        this.inframe = variant.getInframe();
+        this.intronExonDistance = variant.getIntronExonDistance();
+        this.locationType = variant.getLocationType();
+        this.nummaps = variant.getNumberOfTranscriptMaps();
+        this.originalAminoAcid = variant.getOriginalAminoAcid();
+        this.strand = variant.getStrand();
+        this.position = variant.getKey().getPosition();
+        this.referenceAllele = variant.getReferenceAllele();
+        this.refseqGene = variant.getRefSeqGene();
+        this.transcriptPosition = variant.getTranscriptPosition();
+        this.type = variant.getVariantType().getName();
+        this.variantEffect = variant.getVariantEffect();
+
+        if (hgmdLocatedVariant != null) {
+            this.hgmdAccessionNumber = hgmdLocatedVariant.getKey().getAccession();
+            this.hgmdTag = hgmdLocatedVariant.getTag();
+        }
+
+        if (assemblyLocatedVariant != null) {
+            this.homozygous = assemblyLocatedVariant.getHomozygous();
+            this.genotypeQual = assemblyLocatedVariant.getGenotypeQuality();
+        }
+
+        if (assemblyLocatedVariantQC != null) {
+            this.altDepth = assemblyLocatedVariantQC.getAltDepth();
+            this.refDepth = assemblyLocatedVariantQC.getRefDepth();
+            this.depth = assemblyLocatedVariantQC.getDepth();
+            this.fracReadsWithDels = assemblyLocatedVariantQC.getFracReadsWithDels();
+            this.hrun = assemblyLocatedVariantQC.getHomopolymerRun();
+            this.qd = assemblyLocatedVariantQC.getQualityByDepth();
+            this.strandScore = assemblyLocatedVariantQC.getStrandScore();
+            this.readPosRankSum = assemblyLocatedVariantQC.getReadPosRankSum();
+        }
+
+        if (ncgenesFrequencies != null) {
+            this.NCGenesAlternateFrequency = ncgenesFrequencies.getAltAlleleFrequency() != null ? ncgenesFrequencies.getAltAlleleFrequency()
+                    : 0D;
+            this.NCGenesHWEP = ncgenesFrequencies.getHweP() != null ? ncgenesFrequencies.getHweP() : 1D;
+        }
+
+        if (maxFrequency != null) {
+            this.maxAlleleFrequency = maxFrequency.getMaxAlleleFreq();
+        }
+
+        if (diagnosticGene != null) {
+            this.tier = diagnosticGene.getTier();
+            this.inheritance = diagnosticGene.getInheritance();
+        }
+
+        if (snpMappingAgg != null) {
+            this.rsId = snpMappingAgg.getRsIds();
+        }
+
+        if (unimportantExon != null) {
+            this.exonTruncationCount = unimportantExon.getCount() != null ? unimportantExon.getCount() : 0;
+        }
+
+    }
+
+    public BinResultsFinalDiagnostic(BinResultsFinalDiagnosticPK key, Variants_78_4 variant, DiseaseClass hgmdDiseaseClass,
             DiseaseClass clinvarDiseaseClass, MaxFrequency maxFrequency, DiagnosticGene diagnosticGene,
             HGMDLocatedVariant hgmdLocatedVariant, AssemblyLocatedVariant assemblyLocatedVariant,
             AssemblyLocatedVariantQC assemblyLocatedVariantQC, NCGenesFrequencies ncgenesFrequencies, SNPMappingAgg snpMappingAgg,
