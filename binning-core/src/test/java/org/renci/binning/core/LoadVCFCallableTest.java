@@ -88,9 +88,11 @@ public class LoadVCFCallableTest {
                 case "NCGENES Study":
                     excludesFilter.add("LowQual");
 
+                    avuMap.put("ParticipantId", participant);
+                    avuMap.put("MaPSeqSystem", "prod");
                     avuMap.put("MaPSeqJobName", "WriteVCFHeader");
                     avuMap.put("MaPSeqMimeType", "TEXT_PLAIN");
-                    String possibleHeaderFile = IRODSUtils.findFile(participant, avuMap);
+                    String possibleHeaderFile = IRODSUtils.findFile(avuMap);
 
                     if (StringUtils.isNotEmpty(possibleHeaderFile)) {
                         // List<String> headerFileLines = FileUtils.readLines(IRODSUtils.getFile(possibleHeaderFile,
