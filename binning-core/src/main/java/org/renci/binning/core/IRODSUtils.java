@@ -29,7 +29,7 @@ public class IRODSUtils {
 
         String irodsFile = null;
         try {
-            CommandInput lookupFileCI = new CommandInput(commandSB.toString());
+            CommandInput lookupFileCI = new CommandInput(commandSB.toString().replaceFirst(" and ", ""));
             CommandOutput lookupFileCO = BashExecutor.getInstance().execute(lookupFileCI);
             String output = lookupFileCO.getStdout().toString();
             List<String> lines = Arrays.asList(output.split("\n"));
