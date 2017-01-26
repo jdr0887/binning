@@ -30,7 +30,8 @@ public class IRODSUtils {
         String irodsFile = null;
         try {
             CommandInput lookupFileCI = new CommandInput(commandSB.toString().replaceFirst(" and ", ""));
-            CommandOutput lookupFileCO = BashExecutor.getInstance().execute(lookupFileCI);
+            CommandOutput lookupFileCO = BashExecutor.getInstance().execute(lookupFileCI,
+                    new File(System.getProperty("user.home"), ".binningrc"));
             String output = lookupFileCO.getStdout().toString();
             List<String> lines = Arrays.asList(output.split("\n"));
 
@@ -73,7 +74,7 @@ public class IRODSUtils {
     public static File getFile(String irodsFile, String outputDir) throws BinningException {
         try {
             CommandInput getCI = new CommandInput(String.format("$IRODS_HOME/iget -N 1 %s %s", irodsFile, outputDir));
-            BashExecutor.getInstance().execute(getCI);
+            BashExecutor.getInstance().execute(getCI, new File(System.getProperty("user.home"), ".binningrc"));
         } catch (ExecutorException e) {
             throw new BinningException(e);
         }
