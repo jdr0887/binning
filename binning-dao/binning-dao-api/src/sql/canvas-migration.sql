@@ -136,3 +136,12 @@ $$;
 
 ALTER FUNCTION clinbin.incidental_binning_job_insert(_incidental_list_version integer, _participant text, _gender text, _incidental_bin_id integer, _study text) OWNER TO vardb_admin;
 
+CREATE OR REPLACE FUNCTION clinbin.analysis_note_insert(_loc_var_id bigint, _hgnc_gene text, _phenotype_id integer, _note text, _user_name text) RETURNS VOID
+       LANGUAGE plpgsql
+       AS $$
+BEGIN
+	INSERT INTO clinbin.analysis_note (analysis_note_id, loc_var_id, hgnc_gene, phenotype_id, note, user_name, "timestamp")
+	       VALUES (NEXTVAL('clinbin.analysis_note_analysis_note_id_seq'),_loc_var_id, _hgnc_gene, _phenotype_id, _note, _user_name, now());
+       RETURN;		    
+END;
+$$;
