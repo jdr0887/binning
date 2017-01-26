@@ -22,7 +22,7 @@ public class IRODSUtils {
     }
 
     public static String findFile(Map<String, String> avuMap, String extension) throws BinningException {
-        StringBuilder commandSB = new StringBuilder("$IRODS_HOME/imeta %s -d qu");
+        StringBuilder commandSB = new StringBuilder("$IRODS_HOME/imeta -d qu ");
         for (String key : avuMap.keySet()) {
             commandSB.append(String.format(" and %s = '%s'", key, avuMap.get(key)));
         }
