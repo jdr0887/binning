@@ -17,14 +17,12 @@ public class IRODSUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(IRODSUtils.class);
 
-    public static String findFile(String participant, Map<String, String> avuMap) throws BinningException {
-        return findFile(participant, avuMap, null);
+    public static String findFile(Map<String, String> avuMap) throws BinningException {
+        return findFile(avuMap, null);
     }
 
-    public static String findFile(String participant, Map<String, String> avuMap, String extension) throws BinningException {
+    public static String findFile(Map<String, String> avuMap, String extension) throws BinningException {
         StringBuilder commandSB = new StringBuilder("$IRODS_HOME/imeta %s -d qu");
-        commandSB.append(String.format("ParticipantId = '%s'", participant));
-        commandSB.append(String.format(" and MaPSeqSystem = '%s'", "prod"));
         for (String key : avuMap.keySet()) {
             commandSB.append(String.format(" and %s = '%s'", key, avuMap.get(key)));
         }
