@@ -64,6 +64,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     public abstract String getStudyName();
 
+    public abstract GenomeRef getGenomeRef();
+
     public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningException;
 
     public AbstractLoadVCFCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
@@ -105,7 +107,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 vcfFile = new File(binningJob.getVcfFile());
             }
 
-            GenomeRef build37GenomeRef = daoBean.getGenomeRefDAO().findById(2);
+            GenomeRef genomeRef = getGenomeRef();
 
             try (final VCFFileReader vcfFileReader = new VCFFileReader(vcfFile, false)) {
 
@@ -170,7 +172,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 if (CollectionUtils.isEmpty(foundAssemblies)) {
 
                     VariantSet variantSet = new VariantSet();
-                    variantSet.setGenomeRef(build37GenomeRef);
+                    variantSet.setGenomeRef(genomeRef);
                     variantSet.setId(daoBean.getVariantSetDAO().save(variantSet));
 
                     assembly = new Assembly();
@@ -257,8 +259,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             try {
                                 List<GenomeRefSeq> foundGenomeRefSeqs = null;
                                 if (variantContext.getContig().length() < 3 && !variantContext.getContig().startsWith("NC_")) {
-                                    foundGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByRefIdAndContigAndSeqType(
-                                            build37GenomeRef.getId(), variantContext.getContig(), "Chromosome");
+                                    foundGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByRefIdAndContigAndSeqType(genomeRef.getId(),
+                                            variantContext.getContig(), "Chromosome");
                                 } else {
                                     foundGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByVersionedAccession(variantContext.getContig());
                                 }
@@ -276,7 +278,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                 for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
                                     LocatedVariant locatedVariant = new LocatedVariant();
-                                    locatedVariant.setGenomeRef(build37GenomeRef);
+                                    locatedVariant.setGenomeRef(genomeRef);
                                     locatedVariant.setGenomeRefSeq(genomeRefSeq);
                                     locatedVariant.setSeq(altAllele.getDisplayString());
 
@@ -286,7 +288,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         }
 
                                         List<GenomeRefSeqLocation> genomeRefSeqLocationList = daoBean.getGenomeRefSeqLocationDAO()
-                                                .findByRefIdAndVersionedAccesionAndPosition(build37GenomeRef.getId(),
+                                                .findByRefIdAndVersionedAccesionAndPosition(genomeRef.getId(),
                                                         genomeRefSeq.getVerAccession(), variantContext.getStart());
                                         if (CollectionUtils.isNotEmpty(genomeRefSeqLocationList)) {
                                             locatedVariant.setRef(genomeRefSeqLocationList.get(0).getBase());
@@ -314,7 +316,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         String ref = "";
                                         locatedVariant.setPosition(variantContext.getStart());
                                         List<GenomeRefSeqLocation> genomeRefSeqLocationList = daoBean.getGenomeRefSeqLocationDAO()
-                                                .findByRefIdAndVersionedAccesionAndPosition(build37GenomeRef.getId(),
+                                                .findByRefIdAndVersionedAccesionAndPosition(genomeRef.getId(),
                                                         genomeRefSeq.getVerAccession(), locatedVariant.getPosition());
                                         if (CollectionUtils.isNotEmpty(genomeRefSeqLocationList)) {
                                             ref = genomeRefSeqLocationList.get(0).getBase();
@@ -331,7 +333,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         }
                                         locatedVariant.setPosition(variantContext.getStart() + 1);
                                         List<GenomeRefSeqLocation> genomeRefSeqLocationList = daoBean.getGenomeRefSeqLocationDAO()
-                                                .findByRefIdAndVersionedAccesionAndPosition(build37GenomeRef.getId(),
+                                                .findByRefIdAndVersionedAccesionAndPosition(genomeRef.getId(),
                                                         genomeRefSeq.getVerAccession(), locatedVariant.getPosition());
                                         if (CollectionUtils.isNotEmpty(genomeRefSeqLocationList)) {
                                             locatedVariant.setRef(genomeRefSeqLocationList.get(0).getBase());
@@ -375,7 +377,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         }
                                         locatedVariant.setPosition(variantContext.getStart() + 1);
                                         List<GenomeRefSeqLocation> genomeRefSeqLocationList = daoBean.getGenomeRefSeqLocationDAO()
-                                                .findByRefIdAndVersionedAccesionAndPosition(build37GenomeRef.getId(),
+                                                .findByRefIdAndVersionedAccesionAndPosition(genomeRef.getId(),
                                                         genomeRefSeq.getVerAccession(), locatedVariant.getPosition());
                                         if (CollectionUtils.isNotEmpty(genomeRefSeqLocationList)) {
                                             String ref = genomeRefSeqLocationList.get(0).getBase();
