@@ -22,7 +22,7 @@ public class IRODSUtils {
     }
 
     public static String findFile(Map<String, String> avuMap, String extension) throws BinningException {
-        StringBuilder commandSB = new StringBuilder("$IRODS_HOME/imeta -d qu ");
+        StringBuilder commandSB = new StringBuilder("$BINNING_IRODS_HOME/imeta -d qu ");
         for (String key : avuMap.keySet()) {
             commandSB.append(String.format(" and %s = '%s'", key, avuMap.get(key)));
         }
@@ -73,7 +73,7 @@ public class IRODSUtils {
 
     public static File getFile(String irodsFile, String outputDir) throws BinningException {
         try {
-            CommandInput getCI = new CommandInput(String.format("$IRODS_HOME/iget -N 1 %s %s", irodsFile, outputDir));
+            CommandInput getCI = new CommandInput(String.format("$BINNING_IRODS_HOME/iget -N 1 %s %s", irodsFile, outputDir));
             BashExecutor.getInstance().execute(getCI, new File(System.getProperty("user.home"), ".binningrc"));
         } catch (ExecutorException e) {
             throw new BinningException(e);
