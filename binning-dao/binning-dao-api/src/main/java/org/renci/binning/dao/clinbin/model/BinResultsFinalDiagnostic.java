@@ -120,7 +120,7 @@ public class BinResultsFinalDiagnostic implements Persistable {
     @Column(name = "hgmd_tag", length = 5)
     private String hgmdTag;
 
-    @Column(name = "clinvar_accesion", length = 20)
+    @Column(name = "clinvar_accession", length = 20)
     private String clinvarAccession;
 
     @Column(name = "clinvar_assertion", length = 100)
