@@ -137,6 +137,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     project = new Project(studyName);
                     project.setLab(lab);
                     daoBean.getProjectDAO().save(project);
+                    project = daoBean.getProjectDAO().findById(studyName);
                 }
                 logger.info(project.toString());
 
@@ -385,6 +386,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
                                     }
 
+                                    logger.info(locatedVariant.toString());
+
                                     List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
                                             .findByExample(locatedVariant);
                                     if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
@@ -392,16 +395,15 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     } else {
                                         locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
                                     }
-                                    logger.info(locatedVariant.toString());
 
                                     LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
+                                    logger.info(liftOverLocatedVariant.toString());
                                     foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
                                     if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
                                         liftOverLocatedVariant = foundLocatedVariants.get(0);
                                     } else {
                                         liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
                                     }
-                                    logger.info(liftOverLocatedVariant.toString());
 
                                     CanonicalAllele canonicalAllele = null;
                                     // first try to find CanonicalAllele by LocatedVariant
