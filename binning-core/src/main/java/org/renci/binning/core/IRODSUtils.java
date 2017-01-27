@@ -18,10 +18,12 @@ public class IRODSUtils {
     private static final Logger logger = LoggerFactory.getLogger(IRODSUtils.class);
 
     public static String findFile(Map<String, String> avuMap) throws BinningException {
+        logger.debug("ENTERING findFile(Map<String, String>)");
         return findFile(avuMap, null);
     }
 
     public static String findFile(Map<String, String> avuMap, String extension) throws BinningException {
+        logger.debug("ENTERING findFile(Map<String, String>, String)");
         StringBuilder commandSB = new StringBuilder("$BINNING_IRODS_HOME/imeta -d qu ");
         for (String key : avuMap.keySet()) {
             commandSB.append(String.format(" and %s = '%s'", key, avuMap.get(key)));
@@ -62,8 +64,7 @@ public class IRODSUtils {
             }
 
             if (StringUtils.isNotEmpty(directory) && StringUtils.isNotEmpty(file)) {
-                irodsFile = String.format("%s/%s", directory, file);
-                logger.info("Found irods file: {}", irodsFile);
+                irodsFile = String.format("%s/%s", directory.trim(), file.trim());
             }
         } catch (ExecutorException e) {
             throw new BinningException(e);
@@ -72,6 +73,7 @@ public class IRODSUtils {
     }
 
     public static File getFile(String irodsFile, String outputDir) throws BinningException {
+        logger.debug("ENTERING getFile(String, String)");
         try {
             CommandInput getCI = new CommandInput(String.format("$BINNING_IRODS_HOME/iget -N 1 %s %s", irodsFile, outputDir));
             BashExecutor.getInstance().execute(getCI, new File(System.getProperty("user.home"), ".binningrc"));
