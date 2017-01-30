@@ -28,7 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import htsjdk.samtools.liftover.LiftOver;
@@ -37,6 +37,31 @@ import htsjdk.samtools.util.Interval;
 public class Scratch {
 
     private static final Pattern targetPattern = Pattern.compile("(?<chromosome>.+):(?<start>\\d+)-?(?<end>\\d+)?");
+
+    @Test
+    public void test() {
+
+        String ref = "TCCG";
+        String alt = "CCCC";
+
+        // String ref = "abc";
+        // String alt = "abcdefg";
+        String diff = StringUtils.difference(alt, ref);
+        System.out.println(diff);
+        Integer diffIdx = StringUtils.indexOfDifference(alt, ref);
+        System.out.println(diffIdx);
+
+        ref = StringUtils.reverse(ref);
+        alt = StringUtils.reverse(alt);
+        
+        diff = StringUtils.difference(alt, ref);
+        System.out.println(diff);
+        diff = StringUtils.difference(ref, alt);
+        System.out.println(diff);
+        diffIdx = StringUtils.indexOfDifference(alt, ref);
+        System.out.println(diffIdx);
+
+    }
 
     @Test
     public void testIntervalDisjunction() throws IOException {

@@ -3,22 +3,15 @@ package org.renci.binning.core;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.dao.ref.model.GenomeRef;
-import org.renci.binning.dao.ref.model.GenomeRefSeq;
-import org.renci.binning.dao.var.model.Assembly;
 import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.binning.dao.var.model.VariantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,173 +27,23 @@ public class LoadVCFCallableTest {
 
     private static final Logger logger = LoggerFactory.getLogger(LoadVCFCallableTest.class);
 
-    private static final BinningDAOManager daoMgr = BinningDAOManager.getInstance();
-
     @Test
     public void test() throws BinningDAOException, BinningException, IOException {
 
-        DiagnosticBinningJob binningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4093);
-        binningJob.setVcfFile(String.format("/tmp/%s",
-                binningJob.getVcfFile().substring(binningJob.getVcfFile().lastIndexOf("/"), binningJob.getVcfFile().length())));
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("job", binningJob);
-        // variables.put(INTERVALS_DIR, "/storage/binning/annotation/intervals");
-
-        String participant = binningJob.getParticipant();
-
-        // String binningIntervalsDir = variables.get(INTERVALS_DIR).toString();
-        //
-        // String participantDir = String.format("%s/%s/%s", variables.get(ANNOTATION_DIR).toString(), "ncgenes",
-        // binningJob.getParticipant());
-
-        Map<String, String> avuMap = new HashMap<String, String>();
-        avuMap.put("MaPSeqStudyName", "NC_GENES");
-        avuMap.put("MaPSeqWorkflowName", "NCGenesBaseline");
-
-        File vcfFile = null;
-        // if (StringUtils.isEmpty(binningJob.getVcfFile())) {
-        //
-        // avuMap.put("MaPSeqJobName", "GATKApplyRecalibration");
-        // avuMap.put("MaPSeqMimeType", "TEXT_VCF");
-        // String irodsFile = IRODSUtils.findFile(participant, avuMap);
-        // vcfFile = IRODSUtils.getFile(irodsFile, participantDir);
-        // binningJob.setVcfFile(vcfFile.getAbsolutePath());
-        // // daoMgr.getDAOBean().getDiagnosticBinningJobDAO().save(binningJob);
-        // } else {
-        // vcfFile = new File(binningJob.getVcfFile());
-        // }
-
-        GenomeRef build37GenomeRef = daoMgr.getDAOBean().getGenomeRefDAO().findById(2);
+        File vcfFile = new File("/tmp", "GSK_007006.merged.fb.sorted.va.vcf");
+        // File vcfFile = new File("/tmp", "GSK_007217.merged.fb.sorted.va.vcf");
 
         try (VCFFileReader vcfFileReader = new VCFFileReader(vcfFile, false)) {
 
             VCFHeader vcfHeader = vcfFileReader.getFileHeader();
             List<String> sampleNames = vcfHeader.getGenotypeSamples();
 
-            Set<String> excludesFilter = new HashSet<>();
-
-            String labName = null;
-            String libraryName = "";
-            String studyName = null;
-            String sampleNameOverride = null;
-
-            switch (binningJob.getStudy()) {
-                case "NCGENES Study":
-                    excludesFilter.add("LowQual");
-
-                    avuMap.put("ParticipantId", participant);
-                    avuMap.put("MaPSeqSystem", "prod");
-                    avuMap.put("MaPSeqJobName", "WriteVCFHeader");
-                    avuMap.put("MaPSeqMimeType", "TEXT_PLAIN");
-                    String possibleHeaderFile = IRODSUtils.findFile(avuMap);
-
-                    if (StringUtils.isNotEmpty(possibleHeaderFile)) {
-                        // List<String> headerFileLines = FileUtils.readLines(IRODSUtils.getFile(possibleHeaderFile,
-                        // participantDir));
-                        // for (String line : headerFileLines) {
-                        // if (line.contains("LabName")) {
-                        // labName = line.split(" = ")[1];
-                        // }
-                        // if (line.contains("StudyName")) {
-                        // studyName = line.split(" = ")[1];
-                        // }
-                        // }
-                    }
-                    break;
-                case "UNCSeq Cancer Study":
-                    labName = "LCCC";
-                    libraryName = "unknown";
-                    studyName = "UNCSeq";
-                    sampleNames.clear();
-                    sampleNames.add(sampleNameOverride);
-                    break;
-                case "MSKCC":
-                    labName = "MSKCC";
-                    libraryName = "unknown";
-                    studyName = "MSKCC";
-                    sampleNames.clear();
-                    sampleNames.add(sampleNameOverride);
-                    break;
-                case "PipelineTest":
-                    labName = "PipelineTest";
-                    libraryName = "unknown";
-                    studyName = "PipelineTest";
-                    sampleNames.clear();
-                    sampleNames.add(sampleNameOverride);
-                    break;
-            }
-
-            int snpCount = 0;
-            int delCount = 0;
-            int insCount = 0;
-            int subCount = 0;
             int refSkippedCount = 0;
-            int filterSkippedCount = 0;
+            int errorCount = 0;
+            int filteredCount = 0;
             int noCallCount = 0;
 
             for (String sampleName : sampleNames) {
-
-                Assembly assembly = null;
-                if (binningJob.getAssembly() == null) {
-
-                    // Lab lab = null;
-                    // List<Lab> foundLabs = daoMgr.getDAOBean().getLabDAO().findByName(labName);
-                    // if (CollectionUtils.isEmpty(foundLabs)) {
-                    // lab = new Lab(labName);
-                    // // daoMgr.getDAOBean().getLabDAO().save(lab);
-                    // } else {
-                    // lab = foundLabs.get(0);
-                    // }
-                    // logger.info(lab.toString());
-                    //
-                    // Project project = null;
-                    // List<Project> foundProjects = daoMgr.getDAOBean().getProjectDAO().findByName(studyName);
-                    // if (CollectionUtils.isEmpty(foundProjects)) {
-                    // project = new Project(studyName);
-                    // project.setLab(lab);
-                    // // daoMgr.getDAOBean().getProjectDAO().save(project);
-                    // } else {
-                    // project = foundProjects.get(0);
-                    // }
-                    // logger.info(project.toString());
-                    //
-                    // Sample sample = null;
-                    // List<Sample> foundSamples =
-                    // daoMgr.getDAOBean().getSampleDAO().findByNameAndProjectName(sampleName, project.getName());
-                    // if (CollectionUtils.isEmpty(foundSamples)) {
-                    // sample = new Sample(sampleName);
-                    // sample.setProject(project);
-                    // // sample.setId(daoMgr.getDAOBean().getSampleDAO().save(sample));
-                    // } else {
-                    // sample = foundSamples.get(0);
-                    // }
-                    // logger.info(sample.toString());
-                    //
-                    // // library
-                    // Library library = null;
-                    // List<Library> foundLibraries =
-                    // daoMgr.getDAOBean().getLibraryDAO().findByNameAndSampleId(libraryName, sample.getId());
-                    // if (CollectionUtils.isEmpty(foundLibraries)) {
-                    // library = new Library(libraryName);
-                    // library.setSample(sample);
-                    // // library.setId(daoMgr.getDAOBean().getLibraryDAO().save(library));
-                    // } else {
-                    // library = foundLibraries.get(0);
-                    // }
-                    // logger.info(library.toString());
-                    //
-                    // VariantSet variantSet = new VariantSet();
-                    // variantSet.setGenomeRef(genomeRef);
-                    // variantSet.setId(daoMgr.getDAOBean().getVariantSetDAO().save(variantSet));
-                    //
-                    // assembly = new Assembly();
-                    // assembly.setLibrary(library);
-                    // assembly.setVariantSet(variantSet);
-                    // assembly.setId(daoMgr.getDAOBean().getAssemblyDAO().save(assembly));
-                } else {
-                    assembly = binningJob.getAssembly();
-                }
-                logger.info(assembly.toString());
 
                 List<LocatedVariant> locatedVariantList = new ArrayList<>();
                 for (VariantContext variantContext : vcfFileReader) {
@@ -214,12 +57,7 @@ public class LoadVCFCallableTest {
 
                     String altAlleles = StringUtils.join(variantContext.getAlternateAlleles().toArray());
                     if (!altAlleles.matches("[AaCcGgTt,]*")) {
-                        refSkippedCount++;
-                        continue;
-                    }
-
-                    if (CollectionUtils.containsAny(variantContext.getFilters(), excludesFilter)) {
-                        filterSkippedCount++;
+                        errorCount++;
                         continue;
                     }
 
@@ -245,78 +83,155 @@ public class LoadVCFCallableTest {
                     for (Genotype genotype : genotypesContext) {
 
                         if (genotype.isNoCall()) {
+                            noCallCount++;
                             continue;
                         }
 
-                        GenomeRefSeq genomeRefSeq = null;
-                        List<GenomeRefSeq> foundGenomeRefSeqs = daoMgr.getDAOBean().getGenomeRefSeqDAO()
-                                .findByVersionedAccession(variantContext.getContig());
-                        if (CollectionUtils.isNotEmpty(foundGenomeRefSeqs)) {
-                            genomeRefSeq = foundGenomeRefSeqs.get(0);
+                        if (genotype.isHomRef()) {
+                            refSkippedCount++;
+                            continue;
                         }
 
-                        if (genomeRefSeq == null) {
-                            throw new BinningDAOException(String.format("Unable to find GenomeRefSeq: %s ", variantContext.getContig()));
-                        }
+                        try {
 
-                        LocatedVariant locatedVariant = new LocatedVariant();
-                        locatedVariant.setGenomeRef(build37GenomeRef);
-                        locatedVariant.setGenomeRefSeq(genomeRefSeq);
-                        locatedVariant.setPosition(variantContext.getStart());
-                        locatedVariant.setSeq(StringUtils.join(variantContext.getAlternateAlleles().toArray()));
-
-                        // List<GenomeRefSeqLocation> genomeRefSeqLocationList =
-                        // daoMgr.getDAOBean().getGenomeRefSeqLocationDAO()
-                        // .findByRefIdAndVersionedAccesionAndPosition(genomeRef.getId(),
-                        // genomeRefSeq.getVerAccession(),
-                        // variantContext.getStart());
-                        // if (CollectionUtils.isNotEmpty(genomeRefSeqLocationList)) {
-                        // locatedVariant.setRef(genomeRefSeqLocationList.get(0).getBase());
-                        // } else {
-                        locatedVariant.setRef(variantContext.getReference().getDisplayString());
-                        // }
-
-                        if (variantContext.isSNP()) {
-                            snpCount++;
-                            locatedVariant.setVariantType(daoMgr.getDAOBean().getVariantTypeDAO().findById("snp"));
-                            locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getSeq().length());
-                        } else if (variantContext.isIndel()) {
-                            if (variantContext.isSimpleDeletion()) {
-                                delCount++;
-                                locatedVariant.setVariantType(daoMgr.getDAOBean().getVariantTypeDAO().findById("del"));
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                                LocatedVariant locatedVariant = new LocatedVariant();
+                                if (variantContext.isSNP()) {
+                                    locatedVariant.setSeq(altAllele.getDisplayString());
+                                    locatedVariant.setRef(variantContext.getReference().getDisplayString());
+                                    locatedVariant.setPosition(variantContext.getStart());
+                                    locatedVariant.setVariantType(new VariantType("snp"));
+                                    locatedVariant.setEndPosition(variantContext.getStart() + locatedVariant.getRef().length());
+                                    locatedVariantList.add(locatedVariant);
+                                }
                             }
-                            if (variantContext.isSimpleInsertion()) {
-                                insCount++;
-                                locatedVariant.setVariantType(daoMgr.getDAOBean().getVariantTypeDAO().findById("ins"));
-                                String reference = variantContext.getReference().getBaseString();
-                                locatedVariant.setSeq(locatedVariant.getSeq().replaceFirst(reference, ""));
-                            }
-                        } else {
-                            subCount++;
-                            locatedVariant.setVariantType(daoMgr.getDAOBean().getVariantTypeDAO().findById("sub"));
-                        }
 
-                        // List<LocatedVariant> foundLocatedVariants = daoMgr.getDAOBean().getLocatedVariantDAO()
-                        // .findByExample(locatedVariant);
-                        //
-                        // if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                        // locatedVariant = foundLocatedVariants.get(0);
-                        // } else {
-                        // locatedVariant.setId(daoMgr.getDAOBean().getLocatedVariantDAO().save(locatedVariant));
-                        // }
-                        // logger.info(locatedVariant.toString());
-                        locatedVariantList.add(locatedVariant);
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                                LocatedVariant locatedVariant = new LocatedVariant();
+                                if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+                                    locatedVariant.setPosition(variantContext.getStart());
+                                    locatedVariant.setVariantType(new VariantType("ins"));
+                                    String ref = variantContext.getReference().getDisplayString();
+                                    locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
+                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
+                                    locatedVariant.setRef("");
+                                    locatedVariantList.add(locatedVariant);
+                                }
+                            }
+
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                                LocatedVariant locatedVariant = new LocatedVariant();
+                                if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+                                    locatedVariant.setPosition(variantContext.getStart() + 1);
+                                    locatedVariant.setRef(variantContext.getReference().getDisplayString()
+                                            .replaceFirst(altAllele.getDisplayString(), ""));
+                                    locatedVariant.setSeq(locatedVariant.getRef());
+                                    locatedVariant.setVariantType(new VariantType("del"));
+                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
+                                    locatedVariantList.add(locatedVariant);
+                                }
+                            }
+
+                            // cant trust htsjdk to parse properly...switch on freebayes type (if available)
+                            List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                                if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
+
+                                    String forwardRef = variantContext.getReference().getDisplayString();
+                                    String forwardAlt = altAllele.getDisplayString();
+                                    String forwardDiff = StringUtils.difference(forwardAlt, forwardRef);
+                                    Integer forwardDiffIdx = StringUtils.indexOfDifference(forwardAlt, forwardRef);
+
+                                    String reverseRef = StringUtils.reverse(variantContext.getReference().getDisplayString());
+                                    String reverseAlt = StringUtils.reverse(altAllele.getDisplayString());
+                                    String reverseDiff = StringUtils.difference(reverseAlt, reverseRef);
+                                    Integer reverseDiffIdx = StringUtils.indexOfDifference(reverseAlt, reverseRef);
+
+                                    if (CollectionUtils.isNotEmpty(types)) {
+                                        LocatedVariant locatedVariant = new LocatedVariant();
+                                        String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
+                                        switch (type) {
+                                            case "ins":
+                                                locatedVariant.setVariantType(new VariantType("ins"));
+                                                locatedVariant.setRef("");
+                                                if (forwardDiffIdx > 0 && reverseDiffIdx == 0) {
+                                                    locatedVariant.setPosition(variantContext.getStart());
+                                                    locatedVariant.setSeq(StringUtils.difference(forwardRef, forwardAlt));
+                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + forwardDiffIdx);
+                                                } else if (forwardDiffIdx == 0 && reverseDiffIdx > 0) {
+                                                    locatedVariant.setPosition(variantContext.getStart());
+                                                    locatedVariant.setSeq(StringUtils.difference(reverseRef, reverseAlt));
+                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + reverseDiffIdx);
+                                                }
+
+                                                break;
+                                            case "snp":
+                                                if (forwardDiffIdx > 0 && reverseDiffIdx == 0) {
+                                                    locatedVariant.setPosition(variantContext.getStart());
+                                                    locatedVariant.setRef(forwardRef);
+                                                    locatedVariant.setSeq(StringUtils.difference(forwardRef, forwardAlt));
+                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + forwardDiffIdx);
+                                                } else if (forwardDiffIdx == 0 && reverseDiffIdx > 0) {
+                                                    locatedVariant.setPosition(variantContext.getStart());
+                                                    locatedVariant.setRef(reverseRef);
+                                                    locatedVariant.setSeq(StringUtils.difference(reverseRef, reverseAlt));
+                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + reverseDiffIdx);
+                                                }
+                                                locatedVariant.setVariantType(new VariantType("snp"));
+                                                break;
+                                            default:
+                                                locatedVariant.setVariantType(new VariantType("sub"));
+                                                locatedVariant.setPosition(variantContext.getStart());
+                                                locatedVariant.setRef(forwardRef);
+                                                locatedVariant.setSeq(forwardAlt);
+                                                locatedVariant.setEndPosition(locatedVariant.getPosition() + forwardRef.length());
+                                                break;
+                                        }
+                                        locatedVariantList.add(locatedVariant);
+                                    }
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                            e.printStackTrace();
+                        }
 
                     }
 
                 }
 
-                locatedVariantList.forEach(a -> logger.info(a.toString()));
+                // List<LocatedVariant> snps = locatedVariantList.stream()
+                // .filter(a -> a.getVariantType().getName().equals("snp") && a.getPosition().equals(11221454))
+                // .collect(Collectors.toList());
+                // snps.forEach(a -> logger.info(a.toString()));
+
+                List<LocatedVariant> subs = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("sub"))
+                        .collect(Collectors.toList());
+                subs.forEach(a -> logger.info(a.toString()));
+
+                List<LocatedVariant> ins = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("ins"))
+                        .collect(Collectors.toList());
+                // ins.forEach(a -> logger.info(a.toString()));
+
+                List<LocatedVariant> snps = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("snp"))
+                        .collect(Collectors.toList());
+                // snps.forEach(a -> logger.info(a.toString()));
+
+                List<LocatedVariant> dels = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("del"))
+                        .collect(Collectors.toList());
+                // dels.forEach(a -> logger.info(a.toString()));
+
                 logger.info("locatedVariantList.size() = {}", locatedVariantList.size());
 
-            }
+                System.out.println("num_snp_rows | num_del_rows | num_sub_rows | num_ins_rows | num_skipped_ref_rows");
+                System.out.println("118 | 10 | 3 | 4 | 160918");
+                // System.out.println("124 | 11 | 1 | 6 | 160429");
 
-            System.out.println("DONE");
+                System.out.println(
+                        String.format("%d | %d | %d | %d | %d", snps.size(), dels.size(), subs.size(), ins.size(), refSkippedCount));
+
+            }
 
         }
 
