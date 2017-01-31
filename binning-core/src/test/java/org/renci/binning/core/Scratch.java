@@ -30,6 +30,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.renci.binning.dao.var.model.LocatedVariant;
 
 import htsjdk.samtools.liftover.LiftOver;
 import htsjdk.samtools.util.Interval;
@@ -41,25 +42,36 @@ public class Scratch {
     @Test
     public void test() {
 
-        String ref = "TCCG";
-        String alt = "CCCC";
+        // String ref = "TCCG";
+        // String alt = "CCCC";
+        // String alt = "CCCG";
 
-        // String ref = "abc";
-        // String alt = "abcdefg";
-        String diff = StringUtils.difference(alt, ref);
-        System.out.println(diff);
-        Integer diffIdx = StringUtils.indexOfDifference(alt, ref);
-        System.out.println(diffIdx);
+        String ref = "AT";
+        String alt = "ATT";
 
-        ref = StringUtils.reverse(ref);
-        alt = StringUtils.reverse(alt);
-        
-        diff = StringUtils.difference(alt, ref);
-        System.out.println(diff);
-        diff = StringUtils.difference(ref, alt);
-        System.out.println(diff);
-        diffIdx = StringUtils.indexOfDifference(alt, ref);
-        System.out.println(diffIdx);
+        char[] referenceChars = ref.toCharArray();
+        char[] alternateChars = alt.toCharArray();
+
+        StringBuilder charsToRemove = new StringBuilder();
+        for (int i = 0; i < referenceChars.length; ++i) {
+            if (referenceChars[i] != alternateChars[i]) {
+                break;
+            }
+            charsToRemove.append(referenceChars[i]);
+        }
+
+        for (int i = referenceChars.length - 1; i > 0; --i) {
+            if (referenceChars[i] != alternateChars[i]) {
+                break;
+            }
+            charsToRemove.append(referenceChars[i]);
+        }
+
+        if (charsToRemove.length() > 0) {
+            charsToRemove.reverse();
+        }
+
+        ref = StringUtils.removeEnd(ref, charsToRemove.toString());
 
     }
 
