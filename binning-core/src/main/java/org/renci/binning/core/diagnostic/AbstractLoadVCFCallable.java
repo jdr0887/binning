@@ -202,7 +202,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                             GenomeRefSeq genomeRefSeq = foundGenomeRefSeqs.get(0);
                             logger.info(genomeRefSeq.toString());
-                            List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
+                            List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
                             logger.info(genomeRefSeq.toString());
 
                             for (Allele altAllele : variantContext.getAlternateAlleles()) {
