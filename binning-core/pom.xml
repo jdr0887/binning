@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.33</version>
+    <version>0.0.34-SNAPSHOT</version>
   </parent>
   <name>Binning :: Core</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning</groupId>
   <artifactId>binning-core</artifactId>
-  <version>0.0.33</version>
+  <version>0.0.34-SNAPSHOT</version>
   <packaging>bundle</packaging>
   <dependencies>
     <dependency>
