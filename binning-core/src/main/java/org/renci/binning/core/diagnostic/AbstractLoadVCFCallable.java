@@ -204,7 +204,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
 
                         for (Allele altAllele : variantContext.getAlternateAlleles()) {
-
+                            logger.info("altAllele: {}", altAllele.getDisplayString());
                             if (variantContext.isSNP()) {
                                 LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
                                         variantContext.getStart() + variantContext.getReference().getDisplayString().length(),
@@ -344,7 +344,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
     }
 
     private LocatedVariant createLocatedVariant(LocatedVariant locatedVariant) throws BinningException {
-
+        logger.debug("ENTERING createLocatedVariant(LocatedVariant)");
+        logger.info(locatedVariant.toString());
         try {
             List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(locatedVariant);
             if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
