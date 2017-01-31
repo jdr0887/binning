@@ -98,6 +98,12 @@ public class LocatedVariant implements Persistable {
         super();
     }
 
+    public LocatedVariant(GenomeRef genomeRef, GenomeRefSeq genomeRefSeq) {
+        super();
+        this.genomeRef = genomeRef;
+        this.genomeRefSeq = genomeRefSeq;
+    }
+
     public LocatedVariant(GenomeRef genomeRef, GenomeRefSeq genomeRefSeq, Integer position, Integer endPosition, VariantType variantType,
             String ref, String seq) {
         super();
