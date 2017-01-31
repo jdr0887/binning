@@ -3,13 +3,13 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.28-SNAPSHOT</version>
+    <version>0.0.29-SNAPSHOT</version>
   </parent>
   <name>Binning :: Server</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning</groupId>
   <artifactId>binning-server</artifactId>
-  <version>0.0.28-SNAPSHOT</version>
+  <version>0.0.29-SNAPSHOT</version>
   <packaging>karaf-assembly</packaging>
   <properties>
     <assembly.directory>${project.build.directory}/assembly</assembly.directory>
@@ -73,7 +73,7 @@
       <groupId>org.renci.binning</groupId>
       <artifactId>binning-features</artifactId>
       <classifier>features</classifier>
-      <version>0.0.28-SNAPSHOT</version>
+      <version>0.0.29-SNAPSHOT</version>
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
