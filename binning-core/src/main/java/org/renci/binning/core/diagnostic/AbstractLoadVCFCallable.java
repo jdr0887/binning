@@ -417,16 +417,18 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             }
 
             LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
-            if (locatedVariant.getVariantType().getName().equals("ins")) {
-                // could have had a deletion in ref
-                liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
-            }
-            logger.info(liftOverLocatedVariant.toString());
-            foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
-            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                liftOverLocatedVariant = foundLocatedVariants.get(0);
-            } else {
-                liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
+            if (liftOverLocatedVariant != null) {
+                if (locatedVariant.getVariantType().getName().equals("ins")) {
+                    // could have had a deletion in ref
+                    liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
+                }
+                logger.info(liftOverLocatedVariant.toString());
+                foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
+                if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                    liftOverLocatedVariant = foundLocatedVariants.get(0);
+                } else {
+                    liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
+                }
             }
 
             CanonicalAllele canonicalAllele = null;
