@@ -416,6 +416,13 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
             }
 
+            CanonicalAllele canonicalAllele = null;
+            // first try to find CanonicalAllele by LocatedVariant
+            List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO().findByLocatedVariantId(locatedVariant.getId());
+            if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                canonicalAllele = foundCanonicalAlleles.get(0);
+            }
+
             LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
             if (liftOverLocatedVariant != null) {
                 if (locatedVariant.getVariantType().getName().equals("ins")) {
@@ -431,15 +438,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 }
             }
 
-            CanonicalAllele canonicalAllele = null;
-            // first try to find CanonicalAllele by LocatedVariant
-            List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO().findByLocatedVariantId(locatedVariant.getId());
-            if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
-                canonicalAllele = foundCanonicalAlleles.get(0);
-            }
-
             // if not found, try to find CanonicalAllele by liftover LocatedVariant
-            if (canonicalAllele == null) {
+            if (liftOverLocatedVariant != null && canonicalAllele == null) {
                 List<CanonicalAllele> foundCanonicalAllelesByLiftOverLocatedVariant = daoBean.getCanonicalAlleleDAO()
                         .findByLocatedVariantId(liftOverLocatedVariant.getId());
                 if (CollectionUtils.isNotEmpty(foundCanonicalAllelesByLiftOverLocatedVariant)) {
@@ -452,7 +452,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 canonicalAllele = new CanonicalAllele();
                 daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
                 canonicalAllele.getLocatedVariants().add(locatedVariant);
-                canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                if (liftOverLocatedVariant != null) {
+                    canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                }
                 daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
             } else {
 
@@ -460,7 +462,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     canonicalAllele.getLocatedVariants().add(locatedVariant);
                 }
 
-                if (!canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
+                if (liftOverLocatedVariant != null && !canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
                     canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
                 }
                 daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
