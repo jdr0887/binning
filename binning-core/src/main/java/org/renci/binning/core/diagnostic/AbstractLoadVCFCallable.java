@@ -184,7 +184,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     if (CollectionUtils.isNotEmpty(variantContextList)) {
                         logger.info("variantContextList.size(): {}", variantContextList.size());
                         for (VariantContext variantContext : variantContextList) {
-                            logger.info(variantContext.getContig());
 
                             List<GenomeRefSeq> foundGenomeRefSeqs = null;
                             if (variantContext.getContig().length() < 3 && !variantContext.getContig().startsWith("NC_")) {
@@ -203,19 +202,18 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             GenomeRefSeq genomeRefSeq = foundGenomeRefSeqs.get(0);
                             logger.info(genomeRefSeq.toString());
                             List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
-                            logger.info(genomeRefSeq.toString());
 
                             for (Allele altAllele : variantContext.getAlternateAlleles()) {
-                                logger.info("altAllele: {}", altAllele.getDisplayString());
                                 if (variantContext.isSNP()) {
                                     LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
                                             variantContext.getStart() + variantContext.getReference().getDisplayString().length(),
                                             snpVariantType, variantContext.getReference().getDisplayString(), altAllele.getDisplayString());
                                     locatedVariantList.add(createLocatedVariant(locatedVariant));
                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                    continue;
                                 }
+                            }
 
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
                                 if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
                                     String ref = variantContext.getReference().getDisplayString();
                                     LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
@@ -223,9 +221,10 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             altAllele.getDisplayString().replaceFirst(ref, ""));
                                     locatedVariantList.add(createLocatedVariant(locatedVariant));
                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                    continue;
                                 }
+                            }
 
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
                                 if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
                                     String ref = variantContext.getReference().getDisplayString().replaceFirst(altAllele.getDisplayString(),
                                             "");
@@ -234,9 +233,10 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             ref, ref);
                                     locatedVariantList.add(createLocatedVariant(locatedVariant));
                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                    continue;
                                 }
+                            }
 
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
                                 if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
 
                                     String forwardRef = variantContext.getReference().getDisplayString();
@@ -254,6 +254,15 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
                                         String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
                                         switch (type) {
+                                            case "del":
+                                                locatedVariant.setVariantType(delVariantType);
+                                                String ref = variantContext.getReference().getDisplayString()
+                                                        .replaceFirst(altAllele.getDisplayString(), "");
+                                                locatedVariant.setPosition(variantContext.getStart() + 1);
+                                                locatedVariant.setEndPosition(variantContext.getStart() + 1 + ref.length());
+                                                locatedVariant.setRef(ref);
+                                                locatedVariant.setSeq(ref);
+                                                break;
                                             case "ins":
                                                 locatedVariant.setVariantType(insVariantType);
                                                 locatedVariant.setRef("");
@@ -292,9 +301,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         locatedVariantList.add(createLocatedVariant(locatedVariant));
                                         createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
                                     }
-                                    continue;
                                 }
-
                             }
 
                         }
@@ -342,7 +349,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
             }
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
         }
