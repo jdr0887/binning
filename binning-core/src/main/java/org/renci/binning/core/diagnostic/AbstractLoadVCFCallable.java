@@ -277,8 +277,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                     // remove from front
                                                     locatedVariant.setPosition(variantContext.getStart() + charsToRemove.length());
                                                     locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
-                                                    locatedVariant.setEndPosition(
-                                                            locatedVariant.getPosition() + locatedVariant.getSeq().length());
+                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
                                                 } else {
                                                     // remove from back
                                                     for (int i = referenceChars.length - 1; i > 0; --i) {
@@ -292,8 +291,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         charsToRemove.reverse();
                                                         locatedVariant.setPosition(variantContext.getStart());
                                                         locatedVariant.setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
-                                                        locatedVariant.setEndPosition(
-                                                                locatedVariant.getPosition() + locatedVariant.getSeq().length());
+                                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
                                                     }
                                                 }
 
