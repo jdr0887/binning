@@ -208,7 +208,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
                                             variantContext.getStart() + variantContext.getReference().getDisplayString().length(),
                                             snpVariantType, variantContext.getReference().getDisplayString(), altAllele.getDisplayString());
-                                    locatedVariantList.add(createLocatedVariant(locatedVariant));
+                                    locatedVariant = canonicalize(locatedVariant);
+                                    locatedVariantList.add(locatedVariant);
                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
                                 }
                             }
@@ -219,7 +220,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
                                             variantContext.getStart() + ref.length(), insVariantType, "",
                                             altAllele.getDisplayString().replaceFirst(ref, ""));
-                                    locatedVariantList.add(createLocatedVariant(locatedVariant));
+                                    locatedVariant = canonicalize(locatedVariant);
+                                    locatedVariantList.add(locatedVariant);
                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
                                 }
                             }
@@ -231,7 +233,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq,
                                             variantContext.getStart() + 1, variantContext.getStart() + 1 + ref.length(), delVariantType,
                                             ref, ref);
-                                    locatedVariantList.add(createLocatedVariant(locatedVariant));
+                                    locatedVariant = canonicalize(locatedVariant);
+                                    locatedVariantList.add(locatedVariant);
                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
                                 }
                             }
@@ -298,7 +301,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                 locatedVariant.setEndPosition(locatedVariant.getPosition() + forwardRef.length());
                                                 break;
                                         }
-                                        locatedVariantList.add(createLocatedVariant(locatedVariant));
+
+                                        locatedVariant = canonicalize(locatedVariant);
+                                        locatedVariantList.add(locatedVariant);
                                         createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
                                     }
                                 }
@@ -359,8 +364,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
         return null;
     }
 
-    private LocatedVariant createLocatedVariant(LocatedVariant locatedVariant) throws BinningException {
-        logger.debug("ENTERING createLocatedVariant(LocatedVariant)");
+    private LocatedVariant canonicalize(LocatedVariant locatedVariant) throws BinningException {
+        logger.debug("ENTERING canonicalize(LocatedVariant)");
         logger.info(locatedVariant.toString());
         try {
             List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(locatedVariant);
