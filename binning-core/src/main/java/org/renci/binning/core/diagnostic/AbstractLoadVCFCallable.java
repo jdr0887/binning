@@ -97,6 +97,11 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 daoBean.getDiagnosticBinningJobDAO().save(binningJob);
             } else {
                 vcfFile = new File(binningJob.getVcfFile());
+                if (!vcfFile.exists()) {
+                    vcfFile = getVCF(binningJob.getParticipant());
+                    binningJob.setVcfFile(vcfFile.getAbsolutePath());
+                    daoBean.getDiagnosticBinningJobDAO().save(binningJob);
+                }
             }
 
             final GenomeRef genomeRef = getGenomeRef();
@@ -194,6 +199,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         }
 
                         GenomeRefSeq genomeRefSeq = foundGenomeRefSeqs.get(0);
+                        logger.info(genomeRefSeq.toString());
+
                         List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
 
                         for (Allele altAllele : variantContext.getAlternateAlleles()) {
