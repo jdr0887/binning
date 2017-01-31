@@ -195,24 +195,18 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     Allele refAllele = variantContext.getReference();
 
                     if (refAllele.isNoCall()) {
-                        synchronized (countMap) {
-                            countMap.put("noCallCount", countMap.get("noCallCount").add(BigInteger.ONE));
-                        }
+                        countMap.put("noCallCount", countMap.get("noCallCount").add(BigInteger.ONE));
                         continue;
                     }
 
                     String altAlleles = StringUtils.join(variantContext.getAlternateAlleles().toArray());
                     if (!altAlleles.matches("[AaCcGgTt,]*")) {
-                        synchronized (countMap) {
-                            countMap.put("errorCount", countMap.get("errorCount").add(BigInteger.ONE));
-                        }
+                        countMap.put("errorCount", countMap.get("errorCount").add(BigInteger.ONE));
                         continue;
                     }
 
                     if (CollectionUtils.containsAny(variantContext.getFilters(), excludesFilter)) {
-                        synchronized (countMap) {
-                            countMap.put("filterSkippedCount", countMap.get("filterSkippedCount").add(BigInteger.ONE));
-                        }
+                        countMap.put("filterSkippedCount", countMap.get("filterSkippedCount").add(BigInteger.ONE));
                         continue;
                     }
                     CommonInfo commonInfo = variantContext.getCommonInfo();
@@ -234,16 +228,12 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     for (Genotype genotype : genotypesContext) {
 
                         if (genotype.isNoCall()) {
-                            synchronized (countMap) {
-                                countMap.put("noCallCount", countMap.get("noCallCount").add(BigInteger.ONE));
-                            }
+                            countMap.put("noCallCount", countMap.get("noCallCount").add(BigInteger.ONE));
                             continue;
                         }
 
                         if (genotype.isHomRef()) {
-                            synchronized (countMap) {
-                                countMap.put("refSkippedCount", countMap.get("refSkippedCount").add(BigInteger.ONE));
-                            }
+                            countMap.put("refSkippedCount", countMap.get("refSkippedCount").add(BigInteger.ONE));
                             continue;
                         }
 
@@ -258,9 +248,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                             if (CollectionUtils.isEmpty(foundGenomeRefSeqs)) {
                                 logger.warn("Could not find GenomeRefSeq by contig: {}", variantContext.getContig());
-                                synchronized (countMap) {
-                                    countMap.put("errorCount", countMap.get("errorCount").add(BigInteger.ONE));
-                                }
+                                countMap.put("errorCount", countMap.get("errorCount").add(BigInteger.ONE));
                                 continue;
                             }
 
@@ -310,7 +298,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                 }
                             }
 
-                            // cant trust htsjdk to parse properly...switch on freebayes type (if available)
                             List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
                             for (Allele altAllele : variantContext.getAlternateAlleles()) {
                                 if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
@@ -325,6 +312,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     String reverseDiff = StringUtils.difference(reverseAlt, reverseRef);
                                     Integer reverseDiffIdx = StringUtils.indexOfDifference(reverseAlt, reverseRef);
 
+                                    // cant trust htsjdk to parse properly...switch on freebayes type (if available)
                                     if (CollectionUtils.isNotEmpty(types)) {
                                         LocatedVariant locatedVariant = new LocatedVariant();
                                         locatedVariant.setGenomeRefSeq(genomeRefSeq);
@@ -343,7 +331,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                     locatedVariant.setSeq(StringUtils.difference(reverseRef, reverseAlt));
                                                     locatedVariant.setEndPosition(locatedVariant.getPosition() + reverseDiffIdx);
                                                 }
-
                                                 break;
                                             case "snp":
                                                 if (forwardDiffIdx > 0 && reverseDiffIdx == 0) {
@@ -426,13 +413,11 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
                                     }
                                     daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
-
                                 }
 
                             }
                             logger.info("done persisting LocatedVariants");
 
-                            
                             Integer dp = genotype.getDP();
                             int[] ad = genotype.getAD();
 
