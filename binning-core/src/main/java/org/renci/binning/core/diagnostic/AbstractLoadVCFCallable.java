@@ -517,8 +517,10 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 daoBean.getVariantSetLoadDAO().save(variantSetLoad);
                 logger.info(variantSetLoad.toString());
 
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                throw new BinningException(e);
             }
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
