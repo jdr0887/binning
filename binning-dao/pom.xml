@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.20-SNAPSHOT</version>
+    <version>0.0.20</version>
   </parent>
   <name>Binning :: DAO</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning</groupId>
   <artifactId>binning-dao</artifactId>
-  <version>0.0.20-SNAPSHOT</version>
+  <version>0.0.20</version>
   <packaging>pom</packaging>
   <modules>
     <module>binning-dao-api</module>
