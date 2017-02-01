@@ -1,6 +1,0 @@
-.classpath
-.project
-.settings
-target
-logs
-src/main/resources/org/renci/binning/binning.properties
