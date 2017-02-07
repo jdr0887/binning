@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.binning</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.34-SNAPSHOT</version>
+    <version>0.0.34</version>
   </parent>
   <name>Binning :: Features</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning</groupId>
   <artifactId>binning-features</artifactId>
-  <version>0.0.34-SNAPSHOT</version>
+  <version>0.0.34</version>
   <packaging>pom</packaging>
   <properties>
     <maven.site.plugin.skip>true</maven.site.plugin.skip>    

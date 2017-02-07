@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.binning</groupId>
   <artifactId>binning</artifactId>
-  <version>0.0.34-SNAPSHOT</version>
+  <version>0.0.34</version>
   <packaging>pom</packaging>
   <properties>
     <maven.site.plugin.skip>false</maven.site.plugin.skip>
@@ -55,7 +55,7 @@
     <url>https://github.com/jdr0887/binning</url>
     <developerConnection>scm:git:git@github.com:jdr0887/binning.git</developerConnection>
     <connection>scm:git:git@github.com:jdr0887/binning.git</connection>
-    <tag>HEAD</tag>
+    <tag>binning-0.0.34</tag>
   </scm>
   <dependencyManagement>
     <dependencies>
@@ -228,17 +228,17 @@
       <dependency>
 	<groupId>org.renci.binning</groupId>
 	<artifactId>binning-core</artifactId>
-      	<version>0.0.34-SNAPSHOT</version>	
+      	<version>0.0.34</version>	
       </dependency>      
       <dependency>
 	<groupId>org.renci.binning.binning-dao</groupId>
 	<artifactId>binning-dao-api</artifactId>
-      	<version>0.0.34-SNAPSHOT</version>	
+      	<version>0.0.34</version>	
       </dependency>
       <dependency>
 	<groupId>org.renci.binning.binning-dao</groupId>
 	<artifactId>binning-dao-jpa</artifactId>
-      	<version>0.0.34-SNAPSHOT</version>	
+      	<version>0.0.34</version>	
       </dependency>
       <dependency>
 	<groupId>org.apache.openjpa</groupId>
