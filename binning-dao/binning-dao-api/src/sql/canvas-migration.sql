@@ -145,3 +145,33 @@ BEGIN
        RETURN;		    
 END;
 $$;
+
+
+CREATE OR REPLACE FUNCTION clinbin.analysis_class_incidental_insert(_selected_class text, _select_class_descr text, _loc_var_id integer, _user_name text, _timestamp timestamp with time zone, _hgnc_gene text, _phenotype_id text, _incidental_bin_id integer) RETURNS integer
+       LANGUAGE plpgsql
+       AS $$
+DECLARE
+    _id integer;    
+BEGIN
+	INSERT INTO clinbin.analysis_class_incidental (selected_class, select_class_descr, loc_var_id, user_name, timestamp, hgnc_gene, phenotype_id, incidental_bin_id)
+               VALUES (_selected_class, _select_class_descr, _loc_var_id, _user_name, _timestamp, _hgnc_gene, _phenotype_id, _incidental_bin_id) RETURNING analysis_class_incidental_id INTO _id;
+	RETURN _id;
+END;
+$$;
+
+ALTER FUNCTION clinbin.analysis_class_incidental_insert(_selected_class text, _select_class_descr text, _loc_var_id integer, _user_name text, _timestamp timestamp with time zone, _hgnc_gene text, _phenotype_id text, _incidental_bin_id integer) OWNER TO vardb_admin;
+
+
+CREATE OR REPLACE FUNCTION clinbin.analysis_class_insert(_selected_class text, _select_class_descr text, _loc_var_id integer, _user_name text, _timestamp timestamp with time zone, _hgnc_gene text, _dx_id integer) RETURNS integer
+       LANGUAGE plpgsql
+       AS $$
+DECLARE
+    _id integer;    
+BEGIN
+	INSERT INTO clinbin.analysis_class (selected_class, selected_class_descr, loc_var_id, user_name, timestamp, hgnc_gene, dx_id)
+               VALUES (_selected_class, _select_class_descr, _loc_var_id, _user_name, _timestamp, _hgnc_gene, _phenotype_id, _dx_id) RETURNING analysis_class_id INTO _id;
+	RETURN _id;
+END;
+$$;
+
+ALTER FUNCTION clinbin.analysis_class_insert(_selected_class text, _select_class_descr text, _loc_var_id integer, _user_name text, _timestamp timestamp with time zone, _hgnc_gene text, _dx_id integer) OWNER TO vardb_admin;
