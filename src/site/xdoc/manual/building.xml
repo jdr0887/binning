@@ -4,7 +4,7 @@
   <body>
     <section name="Building">
       <subsection name="Prerequisites">
-	<p>Hearsay is %100 Java and is built using the Apache Maven build system.</p>
+	<p>The binning project is %100 Java and is built using the Apache Maven build system.</p>
 	<p>Prerequisites include:</p>
 	<ul>
 	  <li>Java 1.7+ (ensure JAVA_HOME is set in your environment)</li>
@@ -56,7 +56,7 @@
       <subsection name="Misc.">
 	<p>Setting the following helps ensure a successfull build:</p>
 	<pre>
-export JAVA_OPTS="-XX:MaxPermSize=768m -XX:-UseSplitVerifier -Xmx4g"
+export JAVA_OPTS="-Xmx4g"
 export MAVEN_OPTS="$JAVA_OPTS"
 	</pre>
 	<p>Note that "-XX:-UseSplitVerifier" is not needed with JDK 8.</p>

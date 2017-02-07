@@ -14,11 +14,13 @@
     <name>${project.name}</name>
   </bannerLeft>
   <body>
-    <menu name="Documentation">
+    <menu name="Overview">
       <item name="About" href="index.html"/>
-      <item name="FAQ" href="manual/faq.html" />
-      <item name="Building" href="manual/building.html"/>
     </menu>
+    <menu name="Manual">
+      <item name="Building" href="manual/building.html"/>
+      <item name="Plugins" href="manual/plugins.html"/>      
+    </menu>    
     <menu ref="reports"/>
   </body>
 </project>
