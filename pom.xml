@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.renci</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.14</version>    
+    <version>0.0.15</version>    
   </parent>
   <name>Binning</name>
   <modelVersion>4.0.0</modelVersion>
@@ -11,6 +11,7 @@
   <version>0.0.34-SNAPSHOT</version>
   <packaging>pom</packaging>
   <properties>
+    <maven.site.plugin.skip>false</maven.site.plugin.skip>
     <commons.discovery.version>0.5</commons.discovery.version>
     <commons.dbcp.version>1.4</commons.dbcp.version>
     <commons.beanutils.version>1.8.3</commons.beanutils.version>
@@ -407,6 +408,13 @@
       </plugins>
     </pluginManagement>        
     <plugins>
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-site-plugin</artifactId>
+	<configuration>
+          <skip>${maven.site.plugin.skip}</skip>
+	</configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
