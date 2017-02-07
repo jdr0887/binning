@@ -1,0 +1,11 @@
+org.renci.binning.core
+org.renci.binning.dao
+org.renci.binning.dao.clinbin
+org.renci.binning.dao.clinvar
+org.renci.binning.dao.dbsnp
+org.renci.binning.dao.exac
+org.renci.binning.dao.genome1k
+org.renci.binning.dao.hgnc
+org.renci.binning.dao.ref
+org.renci.binning.dao.refseq
+org.renci.binning.dao.var
