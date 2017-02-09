@@ -8,13 +8,13 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.MaxFrequency;
-import org.renci.binning.dao.clinbin.model.MaxFrequencyPK;
-import org.renci.binning.dao.genome1k.model.IndelMaxFrequency;
-import org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequency;
-import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.clinbin.model.MaxFrequency;
+import org.renci.canvas.dao.clinbin.model.MaxFrequencyPK;
+import org.renci.canvas.dao.genome1k.model.IndelMaxFrequency;
+import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequency;
+import org.renci.canvas.dao.jpa.CANVASDAOManager;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,10 +22,10 @@ public class UpdateFrequenciesCallableTest {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateFrequenciesCallableTest.class);
 
-    private static final BinningDAOManager daoMgr = BinningDAOManager.getInstance();
+    private static final CANVASDAOManager daoMgr = CANVASDAOManager.getInstance();
 
     @Test
-    public void test() throws BinningDAOException, BinningException, IOException {
+    public void test() throws CANVASDAOException, BinningException, IOException {
 
         List<LocatedVariant> locatedVariantList = daoMgr.getDAOBean().getLocatedVariantDAO().findByAssemblyId(35619);
 

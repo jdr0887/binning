@@ -9,16 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.renci.binning.core.BinningException;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.IncidentalBinningJob;
-import org.renci.binning.dao.clinbin.model.IncidentalResultVersionX;
-import org.renci.binning.dao.clinbin.model.MaxFrequency;
-import org.renci.binning.dao.clinbin.model.MaxFrequencyPK;
-import org.renci.binning.dao.clinbin.model.MaxFrequencySource;
-import org.renci.binning.dao.genome1k.model.IndelMaxFrequency;
-import org.renci.binning.dao.genome1k.model.SNPPopulationMaxFrequency;
-import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.clinbin.model.IncidentalBinningJob;
+import org.renci.canvas.dao.clinbin.model.IncidentalResultVersionX;
+import org.renci.canvas.dao.clinbin.model.MaxFrequency;
+import org.renci.canvas.dao.clinbin.model.MaxFrequencyPK;
+import org.renci.canvas.dao.clinbin.model.MaxFrequencySource;
+import org.renci.canvas.dao.genome1k.model.IndelMaxFrequency;
+import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequency;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +26,11 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractUpdateFrequenciesCallable.class);
 
-    private BinningDAOBeanService daoBean;
+    private CANVASDAOBeanService daoBean;
 
     private IncidentalBinningJob binningJob;
 
-    public AbstractUpdateFrequenciesCallable(BinningDAOBeanService daoBean, IncidentalBinningJob binningJob) {
+    public AbstractUpdateFrequenciesCallable(CANVASDAOBeanService daoBean, IncidentalBinningJob binningJob) {
         super();
         this.daoBean = daoBean;
         this.binningJob = binningJob;
@@ -115,7 +115,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
                                 maxFrequency.setLocatedVariant(locatedVariant);
                                 results.add(maxFrequency);
                             }
-                        } catch (BinningDAOException e) {
+                        } catch (CANVASDAOException e) {
                             e.printStackTrace();
                         }
 
@@ -143,11 +143,11 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
         this.binningJob = binningJob;
     }
 
-    public BinningDAOBeanService getDaoBean() {
+    public CANVASDAOBeanService getDaoBean() {
         return daoBean;
     }
 
-    public void setDaoBean(BinningDAOBeanService daoBean) {
+    public void setDaoBean(CANVASDAOBeanService daoBean) {
         this.daoBean = daoBean;
     }
 

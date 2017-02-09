@@ -83,7 +83,7 @@
 
   <service id="binningDataSource" ref="binning-ds-no-jta" interface="javax.sql.DataSource">
     <service-properties>
-      <entry key="osgi.jndi.service.name" value="binningNoJTA" />
+      <entry key="osgi.jndi.service.name" value="canvasNoJTA" />
     </service-properties>
   </service>
 
@@ -93,7 +93,7 @@
 
   <service id="binningXADataSource" ref="binning-ds-jta" interface="javax.sql.DataSource">
     <service-properties>
-      <entry key="osgi.jndi.service.name" value="binningJTA" />
+      <entry key="osgi.jndi.service.name" value="canvasJTA" />
     </service-properties>
   </service>
 

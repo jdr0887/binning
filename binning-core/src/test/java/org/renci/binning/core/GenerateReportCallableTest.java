@@ -1,11 +1,11 @@
 package org.renci.binning.core;
 
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.clinbin.model.Report;
-import org.renci.binning.dao.clinbin.model.ReportPK;
-import org.renci.binning.dao.jpa.BinningDAOManager;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.clinbin.model.Report;
+import org.renci.canvas.dao.clinbin.model.ReportPK;
+import org.renci.canvas.dao.jpa.CANVASDAOManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,14 +13,14 @@ public class GenerateReportCallableTest {
 
     private static final Logger logger = LoggerFactory.getLogger(GenerateReportCallableTest.class);
 
-    private static final BinningDAOManager daoMgr = BinningDAOManager.getInstance();
+    private static final CANVASDAOManager daoMgr = CANVASDAOManager.getInstance();
 
     public GenerateReportCallableTest() {
         super();
     }
 
     @Test
-    public void test() throws BinningDAOException {
+    public void test() throws CANVASDAOException {
 
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4207);
 

@@ -3,10 +3,10 @@ package org.renci.binning.core.diagnostic;
 import java.util.concurrent.Callable;
 
 import org.renci.binning.core.BinningException;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.clinbin.model.Report;
-import org.renci.binning.dao.clinbin.model.ReportPK;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.clinbin.model.Report;
+import org.renci.canvas.dao.clinbin.model.ReportPK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +14,11 @@ public abstract class AbstractGenerateReportCallable implements Callable<Report>
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractGenerateReportCallable.class);
 
-    private BinningDAOBeanService daoBean;
+    private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
 
-    public AbstractGenerateReportCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
+    public AbstractGenerateReportCallable(CANVASDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super();
         this.daoBean = daoBean;
         this.binningJob = binningJob;
@@ -156,11 +156,11 @@ public abstract class AbstractGenerateReportCallable implements Callable<Report>
         return report;
     }
 
-    public BinningDAOBeanService getDaoBean() {
+    public CANVASDAOBeanService getDaoBean() {
         return daoBean;
     }
 
-    public void setDaoBean(BinningDAOBeanService daoBean) {
+    public void setDaoBean(CANVASDAOBeanService daoBean) {
         this.daoBean = daoBean;
     }
 

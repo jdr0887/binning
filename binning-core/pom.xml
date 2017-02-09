@@ -30,14 +30,22 @@
       <groupId>commons-cli</groupId>
       <artifactId>commons-cli</artifactId>
     </dependency>
+    <!-- <dependency> -->
+    <!--   <groupId>org.renci.binning.binning-dao</groupId> -->
+    <!--   <artifactId>binning-dao-api</artifactId> -->
+    <!-- </dependency>     -->
+    <!-- <dependency> -->
+    <!--   <groupId>org.renci.binning.binning-dao</groupId> -->
+    <!--   <artifactId>binning-dao-jpa</artifactId> -->
+    <!-- </dependency> -->
     <dependency>
-      <groupId>org.renci.binning.binning-dao</groupId>
-      <artifactId>binning-dao-api</artifactId>
+      <groupId>org.renci.canvas.canvas-dao</groupId>
+      <artifactId>canvas-dao-api</artifactId>
     </dependency>    
     <dependency>
-      <groupId>org.renci.binning.binning-dao</groupId>
-      <artifactId>binning-dao-jpa</artifactId>
-    </dependency>    
+      <groupId>org.renci.canvas.canvas-dao</groupId>
+      <artifactId>canvas-dao-jpa</artifactId>
+    </dependency>        
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>

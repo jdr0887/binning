@@ -17,20 +17,20 @@ import org.biojava.nbio.core.sequence.transcription.DNAToRNATranslator;
 import org.biojava.nbio.core.sequence.transcription.RNAToAminoAcidTranslator;
 import org.biojava.nbio.core.sequence.transcription.TranscriptionEngine;
 import org.renci.binning.core.BinningException;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.annotation.model.AnnotationGeneExternalIds;
-import org.renci.binning.dao.hgnc.model.HGNCGene;
-import org.renci.binning.dao.refseq.model.Feature;
-import org.renci.binning.dao.refseq.model.LocationType;
-import org.renci.binning.dao.refseq.model.RefSeqCodingSequence;
-import org.renci.binning.dao.refseq.model.RefSeqGene;
-import org.renci.binning.dao.refseq.model.RegionGroupRegion;
-import org.renci.binning.dao.refseq.model.TranscriptMaps;
-import org.renci.binning.dao.refseq.model.TranscriptMapsExons;
-import org.renci.binning.dao.refseq.model.Variants_61_2;
-import org.renci.binning.dao.refseq.model.Variants_61_2PK;
-import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.annotation.model.AnnotationGeneExternalIds;
+import org.renci.canvas.dao.hgnc.model.HGNCGene;
+import org.renci.canvas.dao.refseq.model.Feature;
+import org.renci.canvas.dao.refseq.model.LocationType;
+import org.renci.canvas.dao.refseq.model.RefSeqCodingSequence;
+import org.renci.canvas.dao.refseq.model.RefSeqGene;
+import org.renci.canvas.dao.refseq.model.RegionGroupRegion;
+import org.renci.canvas.dao.refseq.model.TranscriptMaps;
+import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
+import org.renci.canvas.dao.refseq.model.Variants_61_2;
+import org.renci.canvas.dao.refseq.model.Variants_61_2PK;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +110,7 @@ public class VariantsFactory {
         return ret;
     }
 
-    public static Variants_61_2 createIntronicVariant(BinningDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
+    public static Variants_61_2 createIntronicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
             List<TranscriptMaps> mapsList, TranscriptMaps tMap, List<TranscriptMapsExons> transcriptMapsExonsList) throws BinningException {
         logger.debug(
                 "ENTERING createIntronicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>)");
@@ -270,7 +270,7 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_61_2 createBorderCrossingVariant(BinningDAOBeanService daoBean, String refseqVersion,
+    public static Variants_61_2 createBorderCrossingVariant(CANVASDAOBeanService daoBean, String refseqVersion,
             LocatedVariant locatedVariant, TranscriptMaps tMap, List<TranscriptMaps> mapsList,
             List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
@@ -392,7 +392,7 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_61_2 createExonicVariant(BinningDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
+    public static Variants_61_2 createExonicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
             List<TranscriptMaps> mapsList, List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons)
             throws BinningException {
         logger.debug(
@@ -873,9 +873,9 @@ public class VariantsFactory {
         return variant;
     }
 
-    private static LocationType getLocationType(BinningDAOBeanService daoBean, Range<Integer> locatedVariantRange,
+    private static LocationType getLocationType(CANVASDAOBeanService daoBean, Range<Integer> locatedVariantRange,
             Range<Integer> transcriptMapsExonsContigRange, Range<Integer> transcriptMapsExonsTranscriptRange, Range<Integer> proteinRange,
-            TranscriptMaps tMap, Integer transcriptPosition) throws BinningDAOException {
+            TranscriptMaps tMap, Integer transcriptPosition) throws CANVASDAOException {
 
         // UTR, UTR-5, UTR-3, intron, exon, intergenic, potential RNA-editing site, intron/exon boundary
 
@@ -898,8 +898,8 @@ public class VariantsFactory {
         return locationType;
     }
 
-    private static Integer getFeatureId(BinningDAOBeanService daoBean, String refseqVersion, TranscriptMaps tMap,
-            Integer transcriptPosition) throws BinningDAOException {
+    private static Integer getFeatureId(CANVASDAOBeanService daoBean, String refseqVersion, TranscriptMaps tMap, Integer transcriptPosition)
+            throws CANVASDAOException {
         List<Feature> featureList = daoBean.getFeatureDAO().findByRefSeqVersionAndTranscriptId(refseqVersion,
                 tMap.getTranscript().getVersionId());
         Integer ret = null;

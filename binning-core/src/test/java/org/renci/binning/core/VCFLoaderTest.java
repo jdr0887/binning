@@ -19,10 +19,10 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.var.model.AssemblyLocatedVariantQC;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.var.model.VariantType;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQC;
+import org.renci.canvas.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.var.model.VariantType;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.CommonInfo;
@@ -331,7 +331,7 @@ public class VCFLoaderTest {
         return map;
     }
 
-    public String loadDataLine(String[] vcfFields, int varSetId, int[] asmId) throws BinningDAOException, BinningException {
+    public String loadDataLine(String[] vcfFields, int varSetId, int[] asmId) throws CANVASDAOException, BinningException {
 
         String ref = vcfFields[3];
         // if (!ref.matches("[AaCcGgTt]*"))

@@ -7,12 +7,12 @@ import java.util.concurrent.Callable;
 import org.apache.commons.collections.CollectionUtils;
 import org.renci.binning.core.BinningException;
 import org.renci.binning.core.grch37.BinResultsFinalDiagnosticFactory;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.BinResultsFinalDiagnostic;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.refseq.model.Variants_61_2;
-import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.clinbin.model.BinResultsFinalDiagnostic;
+import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.refseq.model.Variants_61_2;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +20,11 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractUpdateDiagnosticBinsCallable.class);
 
-    private BinningDAOBeanService daoBean;
+    private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
 
-    public AbstractUpdateDiagnosticBinsCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
+    public AbstractUpdateDiagnosticBinsCallable(CANVASDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super();
         this.daoBean = daoBean;
         this.binningJob = binningJob;
@@ -84,7 +84,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                             }
                         }
                     }
-                } catch (BinningDAOException e) {
+                } catch (CANVASDAOException e) {
                     logger.error(e.getMessage(), e);
                 }
 
@@ -117,7 +117,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                             }
                         }
                     }
-                } catch (BinningDAOException e) {
+                } catch (CANVASDAOException e) {
                     logger.error(e.getMessage(), e);
                 }
 
@@ -148,7 +148,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                             }
                         }
                     }
-                } catch (BinningDAOException e) {
+                } catch (CANVASDAOException e) {
                     logger.error(e.getMessage(), e);
                 }
 
@@ -180,7 +180,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                             }
                         }
                     }
-                } catch (BinningDAOException e) {
+                } catch (CANVASDAOException e) {
                     logger.error(e.getMessage(), e);
                 }
 
@@ -211,7 +211,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                             }
                         }
                     }
-                } catch (BinningDAOException e) {
+                } catch (CANVASDAOException e) {
                     logger.error(e.getMessage(), e);
                 }
 
@@ -243,7 +243,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                             }
                         }
                     }
-                } catch (BinningDAOException e) {
+                } catch (CANVASDAOException e) {
                     logger.error(e.getMessage(), e);
                 }
                 // });

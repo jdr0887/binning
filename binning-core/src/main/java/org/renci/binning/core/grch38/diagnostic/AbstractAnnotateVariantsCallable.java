@@ -10,14 +10,14 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.renci.binning.core.BinningException;
 import org.renci.binning.core.grch38.VariantsFactory;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.clinbin.model.DiagnosticResultVersion;
-import org.renci.binning.dao.ref.model.GenomeRef;
-import org.renci.binning.dao.refseq.model.TranscriptMaps;
-import org.renci.binning.dao.refseq.model.TranscriptMapsExons;
-import org.renci.binning.dao.refseq.model.Variants_78_4;
-import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
+import org.renci.canvas.dao.ref.model.GenomeRef;
+import org.renci.canvas.dao.refseq.model.TranscriptMaps;
+import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
+import org.renci.canvas.dao.refseq.model.Variants_78_4;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +25,11 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAnnotateVariantsCallable.class);
 
-    private BinningDAOBeanService daoBean;
+    private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
 
-    public AbstractAnnotateVariantsCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
+    public AbstractAnnotateVariantsCallable(CANVASDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super();
         this.daoBean = daoBean;
         this.binningJob = binningJob;
@@ -276,11 +276,11 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
         return variants;
     }
 
-    public BinningDAOBeanService getDaoBean() {
+    public CANVASDAOBeanService getDaoBean() {
         return daoBean;
     }
 
-    public void setDaoBean(BinningDAOBeanService daoBean) {
+    public void setDaoBean(CANVASDAOBeanService daoBean) {
         this.daoBean = daoBean;
     }
 

@@ -11,11 +11,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.junit.Test;
 import org.renci.binning.core.grch37.VariantsFactory;
-import org.renci.binning.dao.jpa.BinningDAOManager;
-import org.renci.binning.dao.refseq.model.TranscriptMaps;
-import org.renci.binning.dao.refseq.model.TranscriptMapsExons;
-import org.renci.binning.dao.refseq.model.Variants_61_2;
-import org.renci.binning.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.jpa.CANVASDAOManager;
+import org.renci.canvas.dao.refseq.model.TranscriptMaps;
+import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
+import org.renci.canvas.dao.refseq.model.Variants_61_2;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ public class AnnotateVariantsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnotateVariantsTest.class);
 
-    private static final BinningDAOManager daoMgr = BinningDAOManager.getInstance();
+    private static final CANVASDAOManager daoMgr = CANVASDAOManager.getInstance();
 
     private List<Variants_61_2> annotateLocatedVariant(LocatedVariant locatedVariant) throws Exception {
         List<Variants_61_2> variants = new ArrayList<>();

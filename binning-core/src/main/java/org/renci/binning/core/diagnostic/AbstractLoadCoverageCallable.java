@@ -13,12 +13,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.renci.binning.core.BinningException;
 import org.renci.binning.core.GATKDepthInterval;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.DXCoverage;
-import org.renci.binning.dao.clinbin.model.DXCoveragePK;
-import org.renci.binning.dao.clinbin.model.DXExons;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.clinbin.model.DXCoverage;
+import org.renci.canvas.dao.clinbin.model.DXCoveragePK;
+import org.renci.canvas.dao.clinbin.model.DXExons;
+import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +33,11 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
     public abstract void processIntervals(SortedSet<GATKDepthInterval> allIntervalSet, File depthFile, String participant,
             Integer listVersion) throws BinningException;
 
-    private BinningDAOBeanService daoBean;
+    private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
 
-    public AbstractLoadCoverageCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
+    public AbstractLoadCoverageCallable(CANVASDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super();
         this.daoBean = daoBean;
         this.binningJob = binningJob;
@@ -102,7 +102,7 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
                                 dxCoverage.setFractionGreaterThan50(interval.getSamplePercentAbove50() * 0.01);
                                 logger.info(dxCoverage.toString());
                                 daoBean.getDXCoverageDAO().save(dxCoverage);
-                            } catch (BinningDAOException e) {
+                            } catch (CANVASDAOException e) {
                                 logger.error(e.getMessage(), e);
                             }
 
@@ -122,11 +122,11 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
 
     }
 
-    public BinningDAOBeanService getDaoBean() {
+    public CANVASDAOBeanService getDaoBean() {
         return daoBean;
     }
 
-    public void setDaoBean(BinningDAOBeanService daoBean) {
+    public void setDaoBean(CANVASDAOBeanService daoBean) {
         this.daoBean = daoBean;
     }
 

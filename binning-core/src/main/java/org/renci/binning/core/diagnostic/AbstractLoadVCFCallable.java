@@ -14,25 +14,25 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.renci.binning.core.BinningException;
-import org.renci.binning.dao.BinningDAOBeanService;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.binning.dao.ref.model.GenomeRef;
-import org.renci.binning.dao.ref.model.GenomeRefSeq;
-import org.renci.binning.dao.var.model.Assembly;
-import org.renci.binning.dao.var.model.AssemblyLocatedVariant;
-import org.renci.binning.dao.var.model.AssemblyLocatedVariantPK;
-import org.renci.binning.dao.var.model.AssemblyLocatedVariantQC;
-import org.renci.binning.dao.var.model.AssemblyLocatedVariantQCPK;
-import org.renci.binning.dao.var.model.CanonicalAllele;
-import org.renci.binning.dao.var.model.Lab;
-import org.renci.binning.dao.var.model.Library;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.var.model.Project;
-import org.renci.binning.dao.var.model.Sample;
-import org.renci.binning.dao.var.model.VariantSet;
-import org.renci.binning.dao.var.model.VariantSetLoad;
-import org.renci.binning.dao.var.model.VariantType;
+import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.ref.model.GenomeRef;
+import org.renci.canvas.dao.ref.model.GenomeRefSeq;
+import org.renci.canvas.dao.var.model.Assembly;
+import org.renci.canvas.dao.var.model.AssemblyLocatedVariant;
+import org.renci.canvas.dao.var.model.AssemblyLocatedVariantPK;
+import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQC;
+import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQCPK;
+import org.renci.canvas.dao.var.model.CanonicalAllele;
+import org.renci.canvas.dao.var.model.Lab;
+import org.renci.canvas.dao.var.model.Library;
+import org.renci.canvas.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.var.model.Project;
+import org.renci.canvas.dao.var.model.Sample;
+import org.renci.canvas.dao.var.model.VariantSet;
+import org.renci.canvas.dao.var.model.VariantSetLoad;
+import org.renci.canvas.dao.var.model.VariantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractLoadVCFCallable.class);
 
-    private BinningDAOBeanService daoBean;
+    private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
 
@@ -66,7 +66,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningException;
 
-    public AbstractLoadVCFCallable(BinningDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
+    public AbstractLoadVCFCallable(CANVASDAOBeanService daoBean, DiagnosticBinningJob binningJob) {
         super();
         this.daoBean = daoBean;
         this.binningJob = binningJob;
@@ -465,7 +465,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 }
                 daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
             }
-        } catch (BinningDAOException e) {
+        } catch (CANVASDAOException e) {
             throw new BinningException(e);
         }
 
@@ -542,7 +542,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 logger.info(alvQC.toString());
 
             }
-        } catch (NumberFormatException | BinningDAOException e) {
+        } catch (NumberFormatException | CANVASDAOException e) {
             throw new BinningException(e);
         }
 
@@ -618,17 +618,17 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 logger.info("deleting AssemblyLocatedVariantQC instances");
                 daoBean.getAssemblyLocatedVariantQCDAO().deleteByAssemblyId(binningJob.getAssembly().getId());
             }
-        } catch (BinningDAOException e) {
+        } catch (CANVASDAOException e) {
             e.printStackTrace();
         }
         return assembly;
     }
 
-    public BinningDAOBeanService getDaoBean() {
+    public CANVASDAOBeanService getDaoBean() {
         return daoBean;
     }
 
-    public void setDaoBean(BinningDAOBeanService daoBean) {
+    public void setDaoBean(CANVASDAOBeanService daoBean) {
         this.daoBean = daoBean;
     }
 

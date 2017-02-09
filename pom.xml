@@ -28,6 +28,7 @@
     <commons.httpclient.version>3.1</commons.httpclient.version>
     <commons.csv.version>1.4</commons.csv.version>            
     <renci.commons.version>0.2.3</renci.commons.version>
+    <renci.canvas.dao.version>0.0.4</renci.canvas.dao.version>    
     <jackson.version>2.6.6</jackson.version>
     <osgi.version>5.0.0</osgi.version>
     <openjpa.version>2.4.1</openjpa.version>
@@ -226,20 +227,20 @@
       	<version>1.2</version>	
       </dependency>
       <dependency>
+	<groupId>org.renci.canvas.canvas-dao</groupId>
+	<artifactId>canvas-dao-api</artifactId>
+      	<version>${renci.canvas.dao.version}</version>	
+      </dependency>
+      <dependency>
+	<groupId>org.renci.canvas.canvas-dao</groupId>
+	<artifactId>canvas-dao-jpa</artifactId>
+      	<version>${renci.canvas.dao.version}</version>	
+      </dependency>      
+      <dependency>
 	<groupId>org.renci.binning</groupId>
 	<artifactId>binning-core</artifactId>
       	<version>0.0.35-SNAPSHOT</version>	
       </dependency>      
-      <dependency>
-	<groupId>org.renci.binning.binning-dao</groupId>
-	<artifactId>binning-dao-api</artifactId>
-      	<version>0.0.35-SNAPSHOT</version>	
-      </dependency>
-      <dependency>
-	<groupId>org.renci.binning.binning-dao</groupId>
-	<artifactId>binning-dao-jpa</artifactId>
-      	<version>0.0.35-SNAPSHOT</version>	
-      </dependency>
       <dependency>
 	<groupId>org.apache.openjpa</groupId>
 	<artifactId>openjpa</artifactId>
@@ -258,7 +259,7 @@
       <dependency>
 	<groupId>org.apache.commons</groupId>
 	<artifactId>commons-lang3</artifactId>
-	<version>3.4</version>
+	<version>${commons.lang3.version}</version>
       </dependency>
       <dependency>
       	<groupId>org.slf4j</groupId>
@@ -456,7 +457,6 @@
   <modules>
     <module>binning-core</module>    
     <module>binning-datasource</module>
-    <module>binning-dao</module>
     <module>binning-features</module>    
   </modules>
 </project>

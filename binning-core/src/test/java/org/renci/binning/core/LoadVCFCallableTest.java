@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.renci.binning.dao.BinningDAOException;
-import org.renci.binning.dao.var.model.LocatedVariant;
-import org.renci.binning.dao.var.model.VariantType;
+import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.var.model.VariantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class LoadVCFCallableTest {
     private static final Logger logger = LoggerFactory.getLogger(LoadVCFCallableTest.class);
 
     @Test
-    public void test() throws BinningDAOException, BinningException, IOException {
+    public void test() throws CANVASDAOException, BinningException, IOException {
 
         // File vcfFile = new File("/tmp", "GSK_007006.merged.fb.sorted.va.vcf");
         // File vcfFile = new File("/tmp", "GSK_007217.merged.fb.sorted.va.vcf");

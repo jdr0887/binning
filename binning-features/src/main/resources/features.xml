@@ -58,8 +58,10 @@
 
   <feature name="binning-dao" version="${project.version}" resolver="(obr)">
     <bundle>mvn:org.renci.binning/binning-datasource/${project.version}</bundle>        
-    <bundle>mvn:org.renci.binning.binning-dao/binning-dao-api/${project.version}</bundle>
-    <bundle>mvn:org.renci.binning.binning-dao/binning-dao-jpa/${project.version}</bundle>
+    <!-- <bundle>mvn:org.renci.binning.binning-dao/binning-dao-api/${project.version}</bundle> -->
+    <!-- <bundle>mvn:org.renci.binning.binning-dao/binning-dao-jpa/${project.version}</bundle> -->
+    <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-api/${renci.canvas.dao.version}</bundle>
+    <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-jpa/${renci.canvas.dao.version}</bundle>
   </feature>
   
 </features>
