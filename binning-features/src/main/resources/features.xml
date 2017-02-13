@@ -51,15 +51,13 @@
     <bundle>mvn:org.activiti/activiti-osgi/${activiti.version}</bundle>
     <bundle>mvn:org.activiti/activiti-bpmn-model/${activiti.version}</bundle>
     <bundle>mvn:org.activiti/activiti-engine/${activiti.version}</bundle>
-    <bundle>mvn:org.renci.binning/binning-core/${project.version}</bundle>
+    <bundle>mvn:org.renci.canvas.binning/binning-core/${project.version}</bundle>
     <!-- <bundle>mvn:org.eclipse.persistence/javax.persistence/2.1.0</bundle> -->
     <!-- <bundle>mvn:org.apache.openjpa/openjpa/2.4.1</bundle>     -->        
   </feature>
 
   <feature name="binning-dao" version="${project.version}" resolver="(obr)">
-    <bundle>mvn:org.renci.binning/binning-datasource/${project.version}</bundle>        
-    <!-- <bundle>mvn:org.renci.binning.binning-dao/binning-dao-api/${project.version}</bundle> -->
-    <!-- <bundle>mvn:org.renci.binning.binning-dao/binning-dao-jpa/${project.version}</bundle> -->
+    <bundle>mvn:org.renci.canvas.binning/binning-datasource/${project.version}</bundle>        
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-api/${renci.canvas.dao.version}</bundle>
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-jpa/${renci.canvas.dao.version}</bundle>
   </feature>

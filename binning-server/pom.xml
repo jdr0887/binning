@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.renci.binning</groupId>
+    <groupId>org.renci.canvas</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.35-SNAPSHOT</version>
+    <version>0.0.35</version>
   </parent>
   <name>Binning :: Server</name>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.renci.binning</groupId>
+  <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-server</artifactId>
-  <version>0.0.35-SNAPSHOT</version>
+  <version>0.0.35</version>
   <packaging>karaf-assembly</packaging>
   <properties>
     <maven.site.plugin.skip>true</maven.site.plugin.skip>    
@@ -74,7 +74,7 @@
       <groupId>org.renci.binning</groupId>
       <artifactId>binning-features</artifactId>
       <classifier>features</classifier>
-      <version>0.0.35-SNAPSHOT</version>
+      <version>0.0.35</version>
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
