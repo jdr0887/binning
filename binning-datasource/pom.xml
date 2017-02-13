@@ -5,7 +5,7 @@
     <artifactId>binning</artifactId>
     <version>0.0.37-SNAPSHOT</version>
   </parent>
-  <name>Binning :: Datasource</name>
+  <name>CANVAS :: Binning :: Datasource</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-datasource</artifactId>

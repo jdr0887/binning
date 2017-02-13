@@ -4,7 +4,7 @@
     <artifactId>binning</artifactId>
     <version>0.0.37-SNAPSHOT</version>
   </parent>
-  <name>Binning :: Features</name>
+  <name>CANVAS :: Binning :: Features</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-features</artifactId>

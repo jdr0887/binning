@@ -5,7 +5,7 @@
     <artifactId>binning</artifactId>
     <version>0.0.35</version>
   </parent>
-  <name>Binning :: Server</name>
+  <name>CANVAS :: Binning :: Server</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-server</artifactId>
