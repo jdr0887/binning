@@ -94,9 +94,9 @@
 	    <phase>validate</phase>
 	    <configuration>
 	      <tasks>
-		<delete file="${basedir}/src/main/resources/org/renci/binning/binning.properties" />
-		<touch file="${basedir}/src/main/resources/org/renci/binning/binning.properties" mkdirs="true" />
-		<echo file="${basedir}/src/main/resources/org/renci/binning/binning.properties" append="true">
+		<delete file="${basedir}/src/main/resources/org/renci/canvas/binning/binning.properties" />
+		<touch file="${basedir}/src/main/resources/org/renci/canvas/binning/binning.properties" mkdirs="true" />
+		<echo file="${basedir}/src/main/resources/org/renci/canvas/binning/binning.properties" append="true">
 version=${project.version}
 		</echo>
 	      </tasks>
@@ -113,8 +113,8 @@ version=${project.version}
 	<extensions>true</extensions>
         <configuration>
           <instructions>
-            <Private-Package>org.renci.binning.core.*</Private-Package>
-            <Export-Package>org.renci.binning.core*</Export-Package>
+            <Private-Package>org.renci.canvas.binning.core.*</Private-Package>
+            <Export-Package>org.renci.canvas.binning.core*</Export-Package>
           </instructions>
         </configuration>
       </plugin>
