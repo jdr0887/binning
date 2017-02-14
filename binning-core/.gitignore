@@ -3,4 +3,4 @@
 .settings
 target
 logs
-src/main/resources/org/renci/binning/binning.properties
+src/main/resources/org/renci/canvas/binning/binning.properties
