@@ -14,7 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.renci.binning.core.grch37.VariantsFactory;
+import org.renci.canvas.binning.core.grch37.VariantsFactory;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;

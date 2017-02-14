@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.renci.canvas.binning.core.BinningException;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQC;
 import org.renci.canvas.dao.var.model.LocatedVariant;

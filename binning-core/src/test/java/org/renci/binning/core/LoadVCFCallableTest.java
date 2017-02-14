@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.renci.canvas.binning.core.BinningException;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.renci.canvas.dao.var.model.VariantType;

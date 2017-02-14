@@ -30,6 +30,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.renci.canvas.binning.core.BinningException;
+import org.renci.canvas.binning.core.GATKDepthInterval;
 
 import htsjdk.samtools.liftover.LiftOver;
 import htsjdk.samtools.util.Interval;

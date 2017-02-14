@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.junit.Test;
-import org.renci.binning.core.grch37.VariantsFactory;
+import org.renci.canvas.binning.core.grch37.VariantsFactory;
 import org.renci.canvas.dao.jpa.CANVASDAOManager;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;

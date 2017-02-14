@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
-import org.renci.binning.core.grch37.BinResultsFinalDiagnosticFactory;
+import org.renci.canvas.binning.core.grch37.BinResultsFinalDiagnosticFactory;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.BinResultsFinalDiagnostic;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;

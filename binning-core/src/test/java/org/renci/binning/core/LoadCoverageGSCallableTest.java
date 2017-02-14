@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.renci.canvas.binning.core.GATKDepthInterval;
+import org.renci.canvas.binning.core.SAMToolsDepthInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
