@@ -32,7 +32,7 @@ public class LoadCoverageGSCallableTest {
     public void test() throws IOException {
 
         File allIntervalsFile = new File("/tmp/Intervals", String.format("allintervals.v%d.txt", 40));
-        List<String> allIntervals = FileUtils.readLines(allIntervalsFile);
+        List<String> allIntervals = FileUtils.readLines(allIntervalsFile, "UTF-8");
         if (allIntervals.contains("Targets")) {
             allIntervals.remove("Targets");
         }
