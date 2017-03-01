@@ -3,13 +3,13 @@
   xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   default-activation="lazy">
 
-  <bean id="binningThreadPoolExecutor" class="org.renci.binning.core.BinningThreadPoolExecutor" />
+  <bean id="binningThreadPoolExecutor" class="org.renci.canvas.binning.core.BinningThreadPoolExecutor" />
 
-  <bean id="binningExecutorService" class="org.renci.binning.core.BinningExecutorServiceImpl">
+  <bean id="binningExecutorService" class="org.renci.canvas.binning.core.BinningExecutorServiceImpl">
     <property name="executor" ref="binningThreadPoolExecutor" />
   </bean>
 
-  <service ref="binningExecutorService" interface="org.renci.binning.core.BinningExecutorService" />
+  <service ref="binningExecutorService" interface="org.renci.canvas.binning.core.BinningExecutorService" />
 
   <cm:property-placeholder persistent-id="org.renci.activiti.ds" update-strategy="reload">
     <cm:default-properties>
