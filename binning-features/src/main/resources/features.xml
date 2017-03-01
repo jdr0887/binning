@@ -56,8 +56,8 @@
     <!-- <bundle>mvn:org.apache.openjpa/openjpa/2.4.1</bundle>     -->        
   </feature>
 
-  <feature name="binning-dao" version="${project.version}" resolver="(obr)">
-    <bundle>mvn:org.renci.canvas.binning/binning-datasource/${project.version}</bundle>        
+  <feature name="canvas-dao" version="${project.version}" resolver="(obr)">
+    <bundle>mvn:org.renci.canvas.canvas-dao/canvas-datasource/${renci.canvas.dao.version}</bundle>        
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-api/${renci.canvas.dao.version}</bundle>
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-jpa/${renci.canvas.dao.version}</bundle>
   </feature>
