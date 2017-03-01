@@ -2,7 +2,7 @@
   <parent>
     <groupId>org.renci.canvas</groupId>
     <artifactId>canvas</artifactId>
-    <version>0.0.3</version>    
+    <version>0.0.12</version>    
   </parent>
   <name>CANVAS :: Binning</name>
   <modelVersion>4.0.0</modelVersion>
@@ -12,13 +12,9 @@
   <packaging>pom</packaging>
   <properties>
     <maven.site.plugin.skip>false</maven.site.plugin.skip>
-    <renci.canvas.dao.version>0.0.4</renci.canvas.dao.version>    
-    <jackson.version>2.6.6</jackson.version>
+    <renci.canvas.dao.version>0.0.13</renci.canvas.dao.version>    
     <biojava.version>4.2.4</biojava.version>
     <activiti.version>5.22.0</activiti.version>
-    <karaf.version>4.0.8</karaf.version>
-    <cxf.version>3.1.8</cxf.version>
-    <htsjdk.version>2.8.1</htsjdk.version>
   </properties>
   <issueManagement>
     <system>GitHub Issues</system>
@@ -40,11 +36,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-	<groupId>com.github.samtools</groupId>
-	<artifactId>htsjdk</artifactId>
-	<version>${htsjdk.version}</version>
-      </dependency>
-      <dependency>
 	<groupId>org.activiti</groupId>
 	<artifactId>activiti-engine</artifactId>
 	<version>${activiti.version}</version>
@@ -59,111 +50,6 @@
 	<artifactId>biojava-sequencing</artifactId>
 	<version>${biojava.version}</version>
       </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-ws-rm</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-ws-security</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-ws-addr</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-ws-policy</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-	<groupId>org.apache.cxf</groupId>
-	<artifactId>cxf-rt-rs-client</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-	<groupId>org.apache.cxf</groupId>
-	<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-frontend-jaxws</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-transports-http</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-rt-transports-http-jetty</artifactId>
-      	<version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.geronimo.specs</groupId>
-      	<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-      	<version>1.1.3</version>
-      </dependency>
-      <dependency>
-      	<groupId>org.apache.geronimo.specs</groupId>
-      	<artifactId>geronimo-jaxws_2.2_spec</artifactId>
-      	<version>1.1</version>
-      </dependency>      
-      <dependency>
-	<groupId>com.fasterxml.jackson.jaxrs</groupId>
-	<artifactId>jackson-jaxrs-json-provider</artifactId>
-	<version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-core</artifactId>
-	<version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-annotations</artifactId>
-	<version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-databind</artifactId>
-	<version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ops4j.pax.cdi</groupId>
-        <artifactId>pax-cdi-api</artifactId>
-        <version>0.12.0</version>
-      </dependency>
-      <dependency>
-	<groupId>org.apache.karaf.shell</groupId>
-	<artifactId>org.apache.karaf.shell.core</artifactId>
-      	<version>${karaf.version}</version>      
-      </dependency>                      
-      <dependency>
-	<groupId>javax.ws.rs</groupId>
-	<artifactId>javax.ws.rs-api</artifactId>      
-	<version>2.0.1</version>
-      </dependency>      
-      <dependency>      
-	<groupId>org.renci.commons</groupId>
-	<artifactId>commons-exec</artifactId>
-	<version>0.2.3</version>
-      </dependency>  
-      <dependency>
-	<groupId>org.apache.commons</groupId>
-	<artifactId>commons-csv</artifactId>
-	<version>1.3</version>
-      </dependency>
-      <dependency>
-	<groupId>org.apache.commons</groupId>
-	<artifactId>commons-exec</artifactId>
-	<version>1.3</version>
-      </dependency>            
       <dependency>
 	<groupId>org.renci.canvas.canvas-dao</groupId>
 	<artifactId>canvas-dao-api</artifactId>
@@ -194,7 +80,6 @@
   </build>  
   <modules>
     <module>binning-core</module>    
-    <module>binning-datasource</module>
     <module>binning-features</module>    
   </modules>
 </project>
