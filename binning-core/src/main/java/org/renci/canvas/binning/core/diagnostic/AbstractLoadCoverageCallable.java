@@ -51,7 +51,7 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
 
             File allIntervalsFile = getAllIntervalsFile(binningJob.getListVersion());
 
-            List<String> allIntervals = FileUtils.readLines(allIntervalsFile);
+            List<String> allIntervals = FileUtils.readLines(allIntervalsFile, "UTF-8");
             if (allIntervals.contains("Targets")) {
                 allIntervals.remove("Targets");
             }
