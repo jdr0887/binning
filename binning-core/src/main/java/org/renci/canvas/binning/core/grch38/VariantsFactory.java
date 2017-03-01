@@ -19,7 +19,7 @@ import org.biojava.nbio.core.sequence.transcription.TranscriptionEngine;
 import org.renci.canvas.binning.core.BinningException;
 import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.CANVASDAOException;
-import org.renci.canvas.dao.annotation.model.AnnotationGeneExternalIds;
+import org.renci.canvas.dao.annotation.model.AnnotationGeneExternalId;
 import org.renci.canvas.dao.hgnc.model.HGNCGene;
 import org.renci.canvas.dao.refseq.model.Feature;
 import org.renci.canvas.dao.refseq.model.LocationType;
@@ -241,9 +241,9 @@ public class VariantsFactory {
                 variant.getKey().setVariantEffect(variant.getVariantEffect().getName());
             }
 
-            List<AnnotationGeneExternalIds> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdsDAO()
+            List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
                     .findByExternalId(refSeqGene.getId());
-            Optional<AnnotationGeneExternalIds> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
+            Optional<AnnotationGeneExternalId> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
                     .filter(a -> !"OMIM".equals(a.getKey().getNamespace())).findFirst();
 
             if (!optionalAnnotationGeneExternalIds.isPresent()) {
@@ -297,9 +297,9 @@ public class VariantsFactory {
             }
             variant.setRefSeqGene(refSeqGene.getName());
 
-            List<AnnotationGeneExternalIds> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdsDAO()
+            List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
                     .findByExternalId(refSeqGene.getId());
-            Optional<AnnotationGeneExternalIds> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
+            Optional<AnnotationGeneExternalId> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
                     .filter(a -> !"OMIM".equals(a.getKey().getNamespace())).findFirst();
 
             if (!optionalAnnotationGeneExternalIds.isPresent()) {
@@ -421,9 +421,9 @@ public class VariantsFactory {
             }
             variant.setRefSeqGene(refSeqGene.getName());
 
-            List<AnnotationGeneExternalIds> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdsDAO()
+            List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
                     .findByExternalId(refSeqGene.getId());
-            Optional<AnnotationGeneExternalIds> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
+            Optional<AnnotationGeneExternalId> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
                     .filter(a -> !"OMIM".equals(a.getKey().getNamespace())).findFirst();
 
             if (!optionalAnnotationGeneExternalIds.isPresent()) {
