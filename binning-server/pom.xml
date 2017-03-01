@@ -3,19 +3,27 @@
   <parent>
     <groupId>org.renci.canvas</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.38-SNAPSHOT</version>
+    <version>0.0.39-SNAPSHOT</version>
   </parent>
   <name>CANVAS :: Binning :: Server</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-server</artifactId>
-  <version>0.0.38-SNAPSHOT</version>
+  <version>0.0.39-SNAPSHOT</version>
   <packaging>karaf-assembly</packaging>
   <properties>
     <maven.site.plugin.skip>true</maven.site.plugin.skip>    
     <assembly.directory>${project.build.directory}/assembly</assembly.directory>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.renci.canvas.binning</groupId>
+      <artifactId>binning-features</artifactId>
+      <classifier>features</classifier>
+      <version>0.0.39-SNAPSHOT</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>    
     <dependency>
       <groupId>org.apache.karaf.features</groupId>
       <artifactId>framework</artifactId>
@@ -39,6 +47,14 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.aries.jpa</groupId>
+      <artifactId>jpa-features</artifactId>
+      <version>2.6.0</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+      <scope>runtime</scope>
+    </dependency>            
+    <dependency>
       <groupId>org.apache.cxf.karaf</groupId>
       <artifactId>apache-cxf</artifactId>
       <version>${cxf.version}</version>
@@ -54,30 +70,6 @@
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>    
-    <dependency>
-      <groupId>org.ops4j.pax.cdi</groupId>
-      <artifactId>pax-cdi-features</artifactId>
-      <version>0.12.0</version>
-      <classifier>features</classifier>
-      <type>xml</type>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ops4j.pax.jdbc</groupId>
-      <artifactId>pax-jdbc-features</artifactId>
-      <version>0.7.0</version>
-      <classifier>features</classifier>
-      <type>xml</type>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.renci.binning</groupId>
-      <artifactId>binning-features</artifactId>
-      <classifier>features</classifier>
-      <version>0.0.38-SNAPSHOT</version>
-      <type>xml</type>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -145,6 +137,8 @@
 	    <feature>spring</feature>
 	    <feature>spring-orm</feature>
 	    <feature>scr</feature>
+	    <feature>pax-cdi</feature>
+	    <feature>pax-cdi-weld</feature>	    
             <feature>jndi</feature>
 	    <feature>pax-cdi</feature>
             <feature>aries-blueprint</feature>
@@ -152,13 +146,13 @@
 	    <feature>cxf-commands</feature>
 	    <feature>cxf-jackson</feature>	    
             <feature>jdbc</feature>
-	    <feature>transaction-api/1.2.0</feature>
+	    <feature>transaction-api</feature>
 	    <feature>transaction</feature>
-	    <feature>jpa</feature>
-	    <feature>openjpa/2.4.1</feature>
-	    <feature>jms</feature>
+	    <feature>jms</feature>	    
+	    <feature>jpa/2.6.0</feature>
+	    <feature>hibernate</feature>
 	    <feature>binning-common</feature>
-	    <feature>binning-dao</feature>
+	    <feature>canvas-dao</feature>
           </bootFeatures>
         </configuration>
       </plugin>
