@@ -80,7 +80,7 @@ public class Scratch {
     public void testIntervalDisjunction() throws IOException {
 
         File allIntervalsFile = new File(String.format("%s/allintervals.v%d.txt", "/tmp", 39));
-        List<String> allIntervals = FileUtils.readLines(allIntervalsFile);
+        List<String> allIntervals = FileUtils.readLines(allIntervalsFile, "UTF-8");
         allIntervals.remove("Targets");
 
         List<String> foundIntervals = new ArrayList<>();
@@ -106,7 +106,7 @@ public class Scratch {
     public void testIntervalReintegration() throws IOException, BinningException {
 
         File allIntervalsFile = new File("/tmp", String.format("allintervals.v%d.txt", 39));
-        List<String> allIntervals = FileUtils.readLines(allIntervalsFile);
+        List<String> allIntervals = FileUtils.readLines(allIntervalsFile, "UTF-8");
         allIntervals.remove("Targets");
         File bamFile = new File("/tmp", "140912_UNC17-D00216_0247_BC4G46ANXX_ACAGTG_L004.fixed-rg.deduped.realign.fixmate.recal.bam");
 
@@ -138,7 +138,7 @@ public class Scratch {
                 File missingSampleIntervalSummaryFile = new File("/tmp", "missing.v39.sample_interval_summary");
 
                 // reintegrate output
-                List<String> missingSampleIntervalSummaryFileLines = FileUtils.readLines(missingSampleIntervalSummaryFile);
+                List<String> missingSampleIntervalSummaryFileLines = FileUtils.readLines(missingSampleIntervalSummaryFile, "UTF-8");
 
                 if (missingSampleIntervalSummaryFileLines.size() == 1) {
                     // only contains header...missing results?
@@ -374,7 +374,7 @@ public class Scratch {
             pumpStreamHandler.setStopTimeout(5L);
             executor.setStreamHandler(pumpStreamHandler);
             int exitValue = executor.execute(CommandLine.parse(line));
-            System.out.println(baos.toString());
+            System.out.println(baos.toString("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
