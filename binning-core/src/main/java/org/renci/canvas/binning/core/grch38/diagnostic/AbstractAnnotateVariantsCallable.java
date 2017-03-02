@@ -16,12 +16,12 @@ import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.canvas.dao.ref.model.GenomeRef;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
-import org.renci.canvas.dao.refseq.model.Variants_78_4;
+import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractAnnotateVariantsCallable implements Callable<List<Variants_78_4>> {
+public abstract class AbstractAnnotateVariantsCallable implements Callable<List<Variants_80_4>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAnnotateVariantsCallable.class);
 
@@ -36,10 +36,10 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
     }
 
     @Override
-    public List<Variants_78_4> call() throws BinningException {
+    public List<Variants_80_4> call() throws BinningException {
         logger.debug("ENTERING run()");
 
-        List<Variants_78_4> variants = new ArrayList<>();
+        List<Variants_80_4> variants = new ArrayList<>();
 
         try {
 
@@ -113,7 +113,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                             List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(
                                     genomeRef.getId(), refseqVersion, tMap.getTranscript().getVersionId());
 
-                            Variants_78_4 variant = null;
+                            Variants_80_4 variant = null;
 
                             if (transcriptMapsExons == null) {
                                 variant = VariantsFactory.createIntronicVariant(daoBean, refseqVersion, locatedVariant, mapsList, tMap,
@@ -187,7 +187,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                         .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                 tMap.getTranscript().getVersionId());
 
-                                Variants_78_4 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
+                                Variants_80_4 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
                                         locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                 variants.add(variant);
                             }
@@ -239,7 +239,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                     tMap.getTranscript().getVersionId());
 
-                                    Variants_78_4 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
+                                    Variants_80_4 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
                                             locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                     variants.add(variant);
                                 }
@@ -254,16 +254,16 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
             if (CollectionUtils.isNotEmpty(variants)) {
 
-                List<Variants_78_4> toRemove = new ArrayList<>();
+                List<Variants_80_4> toRemove = new ArrayList<>();
 
-                for (Variants_78_4 variant : variants) {
-                    Variants_78_4 foundVariant = daoBean.getVariants_78_4_DAO().findById(variant.getKey());
+                for (Variants_80_4 variant : variants) {
+                    Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getKey());
                     if (foundVariant != null) {
                         toRemove.add(variant);
                     }
                 }
 
-                for (Variants_78_4 variant : toRemove) {
+                for (Variants_80_4 variant : toRemove) {
                     variants.remove(variant);
                 }
 

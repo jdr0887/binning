@@ -23,7 +23,7 @@ import org.renci.canvas.dao.clinvar.model.AssertionRanking;
 import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertions;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
-import org.renci.canvas.dao.refseq.model.Variants_78_4;
+import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariant;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariantPK;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQC;
@@ -36,7 +36,7 @@ public class BinResultsFinalDiagnosticFactory {
     private static final Logger logger = LoggerFactory.getLogger(BinResultsFinalDiagnosticFactory.class);
 
     public static List<BinResultsFinalDiagnostic> findHGMDKnownPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findHGMDKnownPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_61_2>)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(1);
             Integer maxNCGenesFrequenciesVersion = daoBean.getNCGenesFrequenciesDAO().findMaxVersion();
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -105,7 +105,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findClinVarKnownPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findClinVarKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                     .findById(diagnosticBinningJob.getListVersion());
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -173,7 +173,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findHGMDLikelyPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findHGMDLikelyPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_61_2>)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -185,7 +185,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(2);
             Integer maxNCGenesFrequenciesVersion = daoBean.getNCGenesFrequenciesDAO().findMaxVersion();
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -250,7 +250,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findClinVarLikelyPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findClinVarLikelyPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -265,7 +265,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                     .findById(diagnosticBinningJob.getListVersion());
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -331,7 +331,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findHGMDPossiblyPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -342,7 +342,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(3);
             Integer maxNCGenesFrequenciesVersion = daoBean.getNCGenesFrequenciesDAO().findMaxVersion();
 
-            varLoop: for (Variants_78_4 variant : variants) {
+            varLoop: for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -398,7 +398,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findClinVarPossiblyPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -412,7 +412,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                     .findById(diagnosticBinningJob.getListVersion());
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -467,7 +467,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findHGMDUncertainSignificance(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -482,7 +482,7 @@ public class BinResultsFinalDiagnosticFactory {
 
         if (CollectionUtils.isNotEmpty(variants)) {
 
-            varLoop: for (Variants_78_4 variant : variants) {
+            varLoop: for (Variants_80_4 variant : variants) {
                 logger.debug(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -541,7 +541,7 @@ public class BinResultsFinalDiagnosticFactory {
 
             }
 
-            varLoop: for (Variants_78_4 variant : variants) {
+            varLoop: for (Variants_80_4 variant : variants) {
                 logger.debug(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -601,7 +601,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findClinVarUncertainSignificance(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -619,7 +619,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                     .findById(diagnosticBinningJob.getListVersion());
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.debug(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -679,7 +679,7 @@ public class BinResultsFinalDiagnosticFactory {
 
             }
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.debug(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -740,7 +740,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findHGMDLikelyBenign(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(5);
@@ -749,7 +749,7 @@ public class BinResultsFinalDiagnosticFactory {
         List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
         if (CollectionUtils.isNotEmpty(variants)) {
-            varLoop: for (Variants_78_4 variant : variants) {
+            varLoop: for (Variants_80_4 variant : variants) {
                 logger.debug(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -819,7 +819,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findClinVarLikelyBenign(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(5);
@@ -832,7 +832,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                     .findById(diagnosticBinningJob.getListVersion());
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.debug(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -903,7 +903,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findHGMDAlmostCertainlyBenign(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(6);
@@ -912,7 +912,7 @@ public class BinResultsFinalDiagnosticFactory {
         List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
         if (CollectionUtils.isNotEmpty(variants)) {
-            varLoop: for (Variants_78_4 variant : variants) {
+            varLoop: for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -980,7 +980,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     public static List<BinResultsFinalDiagnostic> findClinVarAlmostCertainlyBenign(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_78_4> variants) throws CANVASDAOException {
+            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(6);
@@ -993,7 +993,7 @@ public class BinResultsFinalDiagnosticFactory {
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                     .findById(diagnosticBinningJob.getListVersion());
 
-            for (Variants_78_4 variant : variants) {
+            for (Variants_80_4 variant : variants) {
                 logger.info(variant.toString());
 
                 List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
@@ -1062,7 +1062,7 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     private static BinResultsFinalDiagnostic createClinVarBinResultsFinalDiagnostic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, Variants_78_4 variant, DiseaseClass clinvarDiseaseClass,
+            DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant, DiseaseClass clinvarDiseaseClass,
             DiagnosticGene diagnosticGene, MaxFrequency maxFrequency, Integer maxNCGenesFrequenciesVersion, SNPMappingAgg snpMappingAgg)
             throws CANVASDAOException {
         logger.debug(
@@ -1102,11 +1102,11 @@ public class BinResultsFinalDiagnosticFactory {
     }
 
     private static BinResultsFinalDiagnostic createHGMDBinResultsFinalDiagnostic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, Variants_78_4 variant, DiseaseClass hgmdDiseaseClass, DiagnosticGene diagnosticGene,
+            DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant, DiseaseClass hgmdDiseaseClass, DiagnosticGene diagnosticGene,
             MaxFrequency maxFrequency, HGMDLocatedVariant hgmdLocatedVariant, Integer maxNCGenesFrequenciesVersion,
             SNPMappingAgg snpMappingAgg) throws CANVASDAOException {
         logger.debug(
-                "ENTERING createHGMDBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_78_4, DiseaseClass, DiagnosticGene, MaxFrequency, HGMDLocatedVariant, Integer, SNPMappingAgg)");
+                "ENTERING createHGMDBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, HGMDLocatedVariant, Integer, SNPMappingAgg)");
 
         AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO()
                 .findById(new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));

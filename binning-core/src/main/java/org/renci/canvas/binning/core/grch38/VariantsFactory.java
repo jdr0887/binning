@@ -28,8 +28,8 @@ import org.renci.canvas.dao.refseq.model.RefSeqGene;
 import org.renci.canvas.dao.refseq.model.RegionGroupRegion;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
-import org.renci.canvas.dao.refseq.model.Variants_78_4;
-import org.renci.canvas.dao.refseq.model.Variants_78_4PK;
+import org.renci.canvas.dao.refseq.model.Variants_80_4;
+import org.renci.canvas.dao.refseq.model.Variants_80_4PK;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,16 +110,16 @@ public class VariantsFactory {
         return ret;
     }
 
-    public static Variants_78_4 createIntronicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
+    public static Variants_80_4 createIntronicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
             List<TranscriptMaps> mapsList, TranscriptMaps tMap, List<TranscriptMapsExons> transcriptMapsExonsList) throws BinningException {
         logger.debug(
                 "ENTERING createIntronicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>)");
 
-        Variants_78_4PK variantKey = new Variants_78_4PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getVerAccession(),
+        Variants_80_4PK variantKey = new Variants_80_4PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getVerAccession(),
                 locatedVariant.getPosition(), locatedVariant.getVariantType().getName(), tMap.getTranscript().getVersionId(), null, null,
                 mapsList.indexOf(tMap) + 1);
 
-        Variants_78_4 variant = new Variants_78_4(variantKey);
+        Variants_80_4 variant = new Variants_80_4(variantKey);
         variant.setGenomeRefSeq(tMap.getGenomeRefSeq());
         variant.setNumberOfTranscriptMaps(mapsList.size());
         variant.setStrand(tMap.getStrand());
@@ -270,15 +270,15 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_78_4 createBorderCrossingVariant(CANVASDAOBeanService daoBean, String refseqVersion,
+    public static Variants_80_4 createBorderCrossingVariant(CANVASDAOBeanService daoBean, String refseqVersion,
             LocatedVariant locatedVariant, TranscriptMaps tMap, List<TranscriptMaps> mapsList,
             List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
                 "ENTERING createBorderCrossingVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
-        Variants_78_4PK variantKey = new Variants_78_4PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getVerAccession(),
+        Variants_80_4PK variantKey = new Variants_80_4PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getVerAccession(),
                 locatedVariant.getPosition(), locatedVariant.getVariantType().getName(), tMap.getTranscript().getVersionId(), null, null,
                 mapsList.indexOf(tMap) + 1);
-        Variants_78_4 variant = new Variants_78_4(variantKey);
+        Variants_80_4 variant = new Variants_80_4(variantKey);
 
         variant.setVariantType(locatedVariant.getVariantType());
         variant.setGenomeRefSeq(tMap.getGenomeRefSeq());
@@ -392,17 +392,17 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_78_4 createExonicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
+    public static Variants_80_4 createExonicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
             List<TranscriptMaps> mapsList, List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons)
             throws BinningException {
         logger.debug(
                 "ENTERING createExonicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
 
-        Variants_78_4PK variantKey = new Variants_78_4PK(locatedVariant.getId(),
+        Variants_80_4PK variantKey = new Variants_80_4PK(locatedVariant.getId(),
                 transcriptMapsExons.getTranscriptMaps().getGenomeRefSeq().getVerAccession(), locatedVariant.getPosition(),
                 locatedVariant.getVariantType().getName(), transcriptMapsExons.getTranscriptMaps().getTranscript().getVersionId(), null,
                 null, mapsList.indexOf(transcriptMapsExons.getTranscriptMaps()) + 1);
-        Variants_78_4 variant = new Variants_78_4(variantKey);
+        Variants_80_4 variant = new Variants_80_4(variantKey);
 
         variant.setVariantType(locatedVariant.getVariantType());
         variant.setGenomeRefSeq(transcriptMapsExons.getTranscriptMaps().getGenomeRefSeq());

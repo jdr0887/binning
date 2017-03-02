@@ -11,7 +11,7 @@ import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.BinResultsFinalDiagnostic;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.canvas.dao.refseq.model.Variants_78_4;
+import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +41,12 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
             List<LocatedVariant> locatedVariantList = daoBean.getLocatedVariantDAO().findByAssemblyId(binningJob.getAssembly().getId());
 
-            List<Variants_78_4> variants = new ArrayList<>();
+            List<Variants_80_4> variants = new ArrayList<>();
 
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
                 for (LocatedVariant locatedVariant : locatedVariantList) {
-                    List<Variants_78_4> foundVariants = daoBean.getVariants_78_4_DAO().findByLocatedVariantId(locatedVariant.getId());
+                    List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                     if (CollectionUtils.isNotEmpty(foundVariants)) {
                         variants.addAll(foundVariants);
                     }
