@@ -905,8 +905,7 @@ public class VariantsFactory {
         Integer ret = null;
         if (CollectionUtils.isNotEmpty(featureList)) {
             for (Feature f : featureList) {
-                List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO()
-                        .findByRegionGroupId(f.getRegionGroup().getRegionGroupId());
+                List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRegionGroupId(f.getRegionGroup().getId());
                 if (CollectionUtils.isNotEmpty(rgrList)) {
                     for (RegionGroupRegion rgr : rgrList) {
                         Range<Integer> rgrRange = Range.between(rgr.getKey().getRegionStart(), rgr.getKey().getRegionEnd());
