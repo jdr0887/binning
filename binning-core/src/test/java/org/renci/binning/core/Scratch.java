@@ -305,7 +305,7 @@ public class Scratch {
 
     @Test
     public void convertAnnotation37BedTo38Bed() {
-        File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning-server/src/main/resources/data/liftOver",
+        File chainFile = new File("/home/jdr0887/workspace/renci/canvas/binning/binning/binning/binning-server/src/main/resources/data/liftOver",
                 "hg19ToHg38.over.chain.gz");
         LiftOver liftOver = new LiftOver(chainFile);
 
