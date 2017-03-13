@@ -504,6 +504,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
             AssemblyLocatedVariantPK alKey = new AssemblyLocatedVariantPK(assembly.getId(), locatedVariant.getId());
             AssemblyLocatedVariant alv = new AssemblyLocatedVariant(alKey);
+            alv.setAssembly(assembly);
+            alv.setLocatedVariant(locatedVariant);
             if (genotype.hasGQ()) {
                 alv.setGenotypeQuality(Double.valueOf(genotype.getGQ() >= 0 ? genotype.getGQ() : -1));
             }
@@ -517,6 +519,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                 AssemblyLocatedVariantQCPK alvKey = new AssemblyLocatedVariantQCPK(assembly.getId(), locatedVariant.getId());
                 AssemblyLocatedVariantQC alvQC = new AssemblyLocatedVariantQC(alvKey);
+                alvQC.setAssembly(assembly);
+                alvQC.setLocatedVariant(locatedVariant);
+                
                 if (dp == null || (dp != null && dp >= 0)) {
                     alvQC.setDepth(dp);
                 }
