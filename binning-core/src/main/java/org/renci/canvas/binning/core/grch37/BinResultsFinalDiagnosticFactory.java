@@ -20,7 +20,7 @@ import org.renci.canvas.dao.clinbin.model.NCGenesFrequenciesPK;
 import org.renci.canvas.dao.clinbin.model.UnimportantExon;
 import org.renci.canvas.dao.clinbin.model.UnimportantExonPK;
 import org.renci.canvas.dao.clinvar.model.AssertionRanking;
-import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertions;
+import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertion;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
@@ -120,14 +120,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.info(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
@@ -268,14 +268,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.info(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
@@ -415,14 +415,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.info(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
@@ -622,14 +622,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.debug(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
@@ -682,14 +682,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.debug(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
@@ -835,14 +835,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.debug(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
@@ -996,14 +996,14 @@ public class BinResultsFinalDiagnosticFactory {
             for (Variants_61_2 variant : variants) {
                 logger.info(variant.toString());
 
-                List<ReferenceClinicalAssertions> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionsDAO()
+                List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
                         .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(variant.getLocatedVariant().getId(),
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
                 List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertions rca : foundReferenceClinicalAssersions) {
+                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
                         foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
                     }
                 }
