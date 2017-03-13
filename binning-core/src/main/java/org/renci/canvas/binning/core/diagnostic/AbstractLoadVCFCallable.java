@@ -195,6 +195,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         for (VariantContext variantContext : variantContextList) {
                             es.submit(() -> {
 
+                                long start = System.currentTimeMillis();
+
                                 GenomeRefSeq genomeRefSeq = null;
                                 Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
                                         .filter(a -> a.getVerAccession().equals(variantContext.getContig())).findAny();
@@ -364,6 +366,10 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         logger.error(e.getMessage(), e);
                                     }
                                 }
+
+                                long end = System.currentTimeMillis();
+                                logger.info("duration (s): {}", end - start / 1000);
+
                             });
 
                             es.shutdown();
@@ -379,7 +385,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     // BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
                     // Bundle bundle = bundleContext.getBundle();
                     // String version = bundle.getVersion().toString();
-                    String version = ResourceBundle.getBundle("org/renci/binning/binning").getString("version");
+                    String version = ResourceBundle.getBundle("org/renci/canvas/binning/binning").getString("version");
 
                     variantSetLoad.setLoadProgramVersion(version);
                     variantSetLoad.setVariantSet(assembly.getVariantSet());
