@@ -368,13 +368,13 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                 }
 
                                 long end = System.currentTimeMillis();
-                                logger.info("duration (s): {}", end - start / 1000);
+                                logger.info("duration (s): {}", (end - start) / 1000);
 
                             });
 
-                            es.shutdown();
-                            es.awaitTermination(1L, TimeUnit.DAYS);
                         }
+                        es.shutdown();
+                        es.awaitTermination(1L, TimeUnit.DAYS);
 
                     }
 
