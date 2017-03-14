@@ -388,6 +388,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     String version = ResourceBundle.getBundle("org/renci/canvas/binning/binning").getString("version");
 
                     variantSetLoad.setLoadProgramVersion(version);
+                    variantSetLoad.setVariantSetId(assembly.getVariantSet().getId());
                     variantSetLoad.setVariantSet(assembly.getVariantSet());
 
                     List<VariantSetLoad> foundVariantSetLoads = daoBean.getVariantSetLoadDAO().findByExample(variantSetLoad);
