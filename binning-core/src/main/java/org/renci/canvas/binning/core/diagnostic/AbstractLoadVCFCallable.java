@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -183,7 +184,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     Assembly assembly = buildAssembly(sampleName);
                     logger.info(assembly.toString());
 
-                    List<LocatedVariant> locatedVariantList = new ArrayList<>();
+                    Set<LocatedVariant> locatedVariantList = new HashSet<>();
 
                     List<VariantContext> variantContextList = variantContext2SampleNameMap.get(sampleName);
 
@@ -194,8 +195,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                         for (VariantContext variantContext : variantContextList) {
                             es.submit(() -> {
-
-                                long start = System.currentTimeMillis();
 
                                 GenomeRefSeq genomeRefSeq = null;
                                 Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
@@ -366,9 +365,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         logger.error(e.getMessage(), e);
                                     }
                                 }
-
-                                long end = System.currentTimeMillis();
-                                logger.info("duration (s): {}", (end - start) / 1000);
 
                             });
 
