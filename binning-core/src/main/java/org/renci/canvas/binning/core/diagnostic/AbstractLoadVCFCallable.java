@@ -190,7 +190,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     if (CollectionUtils.isNotEmpty(variantContextList)) {
                         logger.info("variantContextList.size(): {}", variantContextList.size());
 
-                        ExecutorService es = Executors.newFixedThreadPool(6);
+                        ExecutorService es = Executors.newFixedThreadPool(4);
 
                         for (VariantContext variantContext : variantContextList) {
                             es.submit(() -> {
