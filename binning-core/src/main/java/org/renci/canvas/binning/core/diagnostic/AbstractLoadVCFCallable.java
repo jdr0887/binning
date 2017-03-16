@@ -260,7 +260,11 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             });
 
                         }
+                        es.shutdown();
+                        es.awaitTermination(1L, TimeUnit.DAYS);
 
+                        es = Executors.newFixedThreadPool(4);
+                        
                         // cant trust htsjdk to parse properly...switch/case on freebayes type (if available)
                         for (VariantContext variantContext : variantContextList) {
                             es.submit(() -> {
