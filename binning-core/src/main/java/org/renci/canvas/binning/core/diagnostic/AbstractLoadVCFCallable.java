@@ -116,6 +116,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             Map<String, List<VariantContext>> variantContext2SampleNameMap = new HashMap<String, List<VariantContext>>();
 
             Set<String> excludesFilter = getExcludesFilter();
+            int expectecedLocatedVariantCount = 0;
 
             try (VCFFileReader vcfFileReader = new VCFFileReader(vcfFile, false)) {
 
@@ -163,6 +164,10 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             }
                         }
 
+                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                            expectecedLocatedVariantCount++;
+                        }
+
                         variantContext2SampleNameMap.get(sampleName).add(variantContext);
 
                     }
@@ -172,9 +177,11 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 logger.error(e.getMessage(), e);
                 throw new BinningException(e);
             }
+            logger.info("expectecedLocatedVariantCount: {}", expectecedLocatedVariantCount);
 
-            List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findBySeqType("Chromosome");
+            List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByRefIdAndSeqType(genomeRef.getId(), "Chromosome");
 
+            // real work
             for (String sampleName : variantContext2SampleNameMap.keySet()) {
 
                 if (!sampleName.equals(binningJob.getParticipant())) {
@@ -199,65 +206,81 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                 GenomeRefSeq genomeRefSeq = null;
                                 Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
                                         .filter(a -> a.getVerAccession().equals(variantContext.getContig())).findAny();
-                                if (genomeRefSeqOptional.isPresent()) {
-                                    genomeRefSeq = genomeRefSeqOptional.get();
-                                } else {
-                                    genomeRefSeqOptional = allGenomeRefSeqs.stream()
-                                            .filter(a -> a.getContig().equals(variantContext.getContig()) && !a.getGenomeRefs().isEmpty()
-                                                    && a.getGenomeRefs().contains(genomeRef))
-                                            .findAny();
-                                    if (genomeRefSeqOptional.isPresent()) {
-                                        genomeRefSeq = genomeRefSeqOptional.get();
-                                    }
-                                }
-
-                                if (genomeRefSeq == null) {
-                                    logger.warn("Could not find GenomeRefSeq by contig: {}", variantContext.getContig());
+                                if (!genomeRefSeqOptional.isPresent()) {
+                                    logger.error("GenomeRefSeq not found: {}", variantContext.getContig());
                                     return;
-                                    // errorCount++;
-                                    // continue;
                                 }
-
+                                genomeRefSeq = genomeRefSeqOptional.get();
                                 logger.info(genomeRefSeq.toString());
-                                List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
 
                                 for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
                                     try {
+                                        LocatedVariant locatedVariant = null;
+
                                         if (variantContext.isSNP()) {
-                                            LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq,
-                                                    variantContext.getStart(), variantContext.getStart() + 1, snpVariantType,
+
+                                            locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
+                                                    variantContext.getStart() + 1, snpVariantType,
                                                     variantContext.getReference().getDisplayString(), altAllele.getDisplayString());
-                                            locatedVariant = canonicalize(locatedVariant);
-                                            locatedVariantList.add(locatedVariant);
-                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                            continue;
-                                        }
 
-                                        if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+                                        } else if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+
                                             String ref = variantContext.getReference().getDisplayString();
-                                            LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq,
-                                                    variantContext.getStart(), variantContext.getStart() + 1, insVariantType, "",
+                                            locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
+                                                    variantContext.getStart() + 1, insVariantType, "",
                                                     altAllele.getDisplayString().replaceFirst(ref, ""));
-                                            locatedVariant = canonicalize(locatedVariant);
-                                            locatedVariantList.add(locatedVariant);
-                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                            continue;
-                                        }
 
-                                        if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+                                        } else if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+
                                             String ref = variantContext.getReference().getDisplayString()
                                                     .replaceFirst(altAllele.getDisplayString(), "");
-                                            LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq,
-                                                    variantContext.getStart() + 1, variantContext.getStart() + 1 + ref.length(),
-                                                    delVariantType, ref, ref);
-                                            locatedVariant = canonicalize(locatedVariant);
-                                            locatedVariantList.add(locatedVariant);
-                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                            continue;
+                                            locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart() + 1,
+                                                    variantContext.getStart() + 1 + ref.length(), delVariantType, ref, ref);
+
                                         }
 
-                                        if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
+                                        List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                                .findByExample(locatedVariant);
+                                        if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                            locatedVariant = foundLocatedVariants.get(0);
+                                        } else {
+                                            locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                        }
+                                        logger.info(locatedVariant.toString());
+                                        locatedVariant = canonicalize(locatedVariant);
+                                        locatedVariantList.add(locatedVariant);
+                                        createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+
+                                    } catch (CANVASDAOException | BinningException e) {
+                                        logger.error(e.getMessage(), e);
+                                    }
+
+                                }
+                            });
+
+                        }
+
+                        // cant trust htsjdk to parse properly...switch/case on freebayes type (if available)
+                        for (VariantContext variantContext : variantContextList) {
+                            es.submit(() -> {
+
+                                if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
+
+                                    GenomeRefSeq genomeRefSeq = null;
+                                    Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
+                                            .filter(a -> a.getVerAccession().equals(variantContext.getContig())).findAny();
+                                    if (!genomeRefSeqOptional.isPresent()) {
+                                        logger.error("GenomeRefSeq not found: {}", variantContext.getContig());
+                                        return;
+                                    }
+                                    genomeRefSeq = genomeRefSeqOptional.get();
+                                    logger.info(genomeRefSeq.toString());
+
+                                    List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
+                                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
+
+                                        try {
 
                                             String ref = variantContext.getReference().getDisplayString();
                                             String alt = altAllele.getDisplayString();
@@ -267,7 +290,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                                             StringBuilder charsToRemove = new StringBuilder();
 
-                                            // cant trust htsjdk to parse properly...switch on freebayes type (if available)
                                             if (CollectionUtils.isNotEmpty(types)) {
                                                 LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
                                                 String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
@@ -356,13 +378,23 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         break;
                                                 }
 
-                                                locatedVariant = canonicalize(locatedVariant);
-                                                locatedVariantList.add(locatedVariant);
-                                                createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                                List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                                        .findByExample(locatedVariant);
+                                                if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                                    locatedVariant = foundLocatedVariants.get(0);
+                                                } else {
+                                                    locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                                }
+                                                if (!locatedVariantList.contains(locatedVariant)) {
+                                                    logger.info(locatedVariant.toString());
+                                                    locatedVariant = canonicalize(locatedVariant);
+                                                    locatedVariantList.add(locatedVariant);
+                                                    createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                                }
                                             }
+                                        } catch (CANVASDAOException | BinningException e) {
+                                            logger.error(e.getMessage(), e);
                                         }
-                                    } catch (BinningException e) {
-                                        logger.error(e.getMessage(), e);
                                     }
                                 }
 
@@ -417,7 +449,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
             }
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
         }
@@ -428,13 +462,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
     private LocatedVariant canonicalize(LocatedVariant locatedVariant) throws BinningException {
         logger.debug("ENTERING canonicalize(LocatedVariant)");
         try {
-            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(locatedVariant);
-            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                locatedVariant = foundLocatedVariants.get(0);
-            } else {
-                locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
-            }
-            logger.info(locatedVariant.toString());
 
             CanonicalAllele canonicalAllele = null;
             // first try to find CanonicalAllele by LocatedVariant
@@ -449,7 +476,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     // could have had a deletion in ref
                     liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
                 }
-                foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
+                List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
                 if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
                     liftOverLocatedVariant = foundLocatedVariants.get(0);
                 } else {
