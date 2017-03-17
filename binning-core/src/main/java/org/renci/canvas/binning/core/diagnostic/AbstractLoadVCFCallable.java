@@ -202,7 +202,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                         for (VariantContext variantContext : variantContextList) {
                             es.submit(() -> {
-
+                                LocatedVariant locatedVariant = null;
                                 GenomeRefSeq genomeRefSeq = null;
                                 Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
                                         .filter(a -> a.getVerAccession().equals(variantContext.getContig())).findAny();
@@ -216,7 +216,6 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                 for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
                                     try {
-                                        LocatedVariant locatedVariant = null;
 
                                         if (variantContext.isSNP()) {
 
@@ -248,9 +247,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
                                         }
                                         logger.info(locatedVariant.toString());
-                                        locatedVariant = canonicalize(locatedVariant);
                                         locatedVariantList.add(locatedVariant);
                                         createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                        canonicalize(locatedVariant);
 
                                     } catch (CANVASDAOException | BinningException e) {
                                         logger.error(e.getMessage(), e);
@@ -264,7 +263,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         es.awaitTermination(1L, TimeUnit.DAYS);
 
                         es = Executors.newFixedThreadPool(4);
-                        
+
                         // cant trust htsjdk to parse properly...switch/case on freebayes type (if available)
                         for (VariantContext variantContext : variantContextList) {
                             es.submit(() -> {
@@ -391,9 +390,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                 }
                                                 if (!locatedVariantList.contains(locatedVariant)) {
                                                     logger.info(locatedVariant.toString());
-                                                    locatedVariant = canonicalize(locatedVariant);
                                                     locatedVariantList.add(locatedVariant);
                                                     createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                                    canonicalize(locatedVariant);
                                                 }
                                             }
                                         } catch (CANVASDAOException | BinningException e) {
@@ -463,7 +462,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
         return null;
     }
 
-    private LocatedVariant canonicalize(LocatedVariant locatedVariant) throws BinningException {
+    private synchronized void canonicalize(LocatedVariant locatedVariant) throws BinningException {
         logger.debug("ENTERING canonicalize(LocatedVariant)");
         try {
 
@@ -522,11 +521,10 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             throw new BinningException(e);
         }
 
-        return locatedVariant;
     }
 
-    private void createAssmeblyLocatedVariantQC(String sampleName, VariantContext variantContext, LocatedVariant locatedVariant,
-            Assembly assembly) throws BinningException {
+    private synchronized void createAssmeblyLocatedVariantQC(String sampleName, VariantContext variantContext,
+            LocatedVariant locatedVariant, Assembly assembly) throws BinningException {
 
         try {
 
