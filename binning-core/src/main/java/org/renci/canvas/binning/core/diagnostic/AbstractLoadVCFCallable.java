@@ -239,17 +239,19 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                                         }
 
-                                        List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                                .findByExample(locatedVariant);
-                                        if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                            locatedVariant = foundLocatedVariants.get(0);
-                                        } else {
-                                            locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                        if (locatedVariant != null) {
+                                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                                    .findByExample(locatedVariant);
+                                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                                locatedVariant = foundLocatedVariants.get(0);
+                                            } else {
+                                                locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                            }
+                                            logger.info(locatedVariant.toString());
+                                            locatedVariantList.add(locatedVariant);
+                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                            canonicalize(locatedVariant);
                                         }
-                                        logger.info(locatedVariant.toString());
-                                        locatedVariantList.add(locatedVariant);
-                                        createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                        canonicalize(locatedVariant);
 
                                     } catch (CANVASDAOException | BinningException e) {
                                         logger.error(e.getMessage(), e);
