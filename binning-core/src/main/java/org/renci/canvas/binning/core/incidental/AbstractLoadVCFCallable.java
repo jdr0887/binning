@@ -185,22 +185,25 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         logger.info("variantContextList.size(): {}", variantContextList.size());
                         for (VariantContext variantContext : variantContextList) {
 
-                            List<GenomeRefSeq> foundGenomeRefSeqs = null;
+                            GenomeRefSeq genomeRefSeq = null;
                             if (variantContext.getContig().length() < 3 && !variantContext.getContig().startsWith("NC_")) {
-                                foundGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByRefIdAndContigAndSeqType(genomeRef.getId(),
-                                        variantContext.getContig(), "Chromosome");
+                                List<GenomeRefSeq> foundGenomeRefSeqs = daoBean.getGenomeRefSeqDAO()
+                                        .findByGenomeRefIdAndContigAndSeqType(genomeRef.getId(), variantContext.getContig(), "Chromosome");
+                                if (CollectionUtils.isNotEmpty(foundGenomeRefSeqs)) {
+                                    genomeRefSeq = foundGenomeRefSeqs.get(0);
+                                }
                             } else {
-                                foundGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByVersionedAccession(variantContext.getContig());
+                                genomeRefSeq = daoBean.getGenomeRefSeqDAO().findById(variantContext.getContig());
                             }
 
-                            if (CollectionUtils.isEmpty(foundGenomeRefSeqs)) {
+                            if (genomeRefSeq == null) {
                                 logger.warn("Could not find GenomeRefSeq by contig: {}", variantContext.getContig());
                                 errorCount++;
                                 continue;
                             }
 
-                            GenomeRefSeq genomeRefSeq = foundGenomeRefSeqs.get(0);
                             logger.info(genomeRefSeq.toString());
+                            
                             List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
 
                             for (Allele altAllele : variantContext.getAlternateAlleles()) {
