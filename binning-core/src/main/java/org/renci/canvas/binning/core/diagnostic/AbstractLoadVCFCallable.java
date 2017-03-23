@@ -176,7 +176,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             }
             logger.info("expectecedLocatedVariantCount: {}", expectecedLocatedVariantCount);
 
-            List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByRefIdAndSeqType(genomeRef.getId(), "Chromosome");
+            List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByGenomeRefIdAndSeqType(genomeRef.getId(), "Chromosome");
 
             // real work
             for (String sampleName : variantContext2SampleNameMap.keySet()) {
