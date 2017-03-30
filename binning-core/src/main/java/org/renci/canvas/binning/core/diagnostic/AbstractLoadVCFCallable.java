@@ -189,7 +189,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     logger.info(assembly.toString());
 
                     Set<LocatedVariant> locatedVariantSet = ConcurrentHashMap.newKeySet();
-                    
+
                     List<VariantContext> variantContextList = variantContext2SampleNameMap.get(sampleName);
 
                     if (CollectionUtils.isNotEmpty(variantContextList)) {
@@ -202,7 +202,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                 LocatedVariant locatedVariant = null;
                                 GenomeRefSeq genomeRefSeq = null;
                                 Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
-                                        .filter(a -> a.getVerAccession().equals(variantContext.getContig())).findAny();
+                                        .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
                                 if (!genomeRefSeqOptional.isPresent()) {
                                     logger.error("GenomeRefSeq not found: {}", variantContext.getContig());
                                     return;
@@ -218,7 +218,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                                             locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
                                                     variantContext.getStart() + 1,
-                                                    allVariantTypes.stream().filter(a -> a.getName().equals("snp")).findAny().get(),
+                                                    allVariantTypes.stream().filter(a -> a.getId().equals("snp")).findAny().get(),
                                                     variantContext.getReference().getDisplayString(), altAllele.getDisplayString());
 
                                         } else if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
@@ -226,7 +226,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             String ref = variantContext.getReference().getDisplayString();
                                             locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
                                                     variantContext.getStart() + 1,
-                                                    allVariantTypes.stream().filter(a -> a.getName().equals("ins")).findAny().get(), "",
+                                                    allVariantTypes.stream().filter(a -> a.getId().equals("ins")).findAny().get(), "",
                                                     altAllele.getDisplayString().replaceFirst(ref, ""));
 
                                         } else if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
@@ -235,7 +235,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                     .replaceFirst(altAllele.getDisplayString(), "");
                                             locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart() + 1,
                                                     variantContext.getStart() + 1 + ref.length(),
-                                                    allVariantTypes.stream().filter(a -> a.getName().equals("del")).findAny().get(), ref,
+                                                    allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get(), ref,
                                                     ref);
 
                                         }
@@ -277,7 +277,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                                     GenomeRefSeq genomeRefSeq = null;
                                     Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
-                                            .filter(a -> a.getVerAccession().equals(variantContext.getContig())).findAny();
+                                            .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
                                     if (!genomeRefSeqOptional.isPresent()) {
                                         logger.error("GenomeRefSeq not found: {}", variantContext.getContig());
                                         return;
@@ -304,7 +304,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                 switch (type) {
                                                     case "del":
                                                         locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getName().equals("del")).findAny().get());
+                                                                .filter(a -> a.getId().equals("del")).findAny().get());
                                                         locatedVariant.setPosition(variantContext.getStart() + 1);
                                                         locatedVariant.setEndPosition(variantContext.getStart() + 1
                                                                 + ref.replaceFirst(altAllele.getDisplayString(), "").length());
@@ -313,7 +313,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         break;
                                                     case "ins":
                                                         locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getName().equals("ins")).findAny().get());
+                                                                .filter(a -> a.getId().equals("ins")).findAny().get());
                                                         locatedVariant.setRef("");
 
                                                         for (int i = 0; i < referenceChars.length; ++i) {
@@ -347,7 +347,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         break;
                                                     case "snp":
                                                         locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getName().equals("snp")).findAny().get());
+                                                                .filter(a -> a.getId().equals("snp")).findAny().get());
 
                                                         for (int i = 0; i < referenceChars.length; ++i) {
                                                             if (referenceChars[i] != alternateChars[i]) {
@@ -382,7 +382,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         break;
                                                     default:
                                                         locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getName().equals("sub")).findAny().get());
+                                                                .filter(a -> a.getId().equals("sub")).findAny().get());
                                                         locatedVariant.setPosition(variantContext.getStart());
                                                         locatedVariant.setRef(ref);
                                                         locatedVariant.setSeq(alt);
@@ -431,7 +431,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     String version = ResourceBundle.getBundle("org/renci/canvas/binning/binning").getString("version");
 
                     variantSetLoad.setLoadProgramVersion(version);
-                    variantSetLoad.setVariantSetId(assembly.getVariantSet().getId());
+                    variantSetLoad.setId(assembly.getVariantSet().getId());
                     variantSetLoad.setVariantSet(assembly.getVariantSet());
 
                     List<VariantSetLoad> foundVariantSetLoads = daoBean.getVariantSetLoadDAO().findByExample(variantSetLoad);
@@ -443,13 +443,13 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     variantSetLoad.setLoadTimeStart(startDate);
                     variantSetLoad.setLoadTimeStop(new Date());
                     variantSetLoad.setNotes("");
-                    variantSetLoad.setNumberOfDelRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getName().equals("del"))
+                    variantSetLoad.setNumberOfDelRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getId().equals("del"))
                             .collect(Collectors.toList()).size());
-                    variantSetLoad.setNumberOfInsRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getName().equals("ins"))
+                    variantSetLoad.setNumberOfInsRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getId().equals("ins"))
                             .collect(Collectors.toList()).size());
-                    variantSetLoad.setNumberOfSNPRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getName().equals("snp"))
+                    variantSetLoad.setNumberOfSNPRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getId().equals("snp"))
                             .collect(Collectors.toList()).size());
-                    variantSetLoad.setNumberOfSubRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getName().equals("sub"))
+                    variantSetLoad.setNumberOfSubRows(locatedVariantSet.stream().filter(a -> a.getVariantType().getId().equals("sub"))
                             .collect(Collectors.toList()).size());
                     variantSetLoad.setNumberOfErrorRows(errorCount);
                     variantSetLoad.setNumberOfFilteredRows(filteredCount);
@@ -487,7 +487,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
             LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
             if (liftOverLocatedVariant != null) {
-                if (locatedVariant.getVariantType().getName().equals("ins")) {
+                if (locatedVariant.getVariantType().getId().equals("ins")) {
                     // could have had a deletion in ref
                     liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
                 }
@@ -641,7 +641,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             logger.info(project.toString());
 
             Sample sample = null;
-            List<Sample> foundSamples = daoBean.getSampleDAO().findByNameAndProjectName(binningJob.getParticipant(), project.getName());
+            List<Sample> foundSamples = daoBean.getSampleDAO().findByNameAndProjectName(binningJob.getParticipant(), project.getId());
             if (CollectionUtils.isEmpty(foundSamples)) {
                 sample = new Sample(binningJob.getParticipant());
                 sample.setProject(project);
