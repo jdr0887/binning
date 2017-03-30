@@ -56,7 +56,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
                 locatedVariantList.sort((a, b) -> {
-                    int ret = a.getGenomeRefSeq().getVerAccession().compareTo(b.getGenomeRefSeq().getVerAccession());
+                    int ret = a.getGenomeRefSeq().getId().compareTo(b.getGenomeRefSeq().getId());
                     if (ret == 0) {
                         ret = a.getPosition().compareTo(b.getPosition());
                     }
@@ -67,16 +67,16 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
                     List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
                             .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRef.getId(), refseqVersion,
-                                    locatedVariant.getGenomeRefSeq().getVerAccession(), locatedVariant.getPosition());
+                                    locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition());
 
                     if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
                         Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
                         for (TranscriptMaps tMap : transcriptMapsList) {
-                            if (!transcriptMap.containsKey(tMap.getTranscript().getVersionId())) {
-                                transcriptMap.put(tMap.getTranscript().getVersionId(), new ArrayList<TranscriptMaps>());
+                            if (!transcriptMap.containsKey(tMap.getTranscript().getId())) {
+                                transcriptMap.put(tMap.getTranscript().getId(), new ArrayList<TranscriptMaps>());
                             }
-                            transcriptMap.get(tMap.getTranscript().getVersionId()).add(tMap);
+                            transcriptMap.get(tMap.getTranscript().getId()).add(tMap);
                         }
                         TranscriptMaps remove = null;
                         for (String key : transcriptMap.keySet()) {
@@ -87,7 +87,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                 transcriptMapsList.remove(remove);
                             }
                         }
-                        transcriptMapsList.sort((a, b) -> b.getTranscript().getVersionId().compareTo(a.getTranscript().getVersionId()));
+                        transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
                         // handling non boundary crossing variants (intron/exon/utr*)
                         logger.info("transcriptMapsList.size(): {}", transcriptMapsList.size());
@@ -111,7 +111,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                             }
 
                             List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(
-                                    genomeRef.getId(), refseqVersion, tMap.getTranscript().getVersionId());
+                                    genomeRef.getId(), refseqVersion, tMap.getTranscript().getId());
 
                             Variants_61_2 variant = null;
 
@@ -120,7 +120,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                         transcriptMapsExonsList);
                             } else {
 
-                                if (!"snp".equals(locatedVariant.getVariantType().getName())
+                                if (!"snp".equals(locatedVariant.getVariantType().getId())
                                         && ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition())
                                                 && "-".equals(tMap.getStrand()))
                                                 || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
@@ -142,17 +142,17 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                         // boundary crossing
                         transcriptMapsList = daoBean.getTranscriptMapsDAO()
                                 .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRef.getId(), refseqVersion,
-                                        locatedVariant.getGenomeRefSeq().getVerAccession(),
+                                        locatedVariant.getGenomeRefSeq().getId(),
                                         locatedVariant.getPosition() + locatedVariant.getRef().length() - 1);
 
                         if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
                             Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
                             for (TranscriptMaps tMap : transcriptMapsList) {
-                                if (!transcriptMap.containsKey(tMap.getTranscript().getVersionId())) {
-                                    transcriptMap.put(tMap.getTranscript().getVersionId(), new ArrayList<TranscriptMaps>());
+                                if (!transcriptMap.containsKey(tMap.getTranscript().getId())) {
+                                    transcriptMap.put(tMap.getTranscript().getId(), new ArrayList<TranscriptMaps>());
                                 }
-                                transcriptMap.get(tMap.getTranscript().getVersionId()).add(tMap);
+                                transcriptMap.get(tMap.getTranscript().getId()).add(tMap);
                             }
                             TranscriptMaps remove = null;
                             for (String key : transcriptMap.keySet()) {
@@ -163,7 +163,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                     transcriptMapsList.remove(remove);
                                 }
                             }
-                            transcriptMapsList.sort((a, b) -> b.getTranscript().getVersionId().compareTo(a.getTranscript().getVersionId()));
+                            transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
                             for (TranscriptMaps tMap : transcriptMapsList) {
                                 logger.info(tMap.toString());
@@ -185,25 +185,25 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
                                 List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
                                         .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
-                                                tMap.getTranscript().getVersionId());
+                                                tMap.getTranscript().getId());
 
-                                Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
-                                        locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                                Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion, locatedVariant,
+                                        tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                 variants.add(variant);
                             }
                         } else {
                             transcriptMapsList = daoBean.getTranscriptMapsDAO()
                                     .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRef.getId(),
-                                            refseqVersion, locatedVariant.getGenomeRefSeq().getVerAccession(),
+                                            refseqVersion, locatedVariant.getGenomeRefSeq().getId(),
                                             locatedVariant.getPosition() - locatedVariant.getRef().length());
 
                             if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
                                 Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
                                 for (TranscriptMaps tMap : transcriptMapsList) {
-                                    if (!transcriptMap.containsKey(tMap.getTranscript().getVersionId())) {
-                                        transcriptMap.put(tMap.getTranscript().getVersionId(), new ArrayList<TranscriptMaps>());
+                                    if (!transcriptMap.containsKey(tMap.getTranscript().getId())) {
+                                        transcriptMap.put(tMap.getTranscript().getId(), new ArrayList<TranscriptMaps>());
                                     }
-                                    transcriptMap.get(tMap.getTranscript().getVersionId()).add(tMap);
+                                    transcriptMap.get(tMap.getTranscript().getId()).add(tMap);
                                 }
                                 TranscriptMaps remove = null;
                                 for (String key : transcriptMap.keySet()) {
@@ -214,8 +214,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                         transcriptMapsList.remove(remove);
                                     }
                                 }
-                                transcriptMapsList
-                                        .sort((a, b) -> b.getTranscript().getVersionId().compareTo(a.getTranscript().getVersionId()));
+                                transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
                                 for (TranscriptMaps tMap : transcriptMapsList) {
                                     logger.info(tMap.toString());
@@ -237,7 +236,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
                                     List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
                                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
-                                                    tMap.getTranscript().getVersionId());
+                                                    tMap.getTranscript().getId());
 
                                     Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
                                             locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
@@ -257,7 +256,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                 List<Variants_61_2> toRemove = new ArrayList<>();
 
                 for (Variants_61_2 variant : variants) {
-                    Variants_61_2 foundVariant = daoBean.getVariants_61_2_DAO().findById(variant.getKey());
+                    Variants_61_2 foundVariant = daoBean.getVariants_61_2_DAO().findById(variant.getId());
                     if (foundVariant != null) {
                         toRemove.add(variant);
                     }

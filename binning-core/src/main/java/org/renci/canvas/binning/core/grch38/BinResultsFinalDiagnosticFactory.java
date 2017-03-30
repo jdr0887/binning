@@ -58,12 +58,12 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
 
                 boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
-                        .anyMatch((s) -> s.getKey().getVersion().equals(2) && s.getTag().equals("DM"));
+                        .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
                 if (!containsKnownPathogenic) {
                     continue;
                 }
                 hgmdLocatedVariant = hgmdLocatedVariantList.stream()
-                        .filter((s) -> s.getKey().getVersion().equals(2) && s.getTag().equals("DM")).findAny().get();
+                        .filter((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM")).findAny().get();
 
                 if (hgmdLocatedVariant == null) {
                     continue;
@@ -133,7 +133,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (!containsKnownPathogenic) {
                     continue;
                 }
@@ -194,12 +194,12 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
                 if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
                     boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
-                            .anyMatch((s) -> s.getKey().getVersion().equals(2) && s.getTag().equals("DM"));
+                            .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
                     if (containsKnownPathogenic) {
                         continue;
                     }
                     Optional<HGMDLocatedVariant> optionalHGMDLocVar = hgmdLocatedVariantList.stream()
-                            .filter((s) -> !s.getKey().getVersion().equals(2) || !s.getTag().equals("DM")).findFirst();
+                            .filter((s) -> !s.getId().getVersion().equals(2) || !s.getTag().equals("DM")).findFirst();
                     if (optionalHGMDLocVar.isPresent()) {
                         hgmdLocatedVariant = optionalHGMDLocVar.get();
                     }
@@ -232,7 +232,7 @@ public class BinResultsFinalDiagnosticFactory {
 
                     DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                    if (!allowableVariantEffects.contains(variant.getVariantEffect().getName())) {
+                    if (!allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
                         continue;
                     }
 
@@ -281,7 +281,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (containsKnownPathogenic) {
                     continue;
                 }
@@ -313,7 +313,7 @@ public class BinResultsFinalDiagnosticFactory {
 
                     DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                    if (!allowableVariantEffects.contains(variant.getVariantEffect().getName())) {
+                    if (!allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
                         continue;
                     }
 
@@ -351,10 +351,10 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
                 if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
                     for (HGMDLocatedVariant hgmdLocVar : hgmdLocatedVariantList) {
-                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getId().getVersion().equals(2)) {
                             continue varLoop;
                         }
-                        if (!hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (!hgmdLocVar.getId().getVersion().equals(2)) {
                             continue;
                         }
                         hgmdLocatedVariant = hgmdLocVar;
@@ -385,7 +385,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                if (maxFrequency.getMaxAlleleFreq() < 0.01 && allowableVariantEffects.contains(variant.getVariantEffect().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() < 0.01 && allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -428,7 +428,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (containsKnownPathogenic) {
                     continue;
                 }
@@ -454,7 +454,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                if (maxFrequency.getMaxAlleleFreq() < 0.01 && allowableVariantEffects.contains(variant.getVariantEffect().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() < 0.01 && allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -491,10 +491,10 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
                 if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
                     for (HGMDLocatedVariant hgmdLocVar : hgmdLocatedVariantList) {
-                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getId().getVersion().equals(2)) {
                             continue varLoop;
                         }
-                        if (!hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (!hgmdLocVar.getId().getVersion().equals(2)) {
                             continue;
                         }
                         hgmdLocatedVariant = hgmdLocVar;
@@ -525,14 +525,14 @@ public class BinResultsFinalDiagnosticFactory {
                 }
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                if (filteredVariantEffects.contains(variant.getVariantEffect().getName())) {
+                if (filteredVariantEffects.contains(variant.getVariantEffect().getId())) {
                     continue;
                 }
 
                 List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR");
 
-                if (maxFrequency.getMaxAlleleFreq() < 0.01 && (allowableVariantEffects.contains(variant.getVariantEffect().getName())
-                        || allowableLocationTypes.contains(variant.getLocationType().getName()))) {
+                if (maxFrequency.getMaxAlleleFreq() < 0.01 && (allowableVariantEffects.contains(variant.getVariantEffect().getId())
+                        || allowableLocationTypes.contains(variant.getLocationType().getId()))) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -550,10 +550,10 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
                 if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
                     for (HGMDLocatedVariant hgmdLocVar : hgmdLocatedVariantList) {
-                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getId().getVersion().equals(2)) {
                             continue varLoop;
                         }
-                        if (!hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (!hgmdLocVar.getId().getVersion().equals(2)) {
                             continue;
                         }
                         hgmdLocatedVariant = hgmdLocVar;
@@ -587,7 +587,7 @@ public class BinResultsFinalDiagnosticFactory {
                 List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
                 if (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                        && allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -635,7 +635,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (containsKnownPathogenic) {
                     continue;
                 }
@@ -663,14 +663,14 @@ public class BinResultsFinalDiagnosticFactory {
                 }
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                if (filteredVariantEffects.contains(variant.getVariantEffect().getName())) {
+                if (filteredVariantEffects.contains(variant.getVariantEffect().getId())) {
                     continue;
                 }
 
                 List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR");
 
-                if (maxFrequency.getMaxAlleleFreq() < 0.01 && (allowableVariantEffects.contains(variant.getVariantEffect().getName())
-                        || allowableLocationTypes.contains(variant.getLocationType().getName()))) {
+                if (maxFrequency.getMaxAlleleFreq() < 0.01 && (allowableVariantEffects.contains(variant.getVariantEffect().getId())
+                        || allowableLocationTypes.contains(variant.getLocationType().getId()))) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -695,7 +695,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (containsKnownPathogenic) {
                     continue;
                 }
@@ -726,7 +726,7 @@ public class BinResultsFinalDiagnosticFactory {
                 List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
                 if (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                        && allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -758,10 +758,10 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
                 if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
                     for (HGMDLocatedVariant hgmdLocVar : hgmdLocatedVariantList) {
-                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getId().getVersion().equals(2)) {
                             continue varLoop;
                         }
-                        if (!hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (!hgmdLocVar.getId().getVersion().equals(2)) {
                             continue;
                         }
                         hgmdLocatedVariant = hgmdLocVar;
@@ -797,14 +797,14 @@ public class BinResultsFinalDiagnosticFactory {
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
                 if (maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
-                        && allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
                     results.add(binResultsFinalDiagnostic);
                 }
 
-                if (maxFrequency.getMaxAlleleFreq() < 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() < 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -848,7 +848,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (containsKnownPathogenic) {
                     continue;
                 }
@@ -881,14 +881,14 @@ public class BinResultsFinalDiagnosticFactory {
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
                 if (maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
-                        && allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
                     results.add(binResultsFinalDiagnostic);
                 }
 
-                if (maxFrequency.getMaxAlleleFreq() < 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() < 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -921,10 +921,10 @@ public class BinResultsFinalDiagnosticFactory {
                 HGMDLocatedVariant hgmdLocatedVariant = null;
                 if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
                     for (HGMDLocatedVariant hgmdLocVar : hgmdLocatedVariantList) {
-                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (hgmdLocVar.getTag().equals("DM") && hgmdLocVar.getId().getVersion().equals(2)) {
                             continue varLoop;
                         }
-                        if (!hgmdLocVar.getKey().getVersion().equals(2)) {
+                        if (!hgmdLocVar.getId().getVersion().equals(2)) {
                             continue;
                         }
                         hgmdLocatedVariant = hgmdLocVar;
@@ -958,14 +958,14 @@ public class BinResultsFinalDiagnosticFactory {
                 }
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
                     results.add(binResultsFinalDiagnostic);
                 }
 
-                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createHGMDBinResultsFinalDiagnostic(daoBean, diagnosticBinningJob,
                             variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -1009,7 +1009,7 @@ public class BinResultsFinalDiagnosticFactory {
                 }
 
                 boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getKey().getRank().equals(1) || s.getKey().getRank().equals(2));
+                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
                 if (containsKnownPathogenic) {
                     continue;
                 }
@@ -1040,14 +1040,14 @@ public class BinResultsFinalDiagnosticFactory {
                 }
                 DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
                     results.add(binResultsFinalDiagnostic);
                 }
 
-                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getName())) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
                     BinResultsFinalDiagnostic binResultsFinalDiagnostic = createClinVarBinResultsFinalDiagnostic(daoBean,
                             diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, maxNCGenesFrequenciesVersion,
                             snpMappingAgg);
@@ -1078,14 +1078,14 @@ public class BinResultsFinalDiagnosticFactory {
                 .findById(new NCGenesFrequenciesPK(variant.getLocatedVariant().getId(), maxNCGenesFrequenciesVersion.toString()));
 
         UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
-                .findById(new UnimportantExonPK(variant.getKey().getTranscript(), variant.getNonCanonicalExon()));
+                .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
         DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                 .findById(diagnosticBinningJob.getListVersion());
 
         BinResultsFinalDiagnosticPK binResultsFinalDiagnosticPK = new BinResultsFinalDiagnosticPK(diagnosticBinningJob.getParticipant(),
                 diagnosticBinningJob.getListVersion(), diagnosticBinningJob.getDx().getId(), diagnosticBinningJob.getAssembly().getId(),
-                variant.getLocatedVariant().getId(), variant.getKey().getMapNumber(), variant.getKey().getTranscript());
+                variant.getLocatedVariant().getId(), variant.getId().getMapNumber(), variant.getId().getTranscript());
 
         BinResultsFinalDiagnostic binResultsFinalDiagnostic = new BinResultsFinalDiagnostic(binResultsFinalDiagnosticPK, variant, null,
                 clinvarDiseaseClass, maxFrequency, diagnosticGene, null, assemblyLocatedVariant, assemblyLocatedVariantQC,
@@ -1118,14 +1118,14 @@ public class BinResultsFinalDiagnosticFactory {
                 .findById(new NCGenesFrequenciesPK(variant.getLocatedVariant().getId(), maxNCGenesFrequenciesVersion.toString()));
 
         UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
-                .findById(new UnimportantExonPK(variant.getKey().getTranscript(), variant.getNonCanonicalExon()));
+                .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
         DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO()
                 .findById(diagnosticBinningJob.getListVersion());
 
         BinResultsFinalDiagnosticPK binResultsFinalDiagnosticPK = new BinResultsFinalDiagnosticPK(diagnosticBinningJob.getParticipant(),
                 diagnosticBinningJob.getListVersion(), diagnosticBinningJob.getDx().getId(), diagnosticBinningJob.getAssembly().getId(),
-                variant.getLocatedVariant().getId(), variant.getKey().getMapNumber(), variant.getKey().getTranscript());
+                variant.getLocatedVariant().getId(), variant.getId().getMapNumber(), variant.getId().getTranscript());
 
         BinResultsFinalDiagnostic binResultsFinalDiagnostic = new BinResultsFinalDiagnostic(binResultsFinalDiagnosticPK, variant,
                 hgmdDiseaseClass, null, maxFrequency, diagnosticGene, hgmdLocatedVariant, assemblyLocatedVariant, assemblyLocatedVariantQC,

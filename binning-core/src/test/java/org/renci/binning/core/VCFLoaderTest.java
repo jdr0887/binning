@@ -149,7 +149,7 @@ public class VCFLoaderTest {
                         }
 
                         // bw.write(locatedVariant.toString());
-                        bw.write(String.format("%d\t%s\t%s\t%s", vc.getStart(), locatedVariant.getVariantType().getName(),
+                        bw.write(String.format("%d\t%s\t%s\t%s", vc.getStart(), locatedVariant.getVariantType().getId(),
                                 vc.getReference().getDisplayString(), sequence));
 
                         bw.newLine();

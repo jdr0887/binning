@@ -34,9 +34,9 @@ public class LoadVCFCallableTest {
 
         // File vcfFile = new File("/tmp", "GSK_007006.merged.fb.sorted.va.vcf");
         // File vcfFile = new File("/tmp", "GSK_007217.merged.fb.sorted.va.vcf");
-        //File vcfFile = new File("/tmp", "NCG_00020.merged.rg.deduped.filtered_by_dxid_7_v22.vcf");
+        // File vcfFile = new File("/tmp", "NCG_00020.merged.rg.deduped.filtered_by_dxid_7_v22.vcf");
         File vcfFile = new File("/tmp", "HRC061-1.merged.rg.deduped.filtered.sorted.va.vcf");
-        
+
         int refSkippedCount = 0;
         int errorCount = 0;
         int filteredCount = 0;
@@ -258,26 +258,26 @@ public class LoadVCFCallableTest {
             // .collect(Collectors.toList());
             // snps.forEach(a -> logger.info(a.toString()));
 
-            List<LocatedVariant> subs = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("sub"))
+            List<LocatedVariant> subs = locatedVariantList.stream().filter(a -> a.getVariantType().getId().equals("sub"))
                     .collect(Collectors.toList());
             // subs.forEach(a -> logger.info(a.toString()));
 
-            List<LocatedVariant> ins = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("ins"))
+            List<LocatedVariant> ins = locatedVariantList.stream().filter(a -> a.getVariantType().getId().equals("ins"))
                     .collect(Collectors.toList());
             // ins.forEach(a -> logger.info(a.toString()));
 
-            List<LocatedVariant> snps = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("snp"))
+            List<LocatedVariant> snps = locatedVariantList.stream().filter(a -> a.getVariantType().getId().equals("snp"))
                     .collect(Collectors.toList());
             snps.forEach(a -> logger.info(a.toString()));
 
-            List<LocatedVariant> dels = locatedVariantList.stream().filter(a -> a.getVariantType().getName().equals("del"))
+            List<LocatedVariant> dels = locatedVariantList.stream().filter(a -> a.getVariantType().getId().equals("del"))
                     .collect(Collectors.toList());
             // dels.forEach(a -> logger.info(a.toString()));
 
             logger.info("locatedVariantList.size() = {}", locatedVariantList.size());
 
             System.out.println("num_snp_rows | num_del_rows | num_sub_rows | num_ins_rows | num_skipped_ref_rows");
-            //System.out.println("118 | 10 | 3 | 4 | 160918");
+            // System.out.println("118 | 10 | 3 | 4 | 160918");
             // System.out.println("124 | 11 | 1 | 6 | 160429");
 
             System.out.println(String.format("%d | %d | %d | %d | %d", snps.size(), dels.size(), subs.size(), ins.size(), refSkippedCount));

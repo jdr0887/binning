@@ -52,7 +52,7 @@ public class AnnotateVariantsFromDiagnosticJobTest {
         logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
 
         locatedVariantList.sort((a, b) -> {
-            int ret = a.getGenomeRefSeq().getVerAccession().compareTo(b.getGenomeRefSeq().getVerAccession());
+            int ret = a.getGenomeRefSeq().getId().compareTo(b.getGenomeRefSeq().getId());
             if (ret == 0) {
                 ret = a.getPosition().compareTo(b.getPosition());
             }
@@ -70,7 +70,7 @@ public class AnnotateVariantsFromDiagnosticJobTest {
                     try {
                         List<TranscriptMaps> transcriptMapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
                                 .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRef.getId(), refseqVersion,
-                                        locatedVariant.getGenomeRefSeq().getVerAccession(), locatedVariant.getPosition());
+                                        locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition());
 
                         if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
@@ -94,7 +94,7 @@ public class AnnotateVariantsFromDiagnosticJobTest {
 
                                 List<TranscriptMaps> mapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
                                         .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
-                                                tMap.getTranscript().getVersionId());
+                                                tMap.getTranscript().getId());
 
                                 Variants_61_2 variant = null;
                                 if (transcriptMapsExons == null) {
@@ -129,11 +129,11 @@ public class AnnotateVariantsFromDiagnosticJobTest {
 
                     bw.write(String.format(
                             "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s%n",
-                            a.getLocatedVariant().getId(), a.getGenomeRefSeq().getVerAccession(), a.getKey().getPosition(),
-                            a.getVariantType().getName(), a.getReferenceAllele(),
-                            StringUtils.isNotEmpty(a.getAlternateAllele()) ? a.getAlternateAllele() : "", a.getKey().getTranscript(),
-                            a.getKey().getMapNumber(), a.getNumberOfTranscriptMaps(), a.getGene().getId(), a.getRefSeqGene(),
-                            a.getHgncGene(), a.getLocationType().getName(), a.getNonCanonicalExon() != null ? a.getNonCanonicalExon() : "",
+                            a.getLocatedVariant().getId(), a.getGenomeRefSeq().getId(), a.getId().getPosition(), a.getVariantType().getId(),
+                            a.getReferenceAllele(), StringUtils.isNotEmpty(a.getAlternateAllele()) ? a.getAlternateAllele() : "",
+                            a.getId().getTranscript(), a.getId().getMapNumber(), a.getNumberOfTranscriptMaps(), a.getGene().getId(),
+                            a.getRefSeqGene(), a.getHgncGene(), a.getLocationType().getId(),
+                            a.getNonCanonicalExon() != null ? a.getNonCanonicalExon() : "",
                             a.getFeatureId() != null ? a.getFeatureId() : "", a.getStrand(),
                             a.getTranscriptPosition() != null ? a.getTranscriptPosition() : "",
                             a.getCodingSequencePosition() != null ? a.getCodingSequencePosition() : "",
@@ -142,7 +142,7 @@ public class AnnotateVariantsFromDiagnosticJobTest {
                             a.getOriginalAminoAcid() != null ? a.getOriginalAminoAcid() : "",
                             a.getFinalAminoAcid() != null ? a.getFinalAminoAcid() : "", a.getFrameshift() != null ? a.getFrameshift() : "",
                             a.getInframe() != null ? a.getInframe() : "",
-                            a.getIntronExonDistance() != null ? a.getIntronExonDistance() : "", a.getVariantEffect().getName(),
+                            a.getIntronExonDistance() != null ? a.getIntronExonDistance() : "", a.getVariantEffect().getId(),
                             StringUtils.isNotEmpty(a.getHgvsGenomic()) ? a.getHgvsGenomic() : "",
                             StringUtils.isNotEmpty(a.getHgvsCodingSequence()) ? a.getHgvsCodingSequence() : "",
                             StringUtils.isNotEmpty(a.getHgvsTranscript()) ? a.getHgvsTranscript() : "",
