@@ -1,6 +1,7 @@
 package org.renci.canvas.binning.core;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
 
     private Integer endPosition;
 
-    private Integer totalCoverage;
+    private AtomicInteger totalCoverage = new AtomicInteger(0);
 
     private Double averageCoverage;
 
@@ -33,23 +34,41 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
 
     private String sampleGranularQ3;
 
-    private Double samplePercentAbove1;
+    private Double samplePercentAbove1 = 0D;
 
-    private Double samplePercentAbove2;
+    private AtomicInteger sampleCountAbove1 = new AtomicInteger(0);
 
-    private Double samplePercentAbove5;
+    private Double samplePercentAbove2 = 0D;
 
-    private Double samplePercentAbove8;
+    private AtomicInteger sampleCountAbove2 = new AtomicInteger(0);
 
-    private Double samplePercentAbove10;
+    private Double samplePercentAbove5 = 0D;
 
-    private Double samplePercentAbove15;
+    private AtomicInteger sampleCountAbove5 = new AtomicInteger(0);
 
-    private Double samplePercentAbove20;
+    private Double samplePercentAbove8 = 0D;
 
-    private Double samplePercentAbove30;
+    private AtomicInteger sampleCountAbove8 = new AtomicInteger(0);
 
-    private Double samplePercentAbove50;
+    private Double samplePercentAbove10 = 0D;
+
+    private AtomicInteger sampleCountAbove10 = new AtomicInteger(0);
+
+    private Double samplePercentAbove15 = 0D;
+
+    private AtomicInteger sampleCountAbove15 = new AtomicInteger(0);
+
+    private Double samplePercentAbove20 = 0D;
+
+    private AtomicInteger sampleCountAbove20 = new AtomicInteger(0);
+
+    private Double samplePercentAbove30 = 0D;
+
+    private AtomicInteger sampleCountAbove30 = new AtomicInteger(0);
+
+    private Double samplePercentAbove50 = 0D;
+
+    private AtomicInteger sampleCountAbove50 = new AtomicInteger(0);
 
     public GATKDepthInterval() {
         super();
@@ -66,15 +85,14 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
         }
 
         if (split.length == 1) {
-            String target = split[0];
-            Matcher m = targetPattern.matcher(target);
+            Matcher m = targetPattern.matcher(line);
             if (m.matches()) {
                 this.contig = m.group("contig");
                 this.startPosition = Integer.valueOf(m.group("start"));
                 this.endPosition = Integer.valueOf(m.group("end"));
             }
         }
-        
+
         if (split.length == 17) {
             String target = split[0];
             Matcher m = targetPattern.matcher(target);
@@ -83,7 +101,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
                 this.startPosition = Integer.valueOf(m.group("start"));
                 this.endPosition = Integer.valueOf(m.group("end"));
             }
-            this.totalCoverage = Integer.valueOf(split[1]);
+            this.totalCoverage = new AtomicInteger(Integer.valueOf(split[1]));
             this.averageCoverage = Double.valueOf(split[2]);
             this.sampleTotalCoverage = Integer.valueOf(split[3]);
             this.sampleMeanCoverage = Double.valueOf(split[4]);
@@ -100,6 +118,28 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
             this.samplePercentAbove30 = Double.valueOf(split[15]);
             this.samplePercentAbove50 = Double.valueOf(split[16]);
         }
+
+        if (split.length == 12) {
+            String target = split[0];
+            Matcher m = targetPattern.matcher(target);
+            if (m.matches()) {
+                this.contig = m.group("contig");
+                this.startPosition = Integer.valueOf(m.group("start"));
+                this.endPosition = Integer.valueOf(m.group("end"));
+            }
+            this.totalCoverage = new AtomicInteger(Integer.valueOf(split[1]));
+            this.averageCoverage = Double.valueOf(split[2]);
+            this.samplePercentAbove1 = Double.valueOf(split[3]);
+            this.samplePercentAbove2 = Double.valueOf(split[4]);
+            this.samplePercentAbove5 = Double.valueOf(split[5]);
+            this.samplePercentAbove8 = Double.valueOf(split[6]);
+            this.samplePercentAbove10 = Double.valueOf(split[7]);
+            this.samplePercentAbove15 = Double.valueOf(split[8]);
+            this.samplePercentAbove20 = Double.valueOf(split[9]);
+            this.samplePercentAbove30 = Double.valueOf(split[10]);
+            this.samplePercentAbove50 = Double.valueOf(split[11]);
+        }
+
     }
 
     public String getContig() {
@@ -126,16 +166,12 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
         this.endPosition = endPosition;
     }
 
-    public Integer getTotalCoverage() {
+    public AtomicInteger getTotalCoverage() {
         return totalCoverage;
     }
 
-    public void setTotalCoverage(Integer totalCoverage) {
-        this.totalCoverage = totalCoverage;
-    }
-
     public Double getAverageCoverage() {
-        return averageCoverage;
+        return this.averageCoverage;
     }
 
     public void setAverageCoverage(Double averageCoverage) {
@@ -183,7 +219,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove1() {
-        return samplePercentAbove1;
+        return this.samplePercentAbove1;
     }
 
     public void setSamplePercentAbove1(Double samplePercentAbove1) {
@@ -191,7 +227,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove2() {
-        return samplePercentAbove2;
+        return this.samplePercentAbove2;
     }
 
     public void setSamplePercentAbove2(Double samplePercentAbove2) {
@@ -199,7 +235,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove5() {
-        return samplePercentAbove5;
+        return this.samplePercentAbove5;
     }
 
     public void setSamplePercentAbove5(Double samplePercentAbove5) {
@@ -207,7 +243,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove8() {
-        return samplePercentAbove8;
+        return this.samplePercentAbove8;
     }
 
     public void setSamplePercentAbove8(Double samplePercentAbove8) {
@@ -215,7 +251,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove10() {
-        return samplePercentAbove10;
+        return this.samplePercentAbove10;
     }
 
     public void setSamplePercentAbove10(Double samplePercentAbove10) {
@@ -223,7 +259,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove15() {
-        return samplePercentAbove15;
+        return this.samplePercentAbove15;
     }
 
     public void setSamplePercentAbove15(Double samplePercentAbove15) {
@@ -231,7 +267,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove20() {
-        return samplePercentAbove20;
+        return this.samplePercentAbove20;
     }
 
     public void setSamplePercentAbove20(Double samplePercentAbove20) {
@@ -239,7 +275,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove30() {
-        return samplePercentAbove30;
+        return this.samplePercentAbove30;
     }
 
     public void setSamplePercentAbove30(Double samplePercentAbove30) {
@@ -247,7 +283,7 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
     }
 
     public Double getSamplePercentAbove50() {
-        return samplePercentAbove50;
+        return this.samplePercentAbove50;
     }
 
     public void setSamplePercentAbove50(Double samplePercentAbove50) {
@@ -260,6 +296,42 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
 
     public Integer getLength() {
         return this.endPosition - this.startPosition + 1;
+    }
+
+    public AtomicInteger getSampleCountAbove1() {
+        return sampleCountAbove1;
+    }
+
+    public AtomicInteger getSampleCountAbove2() {
+        return sampleCountAbove2;
+    }
+
+    public AtomicInteger getSampleCountAbove5() {
+        return sampleCountAbove5;
+    }
+
+    public AtomicInteger getSampleCountAbove8() {
+        return sampleCountAbove8;
+    }
+
+    public AtomicInteger getSampleCountAbove10() {
+        return sampleCountAbove10;
+    }
+
+    public AtomicInteger getSampleCountAbove15() {
+        return sampleCountAbove15;
+    }
+
+    public AtomicInteger getSampleCountAbove20() {
+        return sampleCountAbove20;
+    }
+
+    public AtomicInteger getSampleCountAbove30() {
+        return sampleCountAbove30;
+    }
+
+    public AtomicInteger getSampleCountAbove50() {
+        return sampleCountAbove50;
     }
 
     @Override
@@ -284,17 +356,6 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
         result = prime * result + ((sampleGranularMedian == null) ? 0 : sampleGranularMedian.hashCode());
         result = prime * result + ((sampleGranularQ1 == null) ? 0 : sampleGranularQ1.hashCode());
         result = prime * result + ((sampleGranularQ3 == null) ? 0 : sampleGranularQ3.hashCode());
-        result = prime * result + ((sampleMeanCoverage == null) ? 0 : sampleMeanCoverage.hashCode());
-        result = prime * result + ((samplePercentAbove1 == null) ? 0 : samplePercentAbove1.hashCode());
-        result = prime * result + ((samplePercentAbove10 == null) ? 0 : samplePercentAbove10.hashCode());
-        result = prime * result + ((samplePercentAbove15 == null) ? 0 : samplePercentAbove15.hashCode());
-        result = prime * result + ((samplePercentAbove2 == null) ? 0 : samplePercentAbove2.hashCode());
-        result = prime * result + ((samplePercentAbove20 == null) ? 0 : samplePercentAbove20.hashCode());
-        result = prime * result + ((samplePercentAbove30 == null) ? 0 : samplePercentAbove30.hashCode());
-        result = prime * result + ((samplePercentAbove5 == null) ? 0 : samplePercentAbove5.hashCode());
-        result = prime * result + ((samplePercentAbove50 == null) ? 0 : samplePercentAbove50.hashCode());
-        result = prime * result + ((samplePercentAbove8 == null) ? 0 : samplePercentAbove8.hashCode());
-        result = prime * result + ((sampleTotalCoverage == null) ? 0 : sampleTotalCoverage.hashCode());
         result = prime * result + ((startPosition == null) ? 0 : startPosition.hashCode());
         result = prime * result + ((totalCoverage == null) ? 0 : totalCoverage.hashCode());
         return result;
@@ -344,56 +405,6 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
                 return false;
         } else if (!sampleMeanCoverage.equals(other.sampleMeanCoverage))
             return false;
-        if (samplePercentAbove1 == null) {
-            if (other.samplePercentAbove1 != null)
-                return false;
-        } else if (!samplePercentAbove1.equals(other.samplePercentAbove1))
-            return false;
-        if (samplePercentAbove10 == null) {
-            if (other.samplePercentAbove10 != null)
-                return false;
-        } else if (!samplePercentAbove10.equals(other.samplePercentAbove10))
-            return false;
-        if (samplePercentAbove15 == null) {
-            if (other.samplePercentAbove15 != null)
-                return false;
-        } else if (!samplePercentAbove15.equals(other.samplePercentAbove15))
-            return false;
-        if (samplePercentAbove2 == null) {
-            if (other.samplePercentAbove2 != null)
-                return false;
-        } else if (!samplePercentAbove2.equals(other.samplePercentAbove2))
-            return false;
-        if (samplePercentAbove20 == null) {
-            if (other.samplePercentAbove20 != null)
-                return false;
-        } else if (!samplePercentAbove20.equals(other.samplePercentAbove20))
-            return false;
-        if (samplePercentAbove30 == null) {
-            if (other.samplePercentAbove30 != null)
-                return false;
-        } else if (!samplePercentAbove30.equals(other.samplePercentAbove30))
-            return false;
-        if (samplePercentAbove5 == null) {
-            if (other.samplePercentAbove5 != null)
-                return false;
-        } else if (!samplePercentAbove5.equals(other.samplePercentAbove5))
-            return false;
-        if (samplePercentAbove50 == null) {
-            if (other.samplePercentAbove50 != null)
-                return false;
-        } else if (!samplePercentAbove50.equals(other.samplePercentAbove50))
-            return false;
-        if (samplePercentAbove8 == null) {
-            if (other.samplePercentAbove8 != null)
-                return false;
-        } else if (!samplePercentAbove8.equals(other.samplePercentAbove8))
-            return false;
-        if (sampleTotalCoverage == null) {
-            if (other.sampleTotalCoverage != null)
-                return false;
-        } else if (!sampleTotalCoverage.equals(other.sampleTotalCoverage))
-            return false;
         if (startPosition == null) {
             if (other.startPosition != null)
                 return false;
@@ -418,9 +429,17 @@ public class GATKDepthInterval implements Serializable, Comparable<GATKDepthInte
 
     public String toStringTrimmed() {
         return String.format("%s\t%d\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f%n",
-                String.format("%s:%d-%d", contig, startPosition, endPosition), totalCoverage, averageCoverage, samplePercentAbove1,
-                samplePercentAbove2, samplePercentAbove5, samplePercentAbove8, samplePercentAbove10, samplePercentAbove15,
-                samplePercentAbove20, samplePercentAbove30, samplePercentAbove50);
+                String.format("%s:%d-%d", contig, startPosition, endPosition), totalCoverage.get(),
+                Double.valueOf(1D * getTotalCoverage().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove1().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove2().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove5().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove8().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove10().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove15().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove20().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove30().get() / getLength()),
+                Double.valueOf(100D * getSampleCountAbove50().get() / getLength()));
     }
 
 }
