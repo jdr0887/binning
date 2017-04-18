@@ -6,16 +6,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class LoadCoverageGSCallableTest {
     @Test
     public void test() throws IOException {
 
-        File allIntervalsFile = new File("/tmp/Intervals", String.format("allintervals.v%d.txt", 40));
+        File allIntervalsFile = new File("/tmp/Intervals", String.format("allintervals.v%d.txt", 43));
         List<String> allIntervals = FileUtils.readLines(allIntervalsFile, "UTF-8");
         if (allIntervals.contains("Targets")) {
             allIntervals.remove("Targets");
@@ -39,84 +40,81 @@ public class LoadCoverageGSCallableTest {
         SortedSet<GATKDepthInterval> allIntervalSet = new TreeSet<GATKDepthInterval>();
         allIntervals.forEach(a -> allIntervalSet.add(new GATKDepthInterval(a)));
 
-        File depthFile = new File("/tmp", "GSU_000136.merged.depth.txt");
+        logger.info("done parsing allIntervals");
 
-        File convertedDepthFile = convertDepthFile(allIntervalSet, depthFile);
-        logger.info(convertedDepthFile.getAbsolutePath());
-    }
+        File depthFile = new File("/tmp", "NCX_00101.merged.rg.deduped.depth.txt");
+        // File depthFile = new File("/tmp", "GSU_000384.merged.depth.txt");
 
-    private File convertDepthFile(SortedSet<GATKDepthInterval> allIntervalSet, File depthFile) {
+        ExecutorService es = Executors.newFixedThreadPool(8);
 
-        List<SAMToolsDepthInterval> samtoolsDepthIntervals = new ArrayList<>();
-
-        try (FileReader fr = new FileReader(depthFile); BufferedReader br = new BufferedReader(fr)) {
-            br.readLine();
+        try (FileReader fr = new FileReader(depthFile);
+                BufferedReader br = new BufferedReader(fr, Double.valueOf(Math.pow(2, 14)).intValue())) {
             String line;
             while ((line = br.readLine()) != null) {
-                samtoolsDepthIntervals.add(new SAMToolsDepthInterval(line));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        try {
-            ExecutorService es = Executors.newFixedThreadPool(4);
-            for (GATKDepthInterval gatkDepthInterval : allIntervalSet) {
+                SAMToolsDepthInterval samtoolsDepthInterval = new SAMToolsDepthInterval(line);
 
                 es.submit(() -> {
-                    Map<Integer, Integer> percentageMap = new HashMap<Integer, Integer>();
 
-                    percentageMap.put(1, 0);
-                    percentageMap.put(2, 0);
-                    percentageMap.put(5, 0);
-                    percentageMap.put(8, 0);
-                    percentageMap.put(10, 0);
-                    percentageMap.put(15, 0);
-                    percentageMap.put(20, 0);
-                    percentageMap.put(30, 0);
-                    percentageMap.put(50, 0);
+                    Optional<GATKDepthInterval> optionalGATKDepthInterval = allIntervalSet.stream()
+                            .filter(a -> a.getContig().equals(samtoolsDepthInterval.getContig())
+                                    && a.getPositionRange().contains(samtoolsDepthInterval.getPosition()))
+                            .findFirst();
+                    if (optionalGATKDepthInterval.isPresent()) {
+                        GATKDepthInterval gatkDepthInterval = optionalGATKDepthInterval.get();
 
-                    int total = 0;
-                    for (SAMToolsDepthInterval samtoolsDepthInterval : samtoolsDepthIntervals) {
-                        if (!gatkDepthInterval.getContig().equals(samtoolsDepthInterval.getContig())) {
-                            continue;
-                        }
-                        if (!gatkDepthInterval.getPositionRange().contains(samtoolsDepthInterval.getPosition())) {
-                            continue;
+                        gatkDepthInterval.getTotalCoverage().addAndGet(samtoolsDepthInterval.getCoverage());
+
+                        if (samtoolsDepthInterval.getCoverage() >= 1) {
+                            gatkDepthInterval.getSampleCountAbove1().incrementAndGet();
                         }
 
-                        total += samtoolsDepthInterval.getCoverage();
+                        if (samtoolsDepthInterval.getCoverage() >= 2) {
+                            gatkDepthInterval.getSampleCountAbove2().incrementAndGet();
+                        }
 
-                        for (Integer key : percentageMap.keySet()) {
-                            if (samtoolsDepthInterval.getCoverage() >= key) {
-                                percentageMap.put(key, percentageMap.get(key) + 1);
-                            }
+                        if (samtoolsDepthInterval.getCoverage() >= 5) {
+                            gatkDepthInterval.getSampleCountAbove5().incrementAndGet();
+                        }
+
+                        if (samtoolsDepthInterval.getCoverage() >= 8) {
+                            gatkDepthInterval.getSampleCountAbove8().incrementAndGet();
+                        }
+
+                        if (samtoolsDepthInterval.getCoverage() >= 10) {
+                            gatkDepthInterval.getSampleCountAbove10().incrementAndGet();
+                        }
+
+                        if (samtoolsDepthInterval.getCoverage() >= 15) {
+                            gatkDepthInterval.getSampleCountAbove15().incrementAndGet();
+                        }
+
+                        if (samtoolsDepthInterval.getCoverage() >= 20) {
+                            gatkDepthInterval.getSampleCountAbove20().incrementAndGet();
+                        }
+
+                        if (samtoolsDepthInterval.getCoverage() >= 30) {
+                            gatkDepthInterval.getSampleCountAbove30().incrementAndGet();
+                        }
+
+                        if (samtoolsDepthInterval.getCoverage() >= 50) {
+                            gatkDepthInterval.getSampleCountAbove50().incrementAndGet();
                         }
 
                     }
-                    gatkDepthInterval.setTotalCoverage(total);
-                    gatkDepthInterval
-                            .setAverageCoverage(Double.valueOf(1D * gatkDepthInterval.getTotalCoverage() / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove1(Double.valueOf(100D * percentageMap.get(1) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove2(Double.valueOf(100D * percentageMap.get(2) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove5(Double.valueOf(100D * percentageMap.get(5) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove8(Double.valueOf(100D * percentageMap.get(8) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove10(Double.valueOf(100D * percentageMap.get(10) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove15(Double.valueOf(100D * percentageMap.get(15) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove20(Double.valueOf(100D * percentageMap.get(20) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove30(Double.valueOf(100D * percentageMap.get(30) / gatkDepthInterval.getLength()));
-                    gatkDepthInterval.setSamplePercentAbove50(Double.valueOf(100D * percentageMap.get(50) / gatkDepthInterval.getLength()));
 
                 });
+
             }
             es.shutdown();
-            es.awaitTermination(1, TimeUnit.HOURS);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
+            es.awaitTermination(1L, TimeUnit.HOURS);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        File ret = new File(depthFile.getParentFile(), depthFile.getName().replace(".txt", ".txt.converted"));
-        try (FileWriter fw = new FileWriter(ret); BufferedWriter bw = new BufferedWriter(fw)) {
+        logger.info("writing output");
+        File convertedDepthFile = new File(depthFile.getParentFile(), depthFile.getName().replace(".txt", ".txt.converted"));
+        try (FileWriter fw = new FileWriter(convertedDepthFile); BufferedWriter bw = new BufferedWriter(fw)) {
             bw.write("Target\ttotal_coverage\taverage_coverage");
 
             Arrays.asList(1, 2, 5, 8, 10, 15, 20, 30, 50).forEach(a -> {
@@ -139,7 +137,23 @@ public class LoadCoverageGSCallableTest {
             e.printStackTrace();
         }
 
-        return ret;
+        logger.info(convertedDepthFile.getAbsolutePath());
+    }
+
+    @Test
+    public void parseAlreadyFormatConvertedDepthFile() {
+        SortedSet<GATKDepthInterval> allIntervalSet = new TreeSet<GATKDepthInterval>();
+        File depthFile = new File("/tmp", "GSU_000384.merged.depth.converted.txt");
+        try (Stream<String> stream = Files.lines(depthFile.toPath())) {
+            stream.forEach(a -> {
+                if (!a.startsWith("Target")) {
+                    allIntervalSet.add(new GATKDepthInterval(a));
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("done");
     }
 
 }
