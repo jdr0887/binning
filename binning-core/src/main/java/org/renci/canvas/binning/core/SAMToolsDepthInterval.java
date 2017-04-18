@@ -1,6 +1,11 @@
 package org.renci.canvas.binning.core;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class SAMToolsDepthInterval {
+
+    private static final Pattern p = Pattern.compile("(?<contig>\\S+)\t(?<position>\\S+)\t(?<coverage>\\S+)");
 
     private String contig;
 
@@ -21,12 +26,18 @@ public class SAMToolsDepthInterval {
 
     public SAMToolsDepthInterval(String line) {
         super();
-        String[] split = line.split("\t");
-        if (split.length == 3) {
-            this.contig = split[0];
-            this.position = Integer.valueOf(split[1]);
-            this.coverage = Integer.valueOf(split[2]);
+        Matcher m = p.matcher(line);
+        if (m.find()) {
+            contig = m.group("contig");
+            position = Integer.valueOf(m.group("position"));
+            coverage = Integer.valueOf(m.group("coverage"));
         }
+        // String[] split = line.split("\t");
+        // if (split.length == 3) {
+        // this.contig = split[0];
+        // this.position = Integer.valueOf(split[1]);
+        // this.coverage = Integer.valueOf(split[2]);
+        // }
     }
 
     public String getContig() {
