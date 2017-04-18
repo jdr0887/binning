@@ -119,7 +119,6 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
             throw new BinningException(e);
         }
         return null;
-
     }
 
     public CANVASDAOBeanService getDaoBean() {
