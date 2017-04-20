@@ -98,11 +98,11 @@ public class AnnotateVariantsFromDiagnosticJobTest {
 
                                 Variants_61_2 variant = null;
                                 if (transcriptMapsExons == null) {
-                                    variant = VariantsFactory.createIntronicVariant(daoMgr.getDAOBean(), refseqVersion, locatedVariant,
-                                            mapsList, tMap, transcriptMapsExonsList);
+                                    variant = VariantsFactory.createIntronicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList, tMap,
+                                            transcriptMapsExonsList);
                                 } else {
-                                    variant = VariantsFactory.createExonicVariant(daoMgr.getDAOBean(), refseqVersion, locatedVariant,
-                                            mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                                    variant = VariantsFactory.createExonicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList,
+                                            transcriptMapsExonsList, transcriptMapsExons);
                                 }
                                 logger.info(variant.toString());
                                 // daoMgr.getDAOBean().getVariants_61_2_DAO().save(variant);
