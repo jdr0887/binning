@@ -7,14 +7,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.renci.canvas.binning.core.grch37.VariantsFactory;
-import org.renci.canvas.dao.jpa.CANVASDAOManager;
+import org.renci.canvas.dao.jpa.CANVASDAOBeanServiceImpl;
+import org.renci.canvas.dao.jpa.annotation.AnnotationGeneExternalIdDAOImpl;
+import org.renci.canvas.dao.jpa.hgnc.HGNCGeneDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.FeatureDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.LocationTypeDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.RefSeqCodingSequenceDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.RefSeqGeneDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.RegionGroupRegionDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.TranscriptMapsDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
+import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
+import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +41,77 @@ public class AnnotateVariantsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnotateVariantsTest.class);
 
-    private static final CANVASDAOManager daoMgr = CANVASDAOManager.getInstance();
+    private static EntityManagerFactory emf;
+
+    private static EntityManager em;
+
+    private static CANVASDAOBeanServiceImpl daoBean = new CANVASDAOBeanServiceImpl();
+
+    public AnnotateVariantsTest() {
+        super();
+    }
+
+    @BeforeClass
+    public static void setup() {
+        emf = Persistence.createEntityManagerFactory("canvas_test", null);
+        em = emf.createEntityManager();
+
+        TranscriptMapsDAOImpl transcriptMapsDAO = new TranscriptMapsDAOImpl();
+        transcriptMapsDAO.setEntityManager(em);
+        daoBean.setTranscriptMapsDAO(transcriptMapsDAO);
+
+        TranscriptMapsExonsDAOImpl transcriptMapsExonsDAO = new TranscriptMapsExonsDAOImpl();
+        transcriptMapsExonsDAO.setEntityManager(em);
+        daoBean.setTranscriptMapsExonsDAO(transcriptMapsExonsDAO);
+
+        LocationTypeDAOImpl locationTypeDAO = new LocationTypeDAOImpl();
+        locationTypeDAO.setEntityManager(em);
+        daoBean.setLocationTypeDAO(locationTypeDAO);
+
+        VariantEffectDAOImpl variantEffectDAO = new VariantEffectDAOImpl();
+        variantEffectDAO.setEntityManager(em);
+        daoBean.setVariantEffectDAO(variantEffectDAO);
+
+        RefSeqGeneDAOImpl refSeqGeneDAO = new RefSeqGeneDAOImpl();
+        refSeqGeneDAO.setEntityManager(em);
+        daoBean.setRefSeqGeneDAO(refSeqGeneDAO);
+
+        HGNCGeneDAOImpl hgncGeneDAO = new HGNCGeneDAOImpl();
+        hgncGeneDAO.setEntityManager(em);
+        daoBean.setHGNCGeneDAO(hgncGeneDAO);
+
+        AnnotationGeneExternalIdDAOImpl annotationGeneExternalIdDAO = new AnnotationGeneExternalIdDAOImpl();
+        annotationGeneExternalIdDAO.setEntityManager(em);
+        daoBean.setAnnotationGeneExternalIdDAO(annotationGeneExternalIdDAO);
+
+        RegionGroupRegionDAOImpl regionGroupRegionDAO = new RegionGroupRegionDAOImpl();
+        regionGroupRegionDAO.setEntityManager(em);
+        daoBean.setRegionGroupRegionDAO(regionGroupRegionDAO);
+
+        RefSeqCodingSequenceDAOImpl refSeqCodingSequenceDAO = new RefSeqCodingSequenceDAOImpl();
+        refSeqCodingSequenceDAO.setEntityManager(em);
+        daoBean.setRefSeqCodingSequenceDAO(refSeqCodingSequenceDAO);
+
+        FeatureDAOImpl featureDAO = new FeatureDAOImpl();
+        featureDAO.setEntityManager(em);
+        daoBean.setFeatureDAO(featureDAO);
+
+        LocatedVariantDAOImpl locatedVariantDAO = new LocatedVariantDAOImpl();
+        locatedVariantDAO.setEntityManager(em);
+        daoBean.setLocatedVariantDAO(locatedVariantDAO);
+
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        em.close();
+        emf.close();
+    }
 
     private List<Variants_61_2> annotateLocatedVariant(LocatedVariant locatedVariant) throws Exception {
         List<Variants_61_2> variants = new ArrayList<>();
-        List<TranscriptMaps> transcriptMapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
+
+        List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
                 .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61", locatedVariant.getGenomeRefSeq().getId(),
                         locatedVariant.getPosition());
         logger.info("transcriptMapsList.size(): {}", transcriptMapsList.size());
@@ -55,7 +139,7 @@ public class AnnotateVariantsTest {
 
             for (TranscriptMaps tMap : transcriptMapsList) {
 
-                List<TranscriptMapsExons> transcriptMapsExonsList = daoMgr.getDAOBean().getTranscriptMapsExonsDAO()
+                List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
                         .findByTranscriptMapsId(tMap.getId());
 
                 TranscriptMapsExons transcriptMapsExons = null;
@@ -70,24 +154,23 @@ public class AnnotateVariantsTest {
                     }
                 }
 
-                List<TranscriptMaps> mapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
-                        .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61", tMap.getTranscript().getId());
+                List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61",
+                        tMap.getTranscript().getId());
 
                 Variants_61_2 variant = null;
 
                 if (transcriptMapsExons == null) {
-                    variant = VariantsFactory.createIntronicVariant(daoMgr.getDAOBean(), "61", locatedVariant, mapsList, tMap,
-                            transcriptMapsExonsList);
+                    variant = VariantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap, transcriptMapsExonsList);
                 } else {
 
                     if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
                             || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                     && "+".equals(tMap.getStrand()))) {
-                        variant = VariantsFactory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant, tMap, mapsList,
+                        variant = VariantsFactory.createBorderCrossingVariant(daoBean, "61", locatedVariant, tMap, mapsList,
                                 transcriptMapsExonsList, transcriptMapsExons);
                     } else {
-                        variant = VariantsFactory.createExonicVariant(daoMgr.getDAOBean(), "61", locatedVariant, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons);
+                        variant = VariantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList, transcriptMapsExonsList,
+                                transcriptMapsExons);
                     }
 
                 }
@@ -97,9 +180,8 @@ public class AnnotateVariantsTest {
         } else {
 
             // try searching by adjusting for length of locatedVariant.getSeq()...could be intron/exon boundary crossing
-            transcriptMapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
-                    .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61",
-                            locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() + locatedVariant.getRef().length() - 1);
+            transcriptMapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2,
+                    "61", locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() + locatedVariant.getRef().length() - 1);
 
             if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
@@ -123,7 +205,7 @@ public class AnnotateVariantsTest {
 
                 for (TranscriptMaps tMap : transcriptMapsList) {
 
-                    List<TranscriptMapsExons> transcriptMapsExonsList = daoMgr.getDAOBean().getTranscriptMapsExonsDAO()
+                    List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
                             .findByTranscriptMapsId(tMap.getId());
 
                     TranscriptMapsExons transcriptMapsExons = null;
@@ -138,17 +220,16 @@ public class AnnotateVariantsTest {
                         }
                     }
 
-                    List<TranscriptMaps> mapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
-                            .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61", tMap.getTranscript().getId());
+                    List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61",
+                            tMap.getTranscript().getId());
 
-                    Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant, tMap,
-                            mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                    Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, "61", locatedVariant, tMap, mapsList,
+                            transcriptMapsExonsList, transcriptMapsExons);
                     variants.add(variant);
                 }
             } else {
-                transcriptMapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
-                        .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61",
-                                locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() - locatedVariant.getRef().length());
+                transcriptMapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(
+                        2, "61", locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() - locatedVariant.getRef().length());
                 if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
                     Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
@@ -171,7 +252,7 @@ public class AnnotateVariantsTest {
 
                     for (TranscriptMaps tMap : transcriptMapsList) {
 
-                        List<TranscriptMapsExons> transcriptMapsExonsList = daoMgr.getDAOBean().getTranscriptMapsExonsDAO()
+                        List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
                                 .findByTranscriptMapsId(tMap.getId());
 
                         TranscriptMapsExons transcriptMapsExons = null;
@@ -186,11 +267,185 @@ public class AnnotateVariantsTest {
                             }
                         }
 
-                        List<TranscriptMaps> mapsList = daoMgr.getDAOBean().getTranscriptMapsDAO()
-                                .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61", tMap.getTranscript().getId());
+                        List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2,
+                                "61", tMap.getTranscript().getId());
 
-                        Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoMgr.getDAOBean(), "61", locatedVariant, tMap,
+                        Variants_61_2 variant = VariantsFactory.createBorderCrossingVariant(daoBean, "61", locatedVariant, tMap, mapsList,
+                                transcriptMapsExonsList, transcriptMapsExons);
+                        variants.add(variant);
+                    }
+                }
+            }
+
+        }
+
+        return variants;
+    }
+
+    private List<Variants_80_4> annotateLocatedVariant38(LocatedVariant locatedVariant) throws Exception {
+        List<Variants_80_4> variants = new ArrayList<>();
+        List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
+                .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(4, "80", locatedVariant.getGenomeRefSeq().getId(),
+                        locatedVariant.getPosition());
+        logger.info("transcriptMapsList.size(): {}", transcriptMapsList.size());
+
+        if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
+            // handling non boundary crossing variants (intron/exon/utr*)
+
+            Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
+            for (TranscriptMaps tMap : transcriptMapsList) {
+                if (!transcriptMap.containsKey(tMap.getTranscript().getId())) {
+                    transcriptMap.put(tMap.getTranscript().getId(), new ArrayList<TranscriptMaps>());
+                }
+                transcriptMap.get(tMap.getTranscript().getId()).add(tMap);
+            }
+            TranscriptMaps remove = null;
+            for (String key : transcriptMap.keySet()) {
+                if (transcriptMap.get(key).size() > 1) {
+                    transcriptMap.get(key).sort((a, b) -> a.getMapCount().compareTo(b.getMapCount()));
+                    remove = transcriptMap.get(key).get(0);
+                    logger.info("removing duplicate: {}", remove.toString());
+                    transcriptMapsList.remove(remove);
+                }
+            }
+            transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
+
+            for (TranscriptMaps tMap : transcriptMapsList) {
+
+                List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
+                        .findByTranscriptMapsId(tMap.getId());
+
+                TranscriptMapsExons transcriptMapsExons = null;
+                if (CollectionUtils.isNotEmpty(transcriptMapsExonsList)) {
+                    for (TranscriptMapsExons exon : transcriptMapsExonsList) {
+                        Range<Integer> contigRange = Range.between(exon.getContigStart(), exon.getContigEnd());
+                        if (contigRange.contains(locatedVariant.getPosition())) {
+                            transcriptMapsExons = exon;
+                            logger.info(transcriptMapsExons.toString());
+                            break;
+                        }
+                    }
+                }
+
+                List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61",
+                        tMap.getTranscript().getId());
+
+                Variants_80_4 variant = null;
+
+                if (transcriptMapsExons == null) {
+                    variant = org.renci.canvas.binning.core.grch38.VariantsFactory.createIntronicVariant(daoBean, "80", locatedVariant,
+                            mapsList, tMap, transcriptMapsExonsList);
+                } else {
+
+                    if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
+                            || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
+                                    && "+".equals(tMap.getStrand()))) {
+                        variant = org.renci.canvas.binning.core.grch38.VariantsFactory.createBorderCrossingVariant(daoBean, "80",
+                                locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                    } else {
+                        variant = org.renci.canvas.binning.core.grch38.VariantsFactory.createExonicVariant(daoBean, "80", locatedVariant,
                                 mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                    }
+
+                }
+                variants.add(variant);
+            }
+
+        } else {
+
+            // try searching by adjusting for length of locatedVariant.getSeq()...could be intron/exon boundary crossing
+            transcriptMapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(4,
+                    "80", locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() + locatedVariant.getRef().length() - 1);
+
+            if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
+
+                Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
+                for (TranscriptMaps tMap : transcriptMapsList) {
+                    if (!transcriptMap.containsKey(tMap.getTranscript().getId())) {
+                        transcriptMap.put(tMap.getTranscript().getId(), new ArrayList<TranscriptMaps>());
+                    }
+                    transcriptMap.get(tMap.getTranscript().getId()).add(tMap);
+                }
+                TranscriptMaps remove = null;
+                for (String key : transcriptMap.keySet()) {
+                    if (transcriptMap.get(key).size() > 1) {
+                        transcriptMap.get(key).sort((a, b) -> a.getMapCount().compareTo(b.getMapCount()));
+                        remove = transcriptMap.get(key).get(0);
+                        logger.info("removing duplicate: {}", remove.toString());
+                        transcriptMapsList.remove(remove);
+                    }
+                }
+                transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
+
+                for (TranscriptMaps tMap : transcriptMapsList) {
+
+                    List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
+                            .findByTranscriptMapsId(tMap.getId());
+
+                    TranscriptMapsExons transcriptMapsExons = null;
+                    if (CollectionUtils.isNotEmpty(transcriptMapsExonsList)) {
+                        for (TranscriptMapsExons exon : transcriptMapsExonsList) {
+                            Range<Integer> contigRange = Range.between(exon.getContigStart(), exon.getContigEnd());
+                            if (contigRange.contains(locatedVariant.getPosition() + locatedVariant.getRef().length() - 1)) {
+                                transcriptMapsExons = exon;
+                                logger.info(transcriptMapsExons.toString());
+                                break;
+                            }
+                        }
+                    }
+
+                    List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(4, "80",
+                            tMap.getTranscript().getId());
+
+                    Variants_80_4 variant = org.renci.canvas.binning.core.grch38.VariantsFactory.createBorderCrossingVariant(daoBean, "80",
+                            locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                    variants.add(variant);
+                }
+            } else {
+                transcriptMapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(
+                        2, "61", locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() - locatedVariant.getRef().length());
+                if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
+
+                    Map<String, List<TranscriptMaps>> transcriptMap = new HashMap<String, List<TranscriptMaps>>();
+                    for (TranscriptMaps tMap : transcriptMapsList) {
+                        if (!transcriptMap.containsKey(tMap.getTranscript().getId())) {
+                            transcriptMap.put(tMap.getTranscript().getId(), new ArrayList<TranscriptMaps>());
+                        }
+                        transcriptMap.get(tMap.getTranscript().getId()).add(tMap);
+                    }
+                    TranscriptMaps remove = null;
+                    for (String key : transcriptMap.keySet()) {
+                        if (transcriptMap.get(key).size() > 1) {
+                            transcriptMap.get(key).sort((a, b) -> a.getMapCount().compareTo(b.getMapCount()));
+                            remove = transcriptMap.get(key).get(0);
+                            logger.info("removing duplicate: {}", remove.toString());
+                            transcriptMapsList.remove(remove);
+                        }
+                    }
+                    transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
+
+                    for (TranscriptMaps tMap : transcriptMapsList) {
+
+                        List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
+                                .findByTranscriptMapsId(tMap.getId());
+
+                        TranscriptMapsExons transcriptMapsExons = null;
+                        if (CollectionUtils.isNotEmpty(transcriptMapsExonsList)) {
+                            for (TranscriptMapsExons exon : transcriptMapsExonsList) {
+                                Range<Integer> contigRange = Range.between(exon.getContigStart(), exon.getContigEnd());
+                                if (contigRange.contains(locatedVariant.getPosition() - locatedVariant.getRef().length())) {
+                                    transcriptMapsExons = exon;
+                                    logger.info(transcriptMapsExons.toString());
+                                    break;
+                                }
+                            }
+                        }
+
+                        List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(4,
+                                "80", tMap.getTranscript().getId());
+
+                        Variants_80_4 variant = org.renci.canvas.binning.core.grch38.VariantsFactory.createBorderCrossingVariant(daoBean,
+                                "80", locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                         variants.add(variant);
                     }
                 }
@@ -204,7 +459,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant491939773() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(491939773L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(491939773L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -248,7 +503,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant489265654() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(489265654L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(489265654L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -276,9 +531,42 @@ public class AnnotateVariantsTest {
     }
 
     @Test
+    public void testLocatedVariant562476950() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(562476950L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant38(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+        Variants_80_4 variant = variants.get(0);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
+        assertTrue(variant.getLocatedVariant().getId().equals(562476950L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(12920412));
+        assertTrue(variant.getId().getTranscript().equals("NM_001012277.4"));
+        assertTrue(variant.getId().getVariantEffect().equals("synonymous"));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getReferenceAllele().equals("G"));
+        assertTrue(variant.getAlternateAllele().equals("A"));
+        assertTrue(variant.getGene().getId().equals(22694));
+        assertTrue(variant.getRefSeqGene().equals("PRAMEF7"));
+        assertTrue(variant.getHgncGene().equals("PRAMEF7"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getIntronExonDistance().equals(561));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.11:g.12920412G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001012277.4:c.1424G>A"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001012277.4:g.1490G>A"));
+
+    }
+
+    @Test
     public void testLocatedVariant8801171() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(8801171L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(8801171L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -309,7 +597,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant380297473() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(380297473L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(380297473L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -340,7 +628,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant427005787() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(427005787L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(427005787L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -393,7 +681,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant492018867() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(492018867L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(492018867L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -446,7 +734,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant52648159() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(52648159L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(52648159L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -519,7 +807,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant420518626() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(420518626L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(420518626L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -625,7 +913,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant434113836() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(434113836L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(434113836L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -731,7 +1019,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant435249599() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(435249599L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(435249599L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -840,7 +1128,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant423435870() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(423435870L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(423435870L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -985,7 +1273,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant29831130() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(29831130L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(29831130L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1027,7 +1315,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant491902641() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(491902641L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(491902641L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1476,7 +1764,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant391895876() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(391895876L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(391895876L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1650,7 +1938,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant404841675() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(404841675L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(404841675L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1828,7 +2116,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant386029980() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(386029980L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(386029980L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1859,7 +2147,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant484291964() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(484291964L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(484291964L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1892,7 +2180,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant476428721() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(476428721L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(476428721L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -1923,7 +2211,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant385947625() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(385947625L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(385947625L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2049,7 +2337,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant491873904() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(491873904L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(491873904L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2120,7 +2408,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant32253987() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(32253987L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(32253987L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2196,7 +2484,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant10401977() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(10401977L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(10401977L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2269,7 +2557,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant487626896() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(487626896L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(487626896L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2303,7 +2591,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant385962999() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(385962999L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(385962999L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2337,7 +2625,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant476430841() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(476430841L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(476430841L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2430,7 +2718,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant491937061() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(491937061L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(491937061L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2500,7 +2788,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant31046600() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(31046600L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(31046600L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2603,7 +2891,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant476568240() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(476568240L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(476568240L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2646,7 +2934,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant378427953() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(378427953L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(378427953L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2680,7 +2968,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant386017450() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(386017450L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(386017450L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2723,7 +3011,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant29835813() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(29835813L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(29835813L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2764,7 +3052,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant435110898() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(435110898L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(435110898L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2797,7 +3085,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant384944453() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(384944453L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(384944453L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2830,7 +3118,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant438862902() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(438862902L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(438862902L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2864,7 +3152,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant387000526() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(387000526L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(387000526L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2921,7 +3209,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant392541331() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(392541331L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(392541331L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -2978,7 +3266,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant402249392() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(402249392L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(402249392L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -3035,7 +3323,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant403213080() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(403213080L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(403213080L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
@@ -3070,7 +3358,7 @@ public class AnnotateVariantsTest {
     @Test
     public void testLocatedVariant403858749() throws Exception {
 
-        LocatedVariant locatedVariant = daoMgr.getDAOBean().getLocatedVariantDAO().findById(403858749L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(403858749L);
         logger.info(locatedVariant.toString());
 
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
