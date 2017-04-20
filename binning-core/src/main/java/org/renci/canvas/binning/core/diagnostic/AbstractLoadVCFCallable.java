@@ -198,70 +198,70 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         ExecutorService es = Executors.newFixedThreadPool(4);
 
                         for (VariantContext variantContext : variantContextList) {
-                            es.submit(() -> {
-                                LocatedVariant locatedVariant = null;
-                                GenomeRefSeq genomeRefSeq = null;
-                                Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
-                                        .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
-                                if (!genomeRefSeqOptional.isPresent()) {
-                                    logger.error("GenomeRefSeq not found: {}", variantContext.getContig());
-                                    return;
-                                }
-                                genomeRefSeq = genomeRefSeqOptional.get();
-                                logger.info(genomeRefSeq.toString());
 
-                                for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                            Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.parallelStream()
+                                    .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
+                            if (genomeRefSeqOptional.isPresent()) {
 
-                                    try {
+                                GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
 
-                                        if (variantContext.isSNP()) {
+                                es.submit(() -> {
+                                    LocatedVariant locatedVariant = null;
 
-                                            locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
-                                                    variantContext.getStart() + 1,
-                                                    allVariantTypes.stream().filter(a -> a.getId().equals("snp")).findAny().get(),
-                                                    variantContext.getReference().getDisplayString(), altAllele.getDisplayString());
+                                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
-                                        } else if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+                                        try {
 
-                                            String ref = variantContext.getReference().getDisplayString();
-                                            locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
-                                                    variantContext.getStart() + 1,
-                                                    allVariantTypes.stream().filter(a -> a.getId().equals("ins")).findAny().get(), "",
-                                                    altAllele.getDisplayString().replaceFirst(ref, ""));
+                                            if (variantContext.isSNP()) {
 
-                                        } else if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+                                                locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
+                                                        variantContext.getStart() + 1,
+                                                        allVariantTypes.stream().filter(a -> a.getId().equals("snp")).findAny().get(),
+                                                        variantContext.getReference().getDisplayString(), altAllele.getDisplayString());
 
-                                            String ref = variantContext.getReference().getDisplayString()
-                                                    .replaceFirst(altAllele.getDisplayString(), "");
-                                            locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart() + 1,
-                                                    variantContext.getStart() + 1 + ref.length(),
-                                                    allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get(), ref,
-                                                    ref);
+                                            } else if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
 
+                                                String ref = variantContext.getReference().getDisplayString();
+                                                locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart(),
+                                                        variantContext.getStart() + 1,
+                                                        allVariantTypes.stream().filter(a -> a.getId().equals("ins")).findAny().get(), "",
+                                                        altAllele.getDisplayString().replaceFirst(ref, ""));
+
+                                            } else if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+
+                                                String ref = variantContext.getReference().getDisplayString()
+                                                        .replaceFirst(altAllele.getDisplayString(), "");
+                                                locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq, variantContext.getStart() + 1,
+                                                        variantContext.getStart() + 1 + ref.length(),
+                                                        allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get(), ref,
+                                                        ref);
+
+                                            }
+
+                                            if (locatedVariant != null) {
+                                                List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                                        .findByExample(locatedVariant);
+                                                if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                                    locatedVariant = foundLocatedVariants.get(0);
+                                                } else {
+                                                    locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                                }
+                                                logger.info(locatedVariant.toString());
+                                                locatedVariantSet.add(locatedVariant);
+                                                synchronized (variantContext) {
+                                                    createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                                    canonicalize(locatedVariant);
+                                                }
+                                            }
+
+                                        } catch (CANVASDAOException | BinningException e) {
+                                            logger.error(e.getMessage(), e);
                                         }
 
-                                        if (locatedVariant != null) {
-                                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                                    .findByExample(locatedVariant);
-                                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                                locatedVariant = foundLocatedVariants.get(0);
-                                            } else {
-                                                locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
-                                            }
-                                            logger.info(locatedVariant.toString());
-                                            locatedVariantSet.add(locatedVariant);
-                                            synchronized (variantContext) {
-                                                createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                                canonicalize(locatedVariant);
-                                            }
-                                        }
-
-                                    } catch (CANVASDAOException | BinningException e) {
-                                        logger.error(e.getMessage(), e);
                                     }
+                                });
 
-                                }
-                            });
+                            }
 
                         }
                         es.shutdown();
@@ -271,65 +271,86 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                         // cant trust htsjdk to parse properly...switch/case on freebayes type (if available)
                         for (VariantContext variantContext : variantContextList) {
-                            es.submit(() -> {
 
-                                if (variantContext.isComplexIndel() || variantContext.isMNP()) {
+                            if (!variantContext.isSNP() && !(variantContext.isIndel() && variantContext.isSimpleInsertion())
+                                    && !(variantContext.isIndel() && variantContext.isSimpleDeletion())
+                                    && (variantContext.isComplexIndel() || variantContext.isMNP())) {
 
-                                    GenomeRefSeq genomeRefSeq = null;
-                                    Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
-                                            .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
-                                    if (!genomeRefSeqOptional.isPresent()) {
-                                        logger.error("GenomeRefSeq not found: {}", variantContext.getContig());
-                                        return;
-                                    }
-                                    genomeRefSeq = genomeRefSeqOptional.get();
-                                    logger.info(genomeRefSeq.toString());
+                                Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.parallelStream()
+                                        .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
+                                if (genomeRefSeqOptional.isPresent()) {
 
-                                    List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
-                                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                                    GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
 
-                                        try {
+                                    es.submit(() -> {
 
-                                            String ref = variantContext.getReference().getDisplayString();
-                                            String alt = altAllele.getDisplayString();
+                                        List<String> types = variantContext.getAttributeAsStringList("TYPE", "");
+                                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
-                                            char[] referenceChars = ref.toCharArray();
-                                            char[] alternateChars = alt.toCharArray();
+                                            try {
 
-                                            StringBuilder charsToRemove = new StringBuilder();
+                                                String ref = variantContext.getReference().getDisplayString();
+                                                String alt = altAllele.getDisplayString();
 
-                                            if (CollectionUtils.isNotEmpty(types)) {
-                                                LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
-                                                String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
-                                                switch (type) {
-                                                    case "del":
-                                                        locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getId().equals("del")).findAny().get());
-                                                        locatedVariant.setPosition(variantContext.getStart() + 1);
-                                                        locatedVariant.setEndPosition(variantContext.getStart() + 1
-                                                                + ref.replaceFirst(altAllele.getDisplayString(), "").length());
-                                                        locatedVariant.setRef(ref.replaceFirst(altAllele.getDisplayString(), ""));
-                                                        locatedVariant.setSeq(ref.replaceFirst(altAllele.getDisplayString(), ""));
-                                                        break;
-                                                    case "ins":
-                                                        locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getId().equals("ins")).findAny().get());
-                                                        locatedVariant.setRef("");
+                                                char[] referenceChars = ref.toCharArray();
+                                                char[] alternateChars = alt.toCharArray();
 
-                                                        for (int i = 0; i < referenceChars.length; ++i) {
-                                                            if (referenceChars[i] != alternateChars[i]) {
-                                                                break;
+                                                StringBuilder charsToRemove = new StringBuilder();
+
+                                                if (CollectionUtils.isNotEmpty(types)) {
+                                                    LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
+                                                    String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
+                                                    switch (type) {
+                                                        case "del":
+                                                            locatedVariant.setVariantType(allVariantTypes.stream()
+                                                                    .filter(a -> a.getId().equals("del")).findAny().get());
+                                                            locatedVariant.setPosition(variantContext.getStart() + 1);
+                                                            locatedVariant.setEndPosition(variantContext.getStart() + 1
+                                                                    + ref.replaceFirst(altAllele.getDisplayString(), "").length());
+                                                            locatedVariant.setRef(ref.replaceFirst(altAllele.getDisplayString(), ""));
+                                                            locatedVariant.setSeq(ref.replaceFirst(altAllele.getDisplayString(), ""));
+                                                            break;
+                                                        case "ins":
+                                                            locatedVariant.setVariantType(allVariantTypes.stream()
+                                                                    .filter(a -> a.getId().equals("ins")).findAny().get());
+                                                            locatedVariant.setRef("");
+
+                                                            for (int i = 0; i < referenceChars.length; ++i) {
+                                                                if (referenceChars[i] != alternateChars[i]) {
+                                                                    break;
+                                                                }
+                                                                charsToRemove.append(referenceChars[i]);
                                                             }
-                                                            charsToRemove.append(referenceChars[i]);
-                                                        }
-                                                        if (charsToRemove.length() > 0) {
-                                                            // remove from front
-                                                            locatedVariant.setPosition(variantContext.getStart() + charsToRemove.length());
-                                                            locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
-                                                            locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
-                                                        } else {
-                                                            // remove from back
-                                                            for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                            if (charsToRemove.length() > 0) {
+                                                                // remove from front
+                                                                locatedVariant
+                                                                        .setPosition(variantContext.getStart() + charsToRemove.length());
+                                                                locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
+                                                                locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                                            } else {
+                                                                // remove from back
+                                                                for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                                    if (referenceChars[i] != alternateChars[i]) {
+                                                                        break;
+                                                                    }
+                                                                    charsToRemove.append(referenceChars[i]);
+                                                                }
+
+                                                                if (charsToRemove.length() > 0) {
+                                                                    charsToRemove.reverse();
+                                                                    locatedVariant.setPosition(variantContext.getStart());
+                                                                    locatedVariant
+                                                                            .setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
+                                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                                                }
+                                                            }
+
+                                                            break;
+                                                        case "snp":
+                                                            locatedVariant.setVariantType(allVariantTypes.stream()
+                                                                    .filter(a -> a.getId().equals("snp")).findAny().get());
+
+                                                            for (int i = 0; i < referenceChars.length; ++i) {
                                                                 if (referenceChars[i] != alternateChars[i]) {
                                                                     break;
                                                                 }
@@ -337,83 +358,68 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                             }
 
                                                             if (charsToRemove.length() > 0) {
-                                                                charsToRemove.reverse();
-                                                                locatedVariant.setPosition(variantContext.getStart());
-                                                                locatedVariant.setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
+                                                                // remove from front
+                                                                locatedVariant
+                                                                        .setPosition(variantContext.getStart() + charsToRemove.length());
+                                                                locatedVariant.setRef(ref.replaceFirst(charsToRemove.toString(), ""));
+                                                                locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
                                                                 locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
-                                                            }
-                                                        }
-
-                                                        break;
-                                                    case "snp":
-                                                        locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getId().equals("snp")).findAny().get());
-
-                                                        for (int i = 0; i < referenceChars.length; ++i) {
-                                                            if (referenceChars[i] != alternateChars[i]) {
-                                                                break;
-                                                            }
-                                                            charsToRemove.append(referenceChars[i]);
-                                                        }
-
-                                                        if (charsToRemove.length() > 0) {
-                                                            // remove from front
-                                                            locatedVariant.setPosition(variantContext.getStart() + charsToRemove.length());
-                                                            locatedVariant.setRef(ref.replaceFirst(charsToRemove.toString(), ""));
-                                                            locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
-                                                            locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
-                                                        } else {
-                                                            // remove from back
-                                                            for (int i = referenceChars.length - 1; i > 0; --i) {
-                                                                if (referenceChars[i] != alternateChars[i]) {
-                                                                    break;
+                                                            } else {
+                                                                // remove from back
+                                                                for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                                    if (referenceChars[i] != alternateChars[i]) {
+                                                                        break;
+                                                                    }
+                                                                    charsToRemove.append(referenceChars[i]);
                                                                 }
-                                                                charsToRemove.append(referenceChars[i]);
-                                                            }
 
-                                                            if (charsToRemove.length() > 0) {
-                                                                charsToRemove.reverse();
-                                                                locatedVariant.setPosition(variantContext.getStart());
-                                                                locatedVariant.setRef(StringUtils.removeEnd(ref, charsToRemove.toString()));
-                                                                locatedVariant.setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
-                                                                locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                                                if (charsToRemove.length() > 0) {
+                                                                    charsToRemove.reverse();
+                                                                    locatedVariant.setPosition(variantContext.getStart());
+                                                                    locatedVariant
+                                                                            .setRef(StringUtils.removeEnd(ref, charsToRemove.toString()));
+                                                                    locatedVariant
+                                                                            .setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
+                                                                    locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                                                }
                                                             }
+                                                            break;
+                                                        default:
+                                                            locatedVariant.setVariantType(allVariantTypes.stream()
+                                                                    .filter(a -> a.getId().equals("sub")).findAny().get());
+                                                            locatedVariant.setPosition(variantContext.getStart());
+                                                            locatedVariant.setRef(ref);
+                                                            locatedVariant.setSeq(alt);
+                                                            locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
+                                                            break;
+                                                    }
+
+                                                    List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                                            .findByExample(locatedVariant);
+                                                    if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                                        locatedVariant = foundLocatedVariants.get(0);
+                                                    } else {
+                                                        locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                                    }
+                                                    if (!locatedVariantSet.contains(locatedVariant)) {
+                                                        logger.info(locatedVariant.toString());
+                                                        locatedVariantSet.add(locatedVariant);
+                                                        synchronized (variantContext) {
+                                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant,
+                                                                    assembly);
+                                                            canonicalize(locatedVariant);
                                                         }
-                                                        break;
-                                                    default:
-                                                        locatedVariant.setVariantType(allVariantTypes.stream()
-                                                                .filter(a -> a.getId().equals("sub")).findAny().get());
-                                                        locatedVariant.setPosition(variantContext.getStart());
-                                                        locatedVariant.setRef(ref);
-                                                        locatedVariant.setSeq(alt);
-                                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
-                                                        break;
-                                                }
-
-                                                List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                                        .findByExample(locatedVariant);
-                                                if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                                    locatedVariant = foundLocatedVariants.get(0);
-                                                } else {
-                                                    locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
-                                                }
-                                                if (!locatedVariantSet.contains(locatedVariant)) {
-                                                    logger.info(locatedVariant.toString());
-                                                    locatedVariantSet.add(locatedVariant);
-                                                    synchronized (variantContext) {
-                                                        createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant,
-                                                                assembly);
-                                                        canonicalize(locatedVariant);
                                                     }
                                                 }
+                                            } catch (CANVASDAOException | BinningException e) {
+                                                logger.error(e.getMessage(), e);
                                             }
-                                        } catch (CANVASDAOException | BinningException e) {
-                                            logger.error(e.getMessage(), e);
                                         }
-                                    }
+                                    });
+
                                 }
 
-                            });
+                            }
 
                         }
                         es.shutdown();
