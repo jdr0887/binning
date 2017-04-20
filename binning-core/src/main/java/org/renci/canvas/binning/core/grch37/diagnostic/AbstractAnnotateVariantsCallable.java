@@ -116,7 +116,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                             Variants_61_2 variant = null;
 
                             if (transcriptMapsExons == null) {
-                                variant = VariantsFactory.createIntronicVariant(daoBean, refseqVersion, locatedVariant, mapsList, tMap,
+                                variant = VariantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap,
                                         transcriptMapsExonsList);
                             } else {
 
@@ -128,7 +128,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                     variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion, locatedVariant, tMap,
                                             mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                 } else {
-                                    variant = VariantsFactory.createExonicVariant(daoBean, refseqVersion, locatedVariant, mapsList,
+                                    variant = VariantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList,
                                             transcriptMapsExonsList, transcriptMapsExons);
                                 }
 
