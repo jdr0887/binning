@@ -110,11 +110,12 @@ public class VariantsFactory {
         return ret;
     }
 
-    public static Variants_61_2 createIntronicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
+    public static Variants_61_2 createIntronicVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant,
             List<TranscriptMaps> mapsList, TranscriptMaps tMap, List<TranscriptMapsExons> transcriptMapsExonsList) throws BinningException {
         logger.debug(
                 "ENTERING createIntronicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>)");
 
+        String refseqVersion = "61";
         Variants_61_2PK variantKey = new Variants_61_2PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getId(),
                 locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), tMap.getTranscript().getId(), null, null,
                 mapsList.indexOf(tMap) + 1);
@@ -392,12 +393,13 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_61_2 createExonicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
+    public static Variants_61_2 createExonicVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant,
             List<TranscriptMaps> mapsList, List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons)
             throws BinningException {
         logger.debug(
                 "ENTERING createExonicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
 
+        String refseqVersion = "61";
         Variants_61_2PK variantKey = new Variants_61_2PK(locatedVariant.getId(),
                 transcriptMapsExons.getTranscriptMaps().getGenomeRefSeq().getId(), locatedVariant.getPosition(),
                 locatedVariant.getVariantType().getId(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), null, null,
