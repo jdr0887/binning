@@ -683,7 +683,12 @@ public class VariantsFactory {
                             break;
                     }
 
-                    variant.setAminoAcidStart(Double.valueOf(Math.ceil(variant.getCodingSequencePosition() / 3D)).intValue());
+                    if (Math.abs(transcriptPosition - proteinRange.getMaximum()) == 1) {
+                        variant.setAminoAcidStart(Double.valueOf(Math.floor(variant.getCodingSequencePosition() / 3D)).intValue());
+                    } else {
+                        variant.setAminoAcidStart(Double.valueOf(Math.ceil(variant.getCodingSequencePosition() / 3D)).intValue());
+                    }
+
                     variant.setInframe(Boolean.FALSE);
                     variant.setFrameshift(Boolean.FALSE);
 
