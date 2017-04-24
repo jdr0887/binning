@@ -2,6 +2,5 @@
 .project
 .settings
 target
-logs
 src/main/resources/org/renci/canvas/binning/binning.properties
 src/test/resources/META-INF
