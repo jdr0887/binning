@@ -798,7 +798,7 @@ public class VariantsFactory {
                             Integer aaEndFinal = null;
                             if (StringUtils.isEmpty(variant.getReferenceAllele())) {
                                 variant.setAminoAcidEnd(variant.getAminoAcidStart() + 1);
-                                aaEndFinal = variant.getAminoAcidStart() - 1 + variant.getAlternateAllele().length();
+                                aaEndFinal = variant.getAminoAcidStart() + (variant.getAlternateAllele().length() / 3);
                             } else {
                                 variant.setAminoAcidEnd(
                                         (variant.getCodingSequencePosition() + variant.getReferenceAllele().length() - 1) / 3);
@@ -810,9 +810,14 @@ public class VariantsFactory {
                                 variant.setAminoAcidEnd(variant.getAminoAcidStart() - 1 + (variant.getReferenceAllele().length() / 3));
                             }
 
-                            Sequence<AminoAcidCompound> retvalo = originalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
-                                    variant.getAminoAcidEnd());
-                            variant.setOriginalAminoAcid(retvalo.getSequenceAsString());
+                            if (variant.getAminoAcidStart() == originalProteinSequence.getLength()) {
+                                variant.setOriginalAminoAcid(originalAACompound.getBase());
+                                aaEndFinal = variant.getAminoAcidStart() + (variant.getAlternateAllele().length() / 3);
+                            } else {
+                                Sequence<AminoAcidCompound> retvalo = originalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
+                                        variant.getAminoAcidEnd());
+                                variant.setOriginalAminoAcid(retvalo.getSequenceAsString());
+                            }
 
                             StringBuilder sb = new StringBuilder();
                             if (!"del".equals(variant.getVariantType().getId())) {
