@@ -36,6 +36,9 @@ public class AnnotateVariantsFromDiagnosticJobTest {
     @Test
     public void testDiagnostic() throws CANVASDAOException {
 
+        org.renci.canvas.binning.core.grch37.VariantsFactory variantsFactory = org.renci.canvas.binning.core.grch37.VariantsFactory
+                .getInstance();
+
         DiagnosticBinningJob binningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4093);
         logger.info(binningJob.toString());
 
@@ -98,10 +101,10 @@ public class AnnotateVariantsFromDiagnosticJobTest {
 
                                 Variants_61_2 variant = null;
                                 if (transcriptMapsExons == null) {
-                                    variant = VariantsFactory.createIntronicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList, tMap,
+                                    variant = variantsFactory.createIntronicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList, tMap,
                                             transcriptMapsExonsList);
                                 } else {
-                                    variant = VariantsFactory.createExonicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList,
+                                    variant = variantsFactory.createExonicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList,
                                             transcriptMapsExonsList, transcriptMapsExons);
                                 }
                                 logger.info(variant.toString());
