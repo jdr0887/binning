@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.StringUtils;
-import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
 import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
@@ -16,9 +15,9 @@ import org.biojava.nbio.core.sequence.template.Sequence;
 import org.biojava.nbio.core.sequence.transcription.DNAToRNATranslator;
 import org.biojava.nbio.core.sequence.transcription.RNAToAminoAcidTranslator;
 import org.biojava.nbio.core.sequence.transcription.TranscriptionEngine;
+import org.renci.canvas.binning.core.AbstractVariantsFactory;
 import org.renci.canvas.binning.core.BinningException;
 import org.renci.canvas.dao.CANVASDAOBeanService;
-import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.annotation.model.AnnotationGeneExternalId;
 import org.renci.canvas.dao.hgnc.model.HGNCGene;
 import org.renci.canvas.dao.refseq.model.Feature;
@@ -34,84 +33,30 @@ import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class VariantsFactory {
+public class VariantsFactory extends AbstractVariantsFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(VariantsFactory.class);
 
-    public static String toHGVS(String accession, String accessionType, String type, Integer position, String ref, String alt) {
-        return toHGVS(accession, accessionType, type, position, ref, alt, null, Boolean.FALSE);
-    }
+    private static VariantsFactory instance;
 
-    public static String toHGVS(String accession, String accessionType, String type, Integer position, String ref, String alt,
-            Integer intronExonDistance) {
-        return toHGVS(accession, accessionType, type, position, ref, alt, intronExonDistance, Boolean.FALSE);
-    }
-
-    public static String toHGVS(String accession, String accessionType, String type, Integer position, String ref, String alt,
-            Integer intronExonDistance, Boolean useComplement) {
-        logger.debug("ENTERING toHGVS(String, String, String, Integer, String, String, Integer)");
-        String ret = "";
-
-        if (useComplement) {
-            try {
-                ref = new DNASequence(ref).getReverseComplement().getSequenceAsString();
-                alt = new DNASequence(alt).getReverseComplement().getSequenceAsString();
-            } catch (CompoundNotFoundException e) {
-                e.printStackTrace();
-            }
+    public static VariantsFactory getInstance() {
+        if (instance == null) {
+            instance = new VariantsFactory();
         }
-        switch (type) {
-            case "snp":
-                if (intronExonDistance != null) {
-                    ret = String.format("%s:%s.%d%s%s>%s", accession, accessionType, position, String.format("%+d", intronExonDistance),
-                            ref, alt);
-                } else {
-                    ret = String.format("%s:%s.%d%s>%s", accession, accessionType, position, ref, alt);
-                }
-                break;
-            case "sub":
-                if (useComplement) {
-                    ret = String.format("%s:%s.%s_%ddelins%s", accession, accessionType, Integer.valueOf(position - ref.length() + 1),
-                            intronExonDistance, position, alt);
-                } else {
-                    ret = String.format("%s:%s.%s_%ddelins%s", accession, accessionType, position,
-                            Integer.valueOf(position + ref.length() - 1), alt);
-                }
-                break;
-            case "del":
-                Integer start = null;
-                Integer end = null;
-                if (useComplement) {
-                    end = position;
-                    start = position - ref.length() + 1;
-                } else {
-                    end = position + ref.length() - 1;
-                    start = position;
-                }
-
-                if (intronExonDistance == null) {
-                    if (start.equals(end)) {
-                        ret = String.format("%s:%s.%ddel%s", accession, accessionType, position, ref);
-                    } else {
-                        ret = String.format("%s:%s.%d_%ddel%s", accession, accessionType, start, end, ref);
-                    }
-                } else {
-                    ret = String.format("%s:%s.%d%+d_%ddel%s", accession, accessionType, start, intronExonDistance, end, ref);
-                }
-                break;
-            case "ins":
-                if (useComplement) {
-                    ret = String.format("%s:%s.%d_%dins%s", accession, accessionType, Integer.valueOf(position - 1), position, alt);
-                } else {
-                    ret = String.format("%s:%s.%d_%dins%s", accession, accessionType, position, Integer.valueOf(position + 1), alt);
-                }
-                break;
-        }
-        return ret;
+        return instance;
     }
 
-    public static Variants_80_4 createIntronicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
-            List<TranscriptMaps> mapsList, TranscriptMaps tMap, List<TranscriptMapsExons> transcriptMapsExonsList) throws BinningException {
+    private VariantsFactory() {
+        super();
+    }
+
+    @Override
+    public String getRefSeqVersion() {
+        return "80";
+    }
+
+    public Variants_80_4 createIntronicVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant, List<TranscriptMaps> mapsList,
+            TranscriptMaps tMap, List<TranscriptMapsExons> transcriptMapsExonsList) throws BinningException {
         logger.debug(
                 "ENTERING createIntronicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>)");
 
@@ -131,19 +76,23 @@ public class VariantsFactory {
 
             variant.setLocationType(daoBean.getLocationTypeDAO().findById("intron"));
             variant.getId().setLocationType(variant.getLocationType().getId());
+            
             variant.setVariantEffect(daoBean.getVariantEffectDAO().findById("intron"));
             variant.getId().setVariantEffect(variant.getVariantEffect().getId());
 
-            List<RefSeqGene> refSeqGeneList = daoBean.getRefSeqGeneDAO().findByRefSeqVersionAndTranscriptId(refseqVersion,
+            List<RefSeqGene> refSeqGeneList = daoBean.getRefSeqGeneDAO().findByRefSeqVersionAndTranscriptId(getRefSeqVersion(),
                     tMap.getTranscript().getId());
-            RefSeqGene refSeqGene = null;
-            if (CollectionUtils.isNotEmpty(refSeqGeneList)) {
-                refSeqGene = refSeqGeneList.get(0);
+
+            if (CollectionUtils.isEmpty(refSeqGeneList)) {
+                throw new BinningException(String.format("refseq gene not found: %s", tMap.getTranscript().getId()));
             }
+
+            RefSeqGene refSeqGene = refSeqGeneList.get(0);
+            variant.setRefSeqGene(refSeqGene.getName());
 
             Range<Integer> proteinRange = null;
             List<RefSeqCodingSequence> refSeqCodingSequenceList = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(refseqVersion, tMap.getTranscript().getId());
+                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), tMap.getTranscript().getId());
 
             RefSeqCodingSequence refSeqCDS = null;
             if (CollectionUtils.isNotEmpty(refSeqCodingSequenceList)) {
@@ -213,7 +162,7 @@ public class VariantsFactory {
                                 case "-":
                                     variant.setTranscriptPosition(previous.getTranscriptEnd() - proteinRange.getMinimum() + 1);
                                     if (variant.getIntronExonDistance() < 0) {
-                                        variant.setTranscriptPosition(current.getTranscriptEnd() - proteinRange.getMinimum());
+                                        variant.setTranscriptPosition(currentTranscriptRange.getMinimum() - proteinRange.getMinimum() + 1);
                                     }
                                     if (Math.abs(variant.getIntronExonDistance()) <= 2
                                             && current.getTranscriptRange().getMaximum() > proteinRange.getMaximum()) {
@@ -270,14 +219,15 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_80_4 createBorderCrossingVariant(CANVASDAOBeanService daoBean, String refseqVersion,
-            LocatedVariant locatedVariant, TranscriptMaps tMap, List<TranscriptMaps> mapsList,
-            List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
+    public Variants_80_4 createBorderCrossingVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant, TranscriptMaps tMap,
+            List<TranscriptMaps> mapsList, List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons)
+            throws BinningException {
         logger.debug(
                 "ENTERING createBorderCrossingVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
         Variants_80_4PK variantKey = new Variants_80_4PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getId(),
                 locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), tMap.getTranscript().getId(), null, null,
                 mapsList.indexOf(tMap) + 1);
+
         Variants_80_4 variant = new Variants_80_4(variantKey);
 
         variant.setVariantType(locatedVariant.getVariantType());
@@ -289,12 +239,14 @@ public class VariantsFactory {
         variant.setAlternateAllele(locatedVariant.getSeq() != null ? locatedVariant.getSeq() : "");
 
         try {
-            List<RefSeqGene> refSeqGeneList = daoBean.getRefSeqGeneDAO().findByRefSeqVersionAndTranscriptId(refseqVersion,
+            List<RefSeqGene> refSeqGeneList = daoBean.getRefSeqGeneDAO().findByRefSeqVersionAndTranscriptId(getRefSeqVersion(),
                     tMap.getTranscript().getId());
-            RefSeqGene refSeqGene = null;
-            if (CollectionUtils.isNotEmpty(refSeqGeneList)) {
-                refSeqGene = refSeqGeneList.get(0);
+
+            if (CollectionUtils.isEmpty(refSeqGeneList)) {
+                throw new BinningException(String.format("refseq gene not found: %s", tMap.getTranscript().getId()));
             }
+
+            RefSeqGene refSeqGene = refSeqGeneList.get(0);
             variant.setRefSeqGene(refSeqGene.getName());
 
             List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
@@ -333,7 +285,7 @@ public class VariantsFactory {
 
             Range<Integer> proteinRange = null;
             List<RefSeqCodingSequence> refSeqCodingSequenceList = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(refseqVersion, tMap.getTranscript().getId());
+                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), tMap.getTranscript().getId());
 
             RefSeqCodingSequence refSeqCDS = null;
             if (CollectionUtils.isNotEmpty(refSeqCodingSequenceList)) {
@@ -392,9 +344,8 @@ public class VariantsFactory {
         return variant;
     }
 
-    public static Variants_80_4 createExonicVariant(CANVASDAOBeanService daoBean, String refseqVersion, LocatedVariant locatedVariant,
-            List<TranscriptMaps> mapsList, List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons)
-            throws BinningException {
+    public Variants_80_4 createExonicVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant, List<TranscriptMaps> mapsList,
+            List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
                 "ENTERING createExonicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
 
@@ -413,12 +364,16 @@ public class VariantsFactory {
         variant.setAlternateAllele(locatedVariant.getSeq() != null ? locatedVariant.getSeq() : "");
 
         try {
-            List<RefSeqGene> refSeqGeneList = daoBean.getRefSeqGeneDAO().findByRefSeqVersionAndTranscriptId(refseqVersion,
+
+            List<RefSeqGene> refSeqGeneList = daoBean.getRefSeqGeneDAO().findByRefSeqVersionAndTranscriptId(getRefSeqVersion(),
                     transcriptMapsExons.getTranscriptMaps().getTranscript().getId());
-            RefSeqGene refSeqGene = null;
-            if (CollectionUtils.isNotEmpty(refSeqGeneList)) {
-                refSeqGene = refSeqGeneList.get(0);
+
+            if (CollectionUtils.isEmpty(refSeqGeneList)) {
+                throw new BinningException(
+                        String.format("refseq gene not found: %s", transcriptMapsExons.getTranscriptMaps().getTranscript().getId()));
             }
+
+            RefSeqGene refSeqGene = refSeqGeneList.get(0);
             variant.setRefSeqGene(refSeqGene.getName());
 
             List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
@@ -452,10 +407,13 @@ public class VariantsFactory {
             logger.debug("transcriptPosition: {}", transcriptPosition);
             variant.setTranscriptPosition(transcriptPosition);
 
-            Integer featureId = getFeatureId(daoBean, refseqVersion, transcriptMapsExons.getTranscriptMaps(),
-                    variant.getTranscriptPosition());
-            logger.debug("featureId: {}", featureId);
-            variant.setFeatureId(featureId);
+            List<Feature> featureList = daoBean.getFeatureDAO().findByRefSeqVersionAndTranscriptIdAndTranscriptPosition(getRefSeqVersion(),
+                    transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), transcriptPosition);
+            if (CollectionUtils.isNotEmpty(featureList)) {
+                Feature feature = featureList.get(0);
+                logger.info(feature.toString());
+                variant.setFeatureId(feature.getId());
+            }
 
             if (variant.getIntronExonDistance() != null && variant.getIntronExonDistance().equals(variant.getTranscriptPosition())) {
                 variant.setIntronExonDistance(null);
@@ -473,16 +431,15 @@ public class VariantsFactory {
             Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
 
             Range<Integer> proteinRange = null;
-            List<RefSeqCodingSequence> refSeqCodingSequenceList = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(refseqVersion, transcriptMapsExons.getTranscriptMaps().getTranscript().getId());
+            List<RefSeqCodingSequence> refSeqCodingSequenceList = daoBean.getRefSeqCodingSequenceDAO().findByRefSeqVersionAndTranscriptId(
+                    getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId());
 
             RefSeqCodingSequence refSeqCDS = null;
             if (CollectionUtils.isNotEmpty(refSeqCodingSequenceList)) {
                 refSeqCDS = refSeqCodingSequenceList.get(0);
                 List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId());
                 if (CollectionUtils.isNotEmpty(rgrList)) {
-                    RegionGroupRegion rgr = rgrList.get(0);
-                    proteinRange = Range.between(rgr.getId().getRegionStart(), rgr.getId().getRegionEnd());
+                    proteinRange = rgrList.get(0).getId().getRegionRange();
                 }
             }
 
@@ -700,13 +657,15 @@ public class VariantsFactory {
                     DNAToRNATranslator dna2RnaTranslator = engine.getDnaRnaTranslator();
                     RNAToAminoAcidTranslator rna2AminoAcidTranslator = engine.getRnaAminoAcidTranslator();
 
-                    String originalDNASeq = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
-                    originalDNASeq = originalDNASeq.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
+                    String rawTranscriptSequence = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
+                    String originalDNASeq = rawTranscriptSequence.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
 
                     DNASequence originalDNASequence = new DNASequence(originalDNASeq);
                     Sequence<NucleotideCompound> originalRNASequence = dna2RnaTranslator.createSequence(originalDNASequence);
                     Sequence<AminoAcidCompound> originalProteinSequence = rna2AminoAcidTranslator.createSequence(originalRNASequence);
                     AminoAcidCompound originalAACompound = originalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
+
+                    String dnaSeqPart1, dnaSeqPart2;
 
                     if (variant.getReferenceAllele().length() == variant.getAlternateAllele().length()
                             && variant.getReferenceAllele().length() == 1) {
@@ -716,8 +675,8 @@ public class VariantsFactory {
                         variant.setAminoAcidEnd(
                                 variant.getAminoAcidStart() + (locatedVariant.getEndPosition() - locatedVariant.getPosition()));
 
-                        String dnaSeqPart1 = originalDNASeq.substring(0, variant.getCodingSequencePosition() - 1);
-                        String dnaSeqPart2 = originalDNASeq.substring(
+                        dnaSeqPart1 = originalDNASeq.substring(0, variant.getCodingSequencePosition() - 1);
+                        dnaSeqPart2 = originalDNASeq.substring(
                                 variant.getCodingSequencePosition() - 1 + (locatedVariant.getEndPosition() - locatedVariant.getPosition()));
 
                         String finalDNASeq = String.format("%s%s%s", dnaSeqPart1, variant.getAlternateAllele(), dnaSeqPart2);
@@ -760,29 +719,60 @@ public class VariantsFactory {
                             variant.setFrameshift(Boolean.TRUE);
                         }
 
-                        String dnaSeqPart1 = originalDNASeq.substring(0, variant.getCodingSequencePosition() - 1);
-                        String dnaSeqPart2 = originalDNASeq.substring(
-                                variant.getCodingSequencePosition() - 1 + variant.getReferenceAllele().length(), originalDNASeq.length());
-
-                        String finalDNASeq = String.format("%s%s%s", dnaSeqPart1, variant.getAlternateAllele(), dnaSeqPart2);
-                        if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-                            String altAllele = new DNASequence(variant.getAlternateAllele()).getReverseComplement().getSequenceAsString();
-                            finalDNASeq = String.format("%s%s%s", dnaSeqPart1, altAllele, dnaSeqPart2);
-                        }
-
-                        DNASequence finalDNASequence = new DNASequence(finalDNASeq);
-                        Sequence<NucleotideCompound> finalRNASequence = dna2RnaTranslator.createSequence(finalDNASequence);
-                        Sequence<AminoAcidCompound> finalProteinSequence = rna2AminoAcidTranslator.createSequence(finalRNASequence);
-
                         if (variant.getFrameshift()) {
 
-                            Sequence<AminoAcidCompound> retvalo = originalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
-                                    variant.getAminoAcidStart() + 4);
-                            variant.setOriginalAminoAcid(String.format("%s...", retvalo.getSequenceAsString()));
+                            if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
 
-                            Sequence<AminoAcidCompound> retvalf = finalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
-                                    variant.getAminoAcidStart() + 4);
-                            variant.setFinalAminoAcid(String.format("%s...", retvalf.getSequenceAsString()));
+                                dnaSeqPart1 = originalDNASeq.substring(0,
+                                        variant.getCodingSequencePosition() - variant.getReferenceAllele().length() - 1);
+                                dnaSeqPart2 = originalDNASeq.substring(variant.getCodingSequencePosition() - 1, originalDNASeq.length());
+
+                            } else {
+
+                                dnaSeqPart1 = originalDNASeq.substring(0, variant.getCodingSequencePosition() - 1);
+                                dnaSeqPart2 = originalDNASeq.substring(
+                                        variant.getCodingSequencePosition() + variant.getReferenceAllele().length() - 1,
+                                        originalDNASeq.length());
+
+                            }
+
+                            String finalDNASeq = String.format("%s%s%s", dnaSeqPart1, variant.getAlternateAllele(), dnaSeqPart2);
+
+                            if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+                                if ("del".equals(locatedVariant.getVariantType().getId())) {
+                                    finalDNASeq = String.format("%s%s", dnaSeqPart1, dnaSeqPart2);
+                                } else {
+                                    String altAllele = new DNASequence(variant.getAlternateAllele()).getReverseComplement()
+                                            .getSequenceAsString();
+                                    finalDNASeq = String.format("%s%s%s", dnaSeqPart1, altAllele, dnaSeqPart2);
+                                }
+                            }
+
+                            DNASequence finalDNASequence = new DNASequence(finalDNASeq);
+                            Sequence<NucleotideCompound> finalRNASequence = dna2RnaTranslator.createSequence(finalDNASequence);
+                            Sequence<AminoAcidCompound> finalProteinSequence = rna2AminoAcidTranslator.createSequence(finalRNASequence);
+
+                            if (originalProteinSequence.getLength() >= variant.getAminoAcidStart()) {
+
+                                Sequence<AminoAcidCompound> retvalo = originalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
+                                        originalProteinSequence.getLength());
+                                variant.setOriginalAminoAcid(String.format("%s", retvalo.getSequenceAsString()));
+
+                                Sequence<AminoAcidCompound> retvalf = finalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
+                                        finalProteinSequence.getLength() - 1);
+                                variant.setFinalAminoAcid(String.format("%s", retvalf.getSequenceAsString()));
+
+                            } else {
+
+                                Sequence<AminoAcidCompound> retvalo = originalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
+                                        variant.getAminoAcidStart() + 4);
+                                variant.setOriginalAminoAcid(String.format("%s...", retvalo.getSequenceAsString()));
+
+                                Sequence<AminoAcidCompound> retvalf = finalProteinSequence.getSubSequence(variant.getAminoAcidStart(),
+                                        variant.getAminoAcidStart() + 4);
+                                variant.setFinalAminoAcid(String.format("%s...", retvalf.getSequenceAsString()));
+
+                            }
 
                             variant.setAminoAcidEnd(originalProteinSequence.getLength() + variant.getAlternateAllele().length());
 
@@ -794,7 +784,29 @@ public class VariantsFactory {
                             variant.setVariantEffect(daoBean.getVariantEffectDAO().findById("frameshifting indel"));
                             variant.getId().setVariantEffect(variant.getVariantEffect().getId());
 
+                            if (finalProteinSequence.getSequenceAsString().contains("*")) {
+                                // variant.setVariantEffect(daoBean.getVariantEffectDAO().findById("nonsense
+                                // indel"));
+                                // variant.getId().setVariantEffect(variant.getVariantEffect().getName());
+                            }
+
                         } else {
+
+                            dnaSeqPart1 = originalDNASeq.substring(0, variant.getCodingSequencePosition() - 1);
+                            dnaSeqPart2 = originalDNASeq.substring(
+                                    variant.getCodingSequencePosition() - 1 + variant.getReferenceAllele().length(),
+                                    originalDNASeq.length());
+
+                            String finalDNASeq = String.format("%s%s%s", dnaSeqPart1, variant.getAlternateAllele(), dnaSeqPart2);
+                            if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+                                String altAllele = new DNASequence(variant.getAlternateAllele()).getReverseComplement()
+                                        .getSequenceAsString();
+                                finalDNASeq = String.format("%s%s%s", dnaSeqPart1, altAllele, dnaSeqPart2);
+                            }
+
+                            DNASequence finalDNASequence = new DNASequence(finalDNASeq);
+                            Sequence<NucleotideCompound> finalRNASequence = dna2RnaTranslator.createSequence(finalDNASequence);
+                            Sequence<AminoAcidCompound> finalProteinSequence = rna2AminoAcidTranslator.createSequence(finalRNASequence);
 
                             if ("del".equals(variant.getVariantType().getId())) {
                                 variant.setInframe((variant.getCodingSequencePosition()) % 3 == 0);
@@ -870,12 +882,12 @@ public class VariantsFactory {
                             variant.setVariantEffect(daoBean.getVariantEffectDAO().findById("non-frameshifting indel"));
                             variant.getId().setVariantEffect(variant.getVariantEffect().getId());
 
-                        }
+                            if (finalProteinSequence.getSequenceAsString().contains("*")) {
+                                // variant.setVariantEffect(daoBean.getVariantEffectDAO().findById("nonsense
+                                // indel"));
+                                // variant.getId().setVariantEffect(variant.getVariantEffect().getName());
+                            }
 
-                        if (finalProteinSequence.getSequenceAsString().contains("*")) {
-                            // variant.setVariantEffect(daoBean.getVariantEffectDAO().findById("nonsense
-                            // indel"));
-                            // variant.getId().setVariantEffect(variant.getVariantEffect().getName());
                         }
 
                     }
@@ -893,87 +905,6 @@ public class VariantsFactory {
         }
 
         return variant;
-    }
-
-    private static LocationType getLocationType(CANVASDAOBeanService daoBean, Range<Integer> locatedVariantRange,
-            Range<Integer> transcriptMapsExonsContigRange, Range<Integer> transcriptMapsExonsTranscriptRange, Range<Integer> proteinRange,
-            TranscriptMaps tMap, Integer transcriptPosition) throws CANVASDAOException {
-
-        // UTR, UTR-5, UTR-3, intron, exon, intergenic, potential RNA-editing site, intron/exon boundary
-
-        String locationTypeValue = "UTR";
-
-        if (proteinRange != null) {
-
-            if (transcriptMapsExonsTranscriptRange != null && transcriptMapsExonsTranscriptRange.contains(transcriptPosition)) {
-                locationTypeValue = "exon";
-            }
-
-            if (proteinRange.isBefore(transcriptPosition)) {
-                locationTypeValue = "UTR-3";
-            } else if (proteinRange.isAfter(transcriptPosition)) {
-                locationTypeValue = "UTR-5";
-            }
-
-        }
-        LocationType locationType = daoBean.getLocationTypeDAO().findById(locationTypeValue);
-        return locationType;
-    }
-
-    private static Integer getFeatureId(CANVASDAOBeanService daoBean, String refseqVersion, TranscriptMaps tMap, Integer transcriptPosition)
-            throws CANVASDAOException {
-        List<Feature> featureList = daoBean.getFeatureDAO().findByRefSeqVersionAndTranscriptId(refseqVersion, tMap.getTranscript().getId());
-        Integer ret = null;
-        if (CollectionUtils.isNotEmpty(featureList)) {
-            for (Feature f : featureList) {
-                List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRegionGroupId(f.getRegionGroup().getId());
-                if (CollectionUtils.isNotEmpty(rgrList)) {
-                    for (RegionGroupRegion rgr : rgrList) {
-                        Range<Integer> rgrRange = Range.between(rgr.getId().getRegionStart(), rgr.getId().getRegionEnd());
-                        if (rgrRange.contains(transcriptPosition)) {
-                            ret = f.getId();
-                        }
-                    }
-                }
-            }
-        }
-        return ret;
-    }
-
-    private static Integer getIntronExonDistance(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
-            List<TranscriptMapsExons> transcriptMapsExonsList) {
-        Integer rightDistance = locatedVariant.getEndPosition() - transcriptMapsExons.getContigEnd() - 2;
-        Integer leftDistance = locatedVariant.getPosition() - transcriptMapsExons.getContigStart() + 1;
-
-        if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-            leftDistance = -leftDistance + 2;
-            rightDistance = -rightDistance;
-        }
-
-        if (transcriptMapsExonsList.size() > 1) {
-            int exonIndex = transcriptMapsExonsList.indexOf(transcriptMapsExons);
-            if (exonIndex == 0) {
-                return rightDistance;
-            } else if (exonIndex == transcriptMapsExonsList.size() - 1 || Math.abs(leftDistance) < Math.abs(rightDistance)) {
-                return leftDistance;
-            } else {
-                return rightDistance;
-            }
-        }
-        return null;
-    }
-
-    private static Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons) {
-        Integer ret = null;
-        switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
-            case "+":
-                ret = transcriptMapsExons.getTranscriptEnd() + (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd());
-                break;
-            case "-":
-                ret = transcriptMapsExons.getTranscriptEnd() + (transcriptMapsExons.getContigEnd() - locatedVariant.getPosition());
-                break;
-        }
-        return ret;
     }
 
 }

@@ -25,6 +25,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAnnotateVariantsCallable.class);
 
+    private static final VariantsFactory variantsFactory = VariantsFactory.getInstance();
+
     private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
@@ -116,7 +118,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                             Variants_80_4 variant = null;
 
                             if (transcriptMapsExons == null) {
-                                variant = VariantsFactory.createIntronicVariant(daoBean, refseqVersion, locatedVariant, mapsList, tMap,
+                                variant = variantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap,
                                         transcriptMapsExonsList);
                             } else {
 
@@ -125,10 +127,10 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                                 && "-".equals(tMap.getStrand()))
                                                 || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                                         && "+".equals(tMap.getStrand())))) {
-                                    variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion, locatedVariant, tMap,
-                                            mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                                    variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
+                                            transcriptMapsExonsList, transcriptMapsExons);
                                 } else {
-                                    variant = VariantsFactory.createExonicVariant(daoBean, refseqVersion, locatedVariant, mapsList,
+                                    variant = variantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList,
                                             transcriptMapsExonsList, transcriptMapsExons);
                                 }
 
@@ -187,8 +189,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                         .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                 tMap.getTranscript().getId());
 
-                                Variants_80_4 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion, locatedVariant,
-                                        tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                                Variants_80_4 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
+                                        transcriptMapsExonsList, transcriptMapsExons);
                                 variants.add(variant);
                             }
                         } else {
@@ -238,8 +240,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                     tMap.getTranscript().getId());
 
-                                    Variants_80_4 variant = VariantsFactory.createBorderCrossingVariant(daoBean, refseqVersion,
-                                            locatedVariant, tMap, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                                    Variants_80_4 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap,
+                                            mapsList, transcriptMapsExonsList, transcriptMapsExons);
                                     variants.add(variant);
                                 }
                             }
