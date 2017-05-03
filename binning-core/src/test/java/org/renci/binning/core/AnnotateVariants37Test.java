@@ -3,7 +3,6 @@ package org.renci.binning.core;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,7 +12,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.Range;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -248,6 +246,126 @@ public class AnnotateVariants37Test {
         }
 
         return variants;
+    }
+
+    @Test
+    public void testLocatedVariant476843500() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(476843500L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+        Variants_61_2 variant = variants.get(0);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(476843500L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(151774103));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001004432.2"));
+        assertTrue(variant.getRefSeqGene().equals("LINGO4"));
+        assertTrue(variant.getHgncGene().equals("LINGO4"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(1268));
+        assertTrue(variant.getCodingSequencePosition().equals(1078));
+        assertTrue(variant.getAminoAcidStart().equals(352));
+        assertTrue(variant.getAminoAcidEnd().equals(360));
+        assertTrue(variant.getOriginalAminoAcid().equals("TLRLSGNPL"));
+        assertTrue(variant.getFinalAminoAcid().equals("I"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-705));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(14758));
+        assertTrue(variant.getReferenceAllele().equals("GGGGGTTGCCAGACAGCCTCAAGG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.151774103_151774126delGGGGGTTGCCAGACAGCCTCAAGG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001004432.2:c.1055_1078delCCTTGAGGCTGTCTGGCAACCCCC"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001004432.2:g.1245_1268delCCTTGAGGCTGTCTGGCAACCCCC"));
+        assertTrue(variant.getHgvsProtein().equals("NP_001004432.1:p.Thr352_Leu360delinsIle"));
+        assertTrue(variant.getNonCanonicalExon().equals(1));
+        assertTrue(variant.getFeatureId().equals(2007292));
+
+    }
+
+    @Test
+    public void testLocatedVariant441395481() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(441395481L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 2);
+
+        variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
+
+        Variants_61_2 variant = variants.get(0);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(441395481L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(8759578));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_020661.2"));
+        assertTrue(variant.getRefSeqGene().equals("AICDA"));
+        assertTrue(variant.getHgncGene().equals("AICDA"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(118));
+        assertTrue(variant.getCodingSequencePosition().equals(39));
+        assertTrue(variant.getAminoAcidStart().equals(8));
+        assertTrue(variant.getAminoAcidEnd().equals(200));
+        assertTrue(variant.getOriginalAminoAcid().equals("RRKFL..."));
+        assertTrue(variant.getFinalAminoAcid().equals("NSKMS..."));
+        assertTrue(variant.getFrameshift().equals(Boolean.TRUE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(13));
+        assertTrue(variant.getId().getVariantEffect().equals("frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(604));
+        assertTrue(variant.getReferenceAllele().equals("GTAAAGAAACTTCCTCCGG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000012.11:g.8759578_8759596delGTAAAGAAACTTCCTCCGG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_020661.2:c.21_39delCCGGAGGAAGTTTCTTTAC"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_020661.2:g.100_118delCCGGAGGAAGTTTCTTTAC"));
+        assertTrue(variant.getHgvsProtein().equals("NP_065712.1:p.Arg8fs"));
+        assertTrue(variant.getNonCanonicalExon().equals(4));
+        assertTrue(variant.getFeatureId().equals(1869405));
+
+        variant = variants.get(1);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
+        assertTrue(variant.getLocatedVariant().getId().equals(441395481L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(8759578));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("XM_005253432.1"));
+        assertTrue(variant.getRefSeqGene().equals("AICDA"));
+        assertTrue(variant.getHgncGene().equals("AICDA"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(139));
+        assertTrue(variant.getCodingSequencePosition().equals(39));
+        assertTrue(variant.getAminoAcidStart().equals(8));
+        assertTrue(variant.getAminoAcidEnd().equals(190));
+        assertTrue(variant.getOriginalAminoAcid().equals("RRKFL..."));
+        assertTrue(variant.getFinalAminoAcid().equals("NSKMS..."));
+        assertTrue(variant.getFrameshift().equals(Boolean.TRUE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(13));
+        assertTrue(variant.getId().getVariantEffect().equals("frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(604));
+        assertTrue(variant.getReferenceAllele().equals("GTAAAGAAACTTCCTCCGG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000012.11:g.8759578_8759596delGTAAAGAAACTTCCTCCGG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("XM_005253432.1:c.21_39delCCGGAGGAAGTTTCTTTAC"));
+        assertTrue(variant.getHgvsTranscript().equals("XM_005253432.1:g.121_139delCCGGAGGAAGTTTCTTTAC"));
+        assertTrue(variant.getHgvsProtein().equals("XP_005253489.1:p.Arg8fs"));
+        assertTrue(variant.getNonCanonicalExon().equals(4));
+        assertTrue(variant.getFeatureId().equals(1764521));
+
     }
 
     @Test
@@ -809,6 +927,115 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005269659.1:c.301_318delGACTGCACAAACGTCACC"));
         assertTrue(variant.getHgvsTranscript().equals("XM_005269659.1:g.401_418delGACTGCACAAACGTCACC"));
         assertTrue(variant.getHgvsProtein().equals("XP_005269716.1:p.Asp101_Thr106del"));
+
+    }
+
+    @Test
+    public void testLocatedVariant386432694() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(386432694L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 3);
+
+        variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
+
+        Variants_61_2 variant = variants.get(0);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(386432694L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(78024350));
+        assertTrue(variant.getVariantType().getId().equals("ins"));
+        assertTrue(variant.getId().getTranscript().equals("NM_012093.3"));
+        assertTrue(variant.getRefSeqGene().equals("AK5"));
+        assertTrue(variant.getHgncGene().equals("AK5"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(2632));
+        assertTrue(variant.getCodingSequencePosition().equals(1606));
+        assertTrue(variant.getAminoAcidStart().equals(536));
+        assertTrue(variant.getAminoAcidEnd().equals(537));
+        assertTrue(variant.getOriginalAminoAcid().equals("F*"));
+        assertTrue(variant.getFinalAminoAcid().equals("YF*"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-6));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(646));
+        assertTrue(variant.getAlternateAllele().equals("ATT"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.78024350_78024351insATT"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_012093.3:c.1606_1607insATT"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_012093.3:g.2632_2633insATT"));
+        assertTrue(variant.getHgvsProtein().equals("NP_036225.2:p.Phe536_*537delinsTyrPhe*"));
+        assertTrue(variant.getNonCanonicalExon().equals(13));
+        assertTrue(variant.getFeatureId().equals(0));
+
+        variant = variants.get(1);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(386432694L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(78024350));
+        assertTrue(variant.getVariantType().getId().equals("ins"));
+        assertTrue(variant.getId().getTranscript().equals("NM_174858.2"));
+        assertTrue(variant.getRefSeqGene().equals("AK5"));
+        assertTrue(variant.getHgncGene().equals("AK5"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(2021));
+        assertTrue(variant.getCodingSequencePosition().equals(1684));
+        assertTrue(variant.getAminoAcidStart().equals(562));
+        assertTrue(variant.getAminoAcidEnd().equals(563));
+        assertTrue(variant.getOriginalAminoAcid().equals("F*"));
+        assertTrue(variant.getFinalAminoAcid().equals("YF*"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-6));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(646));
+        assertTrue(variant.getAlternateAllele().equals("ATT"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.78024350_78024351insATT"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_174858.2:c.1684_1685insATT"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_174858.2:g.2021_2022insATT"));
+        assertTrue(variant.getHgvsProtein().equals("NP_777283.1:p.Phe562_*563delinsTyrPhe*"));
+        assertTrue(variant.getNonCanonicalExon().equals(14));
+        assertTrue(variant.getFeatureId().equals(0));
+
+        variant = variants.get(2);
+        logger.info(variant.toString());
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(386432694L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(78024350));
+        assertTrue(variant.getVariantType().getId().equals("ins"));
+        assertTrue(variant.getId().getTranscript().equals("XM_005270739.1"));
+        assertTrue(variant.getRefSeqGene().equals("AK5"));
+        assertTrue(variant.getHgncGene().equals("AK5"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(1868));
+        assertTrue(variant.getCodingSequencePosition().equals(1612));
+        assertTrue(variant.getAminoAcidStart().equals(538));
+        assertTrue(variant.getAminoAcidEnd().equals(539));
+        assertTrue(variant.getOriginalAminoAcid().equals("F*"));
+        assertTrue(variant.getFinalAminoAcid().equals("YF*"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-6));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(646));
+        assertTrue(variant.getAlternateAllele().equals("ATT"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.78024350_78024351insATT"));
+        assertTrue(variant.getHgvsCodingSequence().equals("XM_005270739.1:c.1612_1613insATT"));
+        assertTrue(variant.getHgvsTranscript().equals("XM_005270739.1:g.1868_1869insATT"));
+        assertTrue(variant.getHgvsProtein().equals("XP_005270796.1:p.Phe538_*539delinsTyrPhe*"));
+        assertTrue(variant.getNonCanonicalExon().equals(14));
+        assertTrue(variant.getFeatureId().equals(0));
 
     }
 
@@ -2762,6 +2989,47 @@ public class AnnotateVariants37Test {
     }
 
     @Test
+    public void testLocatedVariant29835813() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(29835813L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+        Variants_61_2 variant = variants.get(0);
+        logger.info(variant.toString());
+        assertTrue(variant.getLocatedVariant().getId().equals(29835813L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(13140452));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getReferenceAllele().equals("G"));
+        assertTrue(variant.getAlternateAllele().equals("C"));
+        assertTrue(variant.getId().getTranscript().equals("XM_003118846.3"));
+        assertTrue(variant.getGene().getId().equals(100932));
+        assertTrue(variant.getRefSeqGene().equals("PRAMEF25"));
+        assertTrue(variant.getHgncGene().equals("None"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getFeatureId().equals(0));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(6));
+        assertTrue(variant.getCodingSequencePosition().equals(3));
+        assertTrue(variant.getAminoAcidStart().equals(1));
+        assertTrue(variant.getAminoAcidEnd().equals(2));
+        assertTrue(variant.getOriginalAminoAcid().equals("M"));
+        assertTrue(variant.getFinalAminoAcid().equals("I"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(3));
+        assertTrue(variant.getId().getVariantEffect().equals("missense"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.13140452G>C"));
+        assertTrue(variant.getHgvsCodingSequence().equals("XM_003118846.3:c.3G>C"));
+        assertTrue(variant.getHgvsTranscript().equals("XM_003118846.3:g.6G>C"));
+        assertTrue(variant.getHgvsProtein().equals("XP_003118894.3:p.Met1Ile"));
+
+    }
+
+    @Test
     public void testLocatedVariant386017450() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(386017450L);
@@ -2801,47 +3069,6 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005263498.1:c.8A>G"));
         assertTrue(variant.getHgvsTranscript().equals("XM_005263498.1:g.8A>G"));
         assertTrue(variant.getHgvsProtein().equals("XP_005263555.1:p.Lys3Arg"));
-
-    }
-
-    @Test
-    public void testLocatedVariant29835813() throws Exception {
-
-        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(29835813L);
-        logger.info(locatedVariant.toString());
-
-        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
-        assertTrue(variants.size() == 1);
-
-        Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
-        assertTrue(variant.getLocatedVariant().getId().equals(29835813L));
-        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
-        assertTrue(variant.getLocatedVariant().getPosition().equals(13140452));
-        assertTrue(variant.getVariantType().getId().equals("snp"));
-        assertTrue(variant.getReferenceAllele().equals("G"));
-        assertTrue(variant.getAlternateAllele().equals("C"));
-        assertTrue(variant.getId().getTranscript().equals("XM_003118846.3"));
-        assertTrue(variant.getGene().getId().equals(100932));
-        assertTrue(variant.getRefSeqGene().equals("PRAMEF25"));
-        assertTrue(variant.getHgncGene().equals("None"));
-        assertTrue(variant.getLocationType().getId().equals("exon"));
-        assertTrue(variant.getFeatureId().equals(0));
-        assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getTranscriptPosition().equals(6));
-        assertTrue(variant.getCodingSequencePosition().equals(3));
-        assertTrue(variant.getAminoAcidStart().equals(1));
-        assertTrue(variant.getAminoAcidEnd().equals(2));
-        assertTrue(variant.getOriginalAminoAcid().equals("M"));
-        assertTrue(variant.getFinalAminoAcid().equals("I"));
-        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
-        assertTrue(variant.getInframe().equals(Boolean.FALSE));
-        assertTrue(variant.getIntronExonDistance().equals(3));
-        assertTrue(variant.getId().getVariantEffect().equals("missense"));
-        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.13140452G>C"));
-        assertTrue(variant.getHgvsCodingSequence().equals("XM_003118846.3:c.3G>C"));
-        assertTrue(variant.getHgvsTranscript().equals("XM_003118846.3:g.6G>C"));
-        assertTrue(variant.getHgvsProtein().equals("XP_003118894.3:p.Met1Ile"));
 
     }
 

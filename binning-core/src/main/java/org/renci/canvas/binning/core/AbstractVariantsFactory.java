@@ -3,6 +3,7 @@ package org.renci.canvas.binning.core;
 import java.util.List;
 
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.tuple.Pair;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.renci.canvas.dao.CANVASDAOBeanService;
@@ -140,18 +141,259 @@ public abstract class AbstractVariantsFactory {
         return null;
     }
 
+    protected Integer getIntronExonDistance(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
+            List<TranscriptMapsExons> transcriptMapsExonsList, Range<Integer> proteinRange, Integer transcriptPosition) {
+
+        Range<Integer> locatedVariantRange = locatedVariant.toRange();
+        Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+        Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+        Range<Integer> proteinExonIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
+
+        Integer exonIndex = transcriptMapsExonsList.indexOf(transcriptMapsExons);
+
+        if ("+".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+
+            if (exonIndex == 0) {
+
+                if (proteinRange.isAfter(transcriptPosition)) {
+                    // we are in UTR5 region
+                    return locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum()
+                            + (transcriptMapsExonsTranscriptRange.getMaximum() - proteinExonIntersection.getMinimum()) - 1;
+                }
+
+                if (proteinRange.contains(transcriptPosition)) {
+                    if (transcriptMapsExonsTranscriptRange.getMinimum() == proteinRange.getMinimum()) {
+                        // first interval is an exon
+                        return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                    }
+                    return transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+                }
+
+            }
+
+            if (exonIndex == transcriptMapsExonsList.size() - 1) {
+
+                if (proteinRange.isBefore(transcriptPosition)) {
+                    // we are in UTR3 region
+                    return transcriptPosition - proteinExonIntersection.getMaximum();
+                }
+
+                if (proteinRange.contains(transcriptPosition)) {
+                    if (transcriptMapsExonsTranscriptRange.getMaximum() == proteinRange.getMaximum()) {
+                        // last interval is an exon
+                        return transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+                    }
+                    return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                }
+
+            }
+
+            Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+            Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+            return Math.abs(left) < Math.abs(right) ? left : right;
+
+        }
+
+        if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+
+            if (exonIndex == 0) {
+
+                if (proteinRange.isAfter(transcriptPosition)) {
+                    // we are in UTR5 region
+                    return locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum()
+                            + (transcriptMapsExonsTranscriptRange.getMaximum() - proteinExonIntersection.getMinimum()) - 1;
+                }
+
+                if (proteinRange.contains(transcriptPosition)) {
+                    if (transcriptMapsExonsTranscriptRange.getMinimum() == proteinRange.getMinimum()) {
+                        // first interval is an exon
+                        return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                    }
+                    return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                }
+
+            }
+
+            if (exonIndex == transcriptMapsExonsList.size() - 1) {
+
+                if (proteinRange.isBefore(transcriptPosition)) {
+                    // we are in UTR3 region
+                    return transcriptPosition - proteinExonIntersection.getMaximum();
+                }
+
+                if (proteinRange.contains(transcriptPosition)) {
+                    if (transcriptMapsExonsTranscriptRange.getMaximum() == proteinRange.getMaximum()) {
+                        // last interval is an exon
+                        return transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+                    }
+                    return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                }
+
+            }
+
+            Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+            Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+            return Math.abs(left) < Math.abs(right) ? left : right;
+
+        }
+
+        return null;
+    }
+
+    protected Integer getNonCanonicalExon(List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons,
+            Range<Integer> proteinRange) {
+        Integer ret = null;
+        int utrAdjustedIndex = 0;
+        switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
+            case "+":
+                // how many UTRs before exon
+                transcriptMapsExonsList.sort((a, b) -> a.getId().getExonNum().compareTo(b.getId().getExonNum()));
+                for (TranscriptMapsExons exon : transcriptMapsExonsList) {
+                    if (exon.getTranscriptRange().contains(proteinRange.getMinimum())) {
+                        utrAdjustedIndex = transcriptMapsExonsList.indexOf(exon);
+                        break;
+                    }
+                }
+                ret = transcriptMapsExons.getId().getExonNum() - utrAdjustedIndex;
+                break;
+            case "-":
+                // how many UTRs after exon
+                transcriptMapsExonsList.sort((a, b) -> b.getId().getExonNum().compareTo(a.getId().getExonNum()));
+                for (TranscriptMapsExons exon : transcriptMapsExonsList) {
+                    ++utrAdjustedIndex;
+                    if (exon.getTranscriptRange().contains(proteinRange.getMaximum())) {
+                        break;
+                    }
+                }
+                ret = transcriptMapsExonsList.indexOf(transcriptMapsExons) + utrAdjustedIndex;
+                break;
+        }
+        return ret;
+    }
+
     protected Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons) {
         Integer ret = null;
         switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
             case "+":
-                // ret = transcriptMapsExons.getTranscriptEnd() + (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd());
-                ret = (locatedVariant.getPosition() - transcriptMapsExons.getContigStart()) + transcriptMapsExons.getTranscriptStart();
+                ret = transcriptMapsExons.getTranscriptEnd() + (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd());
+                // ret = (locatedVariant.getPosition() - transcriptMapsExons.getContigStart()) + transcriptMapsExons.getTranscriptStart();
                 break;
             case "-":
-                // ret = transcriptMapsExons.getTranscriptEnd() + (transcriptMapsExons.getContigEnd() - locatedVariant.getPosition());
-                ret = transcriptMapsExons.getTranscriptStart() - (locatedVariant.getPosition() - transcriptMapsExons.getContigStart());
+                ret = transcriptMapsExons.getTranscriptEnd() + (transcriptMapsExons.getContigEnd() - locatedVariant.getPosition());
+                // ret = transcriptMapsExons.getTranscriptStart() - (locatedVariant.getPosition() - transcriptMapsExons.getContigStart());
                 break;
         }
+        return ret;
+    }
+
+    protected Integer getCodingSequencePosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
+            Integer transcriptPosition, Range<Integer> proteinRange) {
+        Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+        Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+        Integer ret = null;
+        switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
+            case "+":
+                if (proteinRange.contains(transcriptPosition)) {
+                    ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum() + locatedVariant.getPosition()
+                            - transcriptMapsExons.getContigEnd() + 1;
+                } else {
+                    ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum() + locatedVariant.getPosition()
+                            - transcriptMapsExons.getContigEnd() + 1;
+                }
+                break;
+            case "-":
+                if (proteinRange.contains(transcriptPosition)) {
+                    ret = transcriptPosition - proteinRange.getMinimum() + 1;
+                } else {
+                    ret = (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition() + 1);
+                }
+                break;
+        }
+        return ret;
+    }
+
+    protected Pair<String, String> getDNASequenceParts(String variantType, String strand, String originalDNASeq,
+            Integer codingSequencePosition, String refAllele) {
+
+        if ("del".equals(variantType) && "-".equals(strand)) {
+
+            return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
+                    originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
+
+        } else {
+
+            if ("ins".equals(variantType)) {
+
+                if ("-".equals(strand)) {
+                    return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
+                            originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
+                }
+
+                return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
+                        originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
+
+            } else {
+
+                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
+                        originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
+            }
+
+        }
+
+    }
+
+    protected Integer getAminoAcidStart(String variantType, Integer codingSequencePosition, Boolean frameshift, Boolean inframe,
+            String refAllele, String strand) {
+        Integer ret = null;
+
+        if ("snp".equals(variantType) && frameshift && !inframe) {
+            ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue();
+        }
+
+        if ("del".equals(variantType)) {
+
+            if ("-".equals(strand)) {
+
+                if (!frameshift && !inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3);
+                }
+
+                if (!frameshift && inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3) + 1;
+                }
+
+                if (frameshift && !inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3) + 1;
+                }
+
+            } else {
+                ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue();
+            }
+
+        }
+
+        if ("ins".equals(variantType)) {
+
+            if ("-".equals(strand)) {
+
+                if (!frameshift && !inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3);
+                }
+
+                if (!frameshift && inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3);
+                }
+
+                if (frameshift && !inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3);
+                }
+
+            } else {
+                ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue();
+            }
+
+        }
+
         return ret;
     }
 
