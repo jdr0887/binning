@@ -249,6 +249,83 @@ public class AnnotateVariants37Test {
     }
 
     @Test
+    public void testLocatedVariant385391408() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(385391408L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 2);
+
+        variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
+
+        Variants_61_2 variant = variants.get(0);
+
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(385391408L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(1875858));
+        assertTrue(variant.getVariantType().getId().equals("sub"));
+        assertTrue(variant.getId().getTranscript().equals("XM_005244811.1"));
+        assertTrue(variant.getRefSeqGene().equals("KIAA1751"));
+        assertTrue(variant.getHgncGene().equals("CFAP74"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(2554));
+        assertTrue(variant.getCodingSequencePosition().equals(2398));
+        assertTrue(variant.getAminoAcidStart().equals(799));
+        assertTrue(variant.getAminoAcidEnd().equals(800));
+        assertTrue(variant.getOriginalAminoAcid().equals("DV"));
+        assertTrue(variant.getFinalAminoAcid().equals("DL"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(33));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(13879));
+        assertTrue(variant.getReferenceAllele().equals("CA"));
+        assertTrue(variant.getAlternateAllele().equals("GG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.1875858_1875859delinsGG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("XM_005244811.1:c.2397_2398delinsCC"));
+        assertTrue(variant.getHgvsTranscript().equals("XM_005244811.1:g.2553_2554delinsCC"));
+        assertTrue(variant.getHgvsProtein().equals("XP_005244868.1:p.Asp799_Val800delinsAspLeu"));
+        assertTrue(variant.getNonCanonicalExon().equals(19));
+        assertTrue(variant.getFeatureId().equals(0));
+
+        variant = variants.get(1);
+
+        assertTrue(variant.getLocatedVariant().getId().equals(385391408L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(1875858));
+        assertTrue(variant.getVariantType().getId().equals("sub"));
+        assertTrue(variant.getId().getTranscript().equals("XM_005244812.1"));
+        assertTrue(variant.getRefSeqGene().equals("KIAA1751"));
+        assertTrue(variant.getHgncGene().equals("CFAP74"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(2554));
+        assertTrue(variant.getCodingSequencePosition().equals(2398));
+        assertTrue(variant.getAminoAcidStart().equals(799));
+        assertTrue(variant.getAminoAcidEnd().equals(800));
+        assertTrue(variant.getOriginalAminoAcid().equals("DV"));
+        assertTrue(variant.getFinalAminoAcid().equals("DL"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(33));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(13879));
+        assertTrue(variant.getReferenceAllele().equals("CA"));
+        assertTrue(variant.getAlternateAllele().equals("GG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.1875858_1875859delinsGG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("XM_005244812.1:c.2397_2398delinsCC"));
+        assertTrue(variant.getHgvsTranscript().equals("XM_005244812.1:g.2553_2554delinsCC"));
+        assertTrue(variant.getHgvsProtein().equals("XP_005244869.1:p.Asp799_Val800delinsAspLeu"));
+        assertTrue(variant.getNonCanonicalExon().equals(19));
+        assertTrue(variant.getFeatureId().equals(0));
+
+    }
+
+    @Test
     public void testLocatedVariant476843500() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(476843500L);
@@ -258,7 +335,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(476843500L));
@@ -303,7 +380,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(441395481L));
@@ -335,7 +412,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFeatureId().equals(1869405));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(441395481L));
@@ -377,33 +454,11 @@ public class AnnotateVariants37Test {
         List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
         assertTrue(variants.size() == 2);
 
-        Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
-        assertTrue(variant.getId().getMapNumber().equals(1));
-        assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
-        assertTrue(variant.getLocatedVariant().getId().equals(491939773L));
-        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000011.9"));
-        assertTrue(variant.getLocatedVariant().getPosition().equals(2869956));
-        assertTrue(variant.getId().getTranscript().equals("NR_040711.2"));
-        assertTrue(variant.getId().getVariantEffect().equals("UTR"));
-        assertTrue(variant.getVariantType().getId().equals("snp"));
-        assertTrue(variant.getReferenceAllele().equals("C"));
-        assertTrue(variant.getAlternateAllele().equals("T"));
-        assertTrue(variant.getGene().getId().equals(13676));
-        assertTrue(variant.getRefSeqGene().equals("KCNQ1"));
-        assertTrue(variant.getHgncGene().equals("KCNQ1"));
-        assertTrue(variant.getLocationType().getId().equals("UTR"));
-        assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getFeatureId().equals(1849762));
-        assertTrue(variant.getTranscriptPosition().equals(2647));
-        assertTrue(variant.getIntronExonDistance().equals(960));
-        assertTrue(variant.getHgvsGenomic().equals("NC_000011.9:g.2869956C>T"));
-        assertTrue(variant.getHgvsTranscript().equals("NR_040711.2:g.2647C>T"));
+        variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
-        variant = variants.get(1);
-        logger.info(variant.toString());
-        assertTrue(variant.getId().getMapNumber().equals(1));
-        assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        Variants_61_2 variant = variants.get(0);
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491939773L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000011.9"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(2869956));
@@ -423,6 +478,28 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_000218.2:c.2031+723C>T"));
         assertTrue(variant.getHgvsTranscript().equals("NM_000218.2:g.2862C>T"));
 
+        variant = variants.get(1);
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
+        assertTrue(variant.getLocatedVariant().getId().equals(491939773L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000011.9"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(2869956));
+        assertTrue(variant.getId().getTranscript().equals("NR_040711.2"));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR"));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getReferenceAllele().equals("C"));
+        assertTrue(variant.getAlternateAllele().equals("T"));
+        assertTrue(variant.getGene().getId().equals(13676));
+        assertTrue(variant.getRefSeqGene().equals("KCNQ1"));
+        assertTrue(variant.getHgncGene().equals("KCNQ1"));
+        assertTrue(variant.getLocationType().getId().equals("UTR"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getFeatureId().equals(1849762));
+        assertTrue(variant.getTranscriptPosition().equals(2647));
+        assertTrue(variant.getIntronExonDistance().equals(960));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000011.9:g.2869956C>T"));
+        assertTrue(variant.getHgvsTranscript().equals("NR_040711.2:g.2647C>T"));
+
     }
 
     @Test
@@ -435,7 +512,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(489265654L));
@@ -465,7 +542,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(8801171L));
@@ -496,7 +573,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(380297473L));
@@ -529,7 +606,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(427005787L));
@@ -549,7 +626,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.9:g.62341477T>C"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(427005787L));
@@ -582,7 +659,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(492018867L));
@@ -603,7 +680,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_194302.3:c.4453-178C>T"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(492018867L));
@@ -623,7 +700,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsGenomic().equals("NC_000002.11:g.219874360G>A"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(492018867L));
@@ -657,7 +734,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(52648159L));
@@ -677,7 +754,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsGenomic().equals("NC_000009.11:g.139510318T>C"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(52648159L));
@@ -697,7 +774,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsGenomic().equals("NC_000009.11:g.139510318T>C"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(52648159L));
@@ -730,7 +807,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(420518626L));
@@ -761,7 +838,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001138586.1:p.Glu1003del"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(420518626L));
@@ -792,7 +869,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_055994.2:p.Glu1064del"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(420518626L));
@@ -836,7 +913,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(434113836L));
@@ -867,7 +944,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001138586.1:p.Asp101_Thr106del"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(434113836L));
@@ -898,7 +975,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_055994.2:p.Asp101_Thr106del"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(434113836L));
@@ -942,7 +1019,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(386432694L));
@@ -974,7 +1051,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFeatureId().equals(0));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(386432694L));
@@ -1006,7 +1083,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFeatureId().equals(0));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(386432694L));
@@ -1051,7 +1128,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(435249599L));
@@ -1083,7 +1160,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_689522.2:p.Gln182_Pro183delinsValGlnPro"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(435249599L));
@@ -1115,7 +1192,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005269555.1:p.Gln4_Pro5delinsValGlnPro"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(435249599L));
@@ -1160,7 +1237,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(423435870L));
@@ -1193,7 +1270,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005262564.1:p.Gln979fs"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(423435870L));
@@ -1226,7 +1303,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005276163.1:p.Gln885fs"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(423435870L));
@@ -1259,7 +1336,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005276776.1:p.Gln979fs"));
 
         variant = variants.get(3);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(423435870L));
@@ -1303,7 +1380,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(29831130L));
@@ -1347,7 +1424,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1380,7 +1457,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001041636.1:p.Gly458Ser"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1413,7 +1490,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001041637.1:p.Gly445Ser"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1446,7 +1523,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001041638.1:p.Gly444Ser"));
 
         variant = variants.get(3);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1479,7 +1556,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001041639.1:p.Gly444Ser"));
 
         variant = variants.get(4);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1512,7 +1589,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001121897.1:p.Gly472Ser"));
 
         variant = variants.get(5);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1545,7 +1622,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_036354.1:p.Gly469Ser"));
 
         variant = variants.get(6);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1579,7 +1656,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005270937.1:p.Gly459Ser"));
 
         variant = variants.get(7);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1613,7 +1690,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005270938.1:p.Gly455Ser"));
 
         variant = variants.get(8);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1647,7 +1724,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005270939.1:p.Gly455Ser"));
 
         variant = variants.get(9);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1681,7 +1758,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005270940.1:p.Gly416Ser"));
 
         variant = variants.get(10);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1715,7 +1792,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005270941.1:p.Gly352Ser"));
 
         variant = variants.get(11);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1749,7 +1826,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005270942.1:p.Gly352Ser"));
 
         variant = variants.get(12);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(491902641L));
@@ -1796,7 +1873,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1819,7 +1896,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_000038.5:g.8940A>G"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1842,7 +1919,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_001127510.2:g.9048A>G"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1865,7 +1942,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_001127511.2:g.9014A>G"));
 
         variant = variants.get(3);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1888,7 +1965,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XM_005271974.1:g.9002A>G"));
 
         variant = variants.get(4);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1911,7 +1988,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XM_005271975.1:g.9235A>G"));
 
         variant = variants.get(5);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1934,7 +2011,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XM_005271976.1:g.8740A>G"));
 
         variant = variants.get(6);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(391895876L));
@@ -1970,7 +2047,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(404841675L));
@@ -2003,7 +2080,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_000170.1:p.Gln1146*"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(404841675L));
@@ -2036,7 +2113,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001268421.1:p.Gln1016*"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(404841675L));
@@ -2069,7 +2146,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001268422.1:p.Gln844*"));
 
         variant = variants.get(3);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(404841675L));
@@ -2102,7 +2179,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("NP_001268423.1:p.Gln844*"));
 
         variant = variants.get(4);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(404841675L));
@@ -2146,7 +2223,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(386029980L));
@@ -2177,7 +2254,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(484291964L));
@@ -2210,7 +2287,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(476428721L));
@@ -2243,7 +2320,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(2));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
         assertTrue(variant.getLocatedVariant().getId().equals(385947625L));
@@ -2266,7 +2343,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NR_028326.1:g.4613G>C"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(385947625L));
@@ -2289,7 +2366,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NR_039983.2:g.5473G>C"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(1));
         assertTrue(variant.getLocatedVariant().getId().equals(385947625L));
@@ -2312,7 +2389,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_246728.1:g.1721G>C"));
 
         variant = variants.get(3);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(1));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(8));
         assertTrue(variant.getLocatedVariant().getId().equals(385947625L));
@@ -2334,7 +2411,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_253608.1:g.1580G>C"));
 
         variant = variants.get(4);
-        logger.info(variant.toString());
+
         // assertTrue(variant.getId().getMapNumber().equals(3));
         assertTrue(variant.getNumberOfTranscriptMaps().equals(7));
         assertTrue(variant.getLocatedVariant().getId().equals(385947625L));
@@ -2369,7 +2446,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(491873904L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(721323));
@@ -2389,7 +2466,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_108279.2:g.224A>G"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(491873904L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(721323));
@@ -2409,7 +2486,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_171142.2:g.224A>G"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(491873904L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(721323));
@@ -2440,7 +2517,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(32253987L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(846842));
@@ -2461,7 +2538,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_108282.2:g.28G>A"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(32253987L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(846842));
@@ -2482,7 +2559,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_112078.2:g.28G>A"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(32253987L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(846842));
@@ -2516,7 +2593,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(10401977L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(856704));
@@ -2536,7 +2613,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_241051.1:g.1665_1666insC"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(10401977L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(856704));
@@ -2556,7 +2633,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("XR_248814.1:g.1665_1666insC"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(10401977L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(856704));
@@ -2589,7 +2666,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(487626896L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(931116));
@@ -2623,7 +2700,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(385962999L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(901873));
@@ -2657,7 +2734,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(476430841L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(9005897));
@@ -2677,7 +2754,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_001215.3:g.5_7delAAA"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(476430841L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(9005897));
@@ -2697,7 +2774,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_001270500.1:g.5_7delAAA"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(476430841L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(9005897));
@@ -2717,7 +2794,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_001270501.1:g.5_7delAAA"));
 
         variant = variants.get(3);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(476430841L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(9005897));
@@ -2750,7 +2827,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(491937061L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(11876525));
@@ -2769,7 +2846,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript() == null);
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(491937061L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(11876525));
@@ -2788,7 +2865,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsTranscript() == null);
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(491937061L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(11876525));
@@ -2820,7 +2897,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(31046600L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(22649389));
@@ -2850,7 +2927,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_003960166.1:p.Gly146Ser"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(31046600L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(22649389));
@@ -2880,7 +2957,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("XP_005246105.1:p.Gly146Ser"));
 
         variant = variants.get(2);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(31046600L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(22649389));
@@ -2923,7 +3000,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(476568240L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(33772384));
@@ -2966,7 +3043,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(378427953L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(29473876));
@@ -2998,7 +3075,7 @@ public class AnnotateVariants37Test {
         assertTrue(variants.size() == 1);
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(29835813L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(13140452));
@@ -3041,7 +3118,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(386017450L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(9335209));
@@ -3084,7 +3161,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(435110898L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(113739326));
@@ -3117,7 +3194,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(384944453L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(161195724));
@@ -3150,7 +3227,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(438862902L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000013.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(45373639));
@@ -3184,7 +3261,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(387000526L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(176176504));
@@ -3206,7 +3283,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("?"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(387000526L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(176176504));
@@ -3241,7 +3318,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(392541331L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000006.11"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(30643316));
@@ -3263,7 +3340,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("?"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(392541331L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000006.11"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(30643316));
@@ -3298,7 +3375,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(402249392L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000019.9"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(18208489));
@@ -3320,7 +3397,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsProtein().equals("?"));
 
         variant = variants.get(1);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(402249392L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000019.9"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(18208489));
@@ -3355,7 +3432,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(403213080L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000021.8"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(33973624));
@@ -3390,7 +3467,7 @@ public class AnnotateVariants37Test {
         variants.sort((a, b) -> a.getId().getTranscript().compareTo(b.getId().getTranscript()));
 
         Variants_61_2 variant = variants.get(0);
-        logger.info(variant.toString());
+
         assertTrue(variant.getLocatedVariant().getId().equals(403858749L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000023.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(48969879));
