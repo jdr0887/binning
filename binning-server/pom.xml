@@ -3,13 +3,13 @@
   <parent>
     <groupId>org.renci.canvas</groupId>
     <artifactId>binning</artifactId>
-    <version>0.0.66</version>
+    <version>0.0.67</version>
   </parent>
   <name>CANVAS :: Binning :: Server</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-server</artifactId>
-  <version>0.0.66</version>
+  <version>0.0.67</version>
   <packaging>karaf-assembly</packaging>
   <properties>
     <maven.site.plugin.skip>true</maven.site.plugin.skip>    
@@ -20,7 +20,7 @@
       <groupId>org.renci.canvas.binning</groupId>
       <artifactId>binning-features</artifactId>
       <classifier>features</classifier>
-      <version>0.0.66</version>
+      <version>0.0.67</version>
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>    
@@ -62,6 +62,14 @@
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.aries.jpa</groupId>
+      <artifactId>jpa-features</artifactId>
+      <version>2.6.1</version>
+      <classifier>features</classifier>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>                
   </dependencies>
   <build>
     <resources>
@@ -141,7 +149,7 @@
 	    <feature>transaction-api</feature>
 	    <feature>transaction</feature>
 	    <feature>jms</feature>	    
-	    <feature>jpa</feature>
+	    <feature>jpa/2.6.1</feature>
 	    <feature>binning-common</feature>
 	    <feature>canvas-dao</feature>
           </bootFeatures>
