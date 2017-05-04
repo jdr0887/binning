@@ -215,7 +215,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
         }
-
+        
+        logger.info(variant.toString());
         return variant;
     }
 
@@ -340,6 +341,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             throw new BinningException(e);
         }
 
+        logger.info(variant.toString());
         return variant;
     }
 
@@ -762,6 +764,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             throw new BinningException(e);
         }
 
+        logger.info(variant.toString());
         return variant;
     }
 
