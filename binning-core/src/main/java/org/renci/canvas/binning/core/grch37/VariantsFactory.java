@@ -115,7 +115,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             TranscriptMapsExons previous = null;
             while (transcriptMapsExonsIter.hasNext()) {
                 TranscriptMapsExons current = transcriptMapsExonsIter.next();
-                logger.info(current.toString());
+                logger.debug(current.toString());
                 if (previous != null && current != null) {
                     Range<Integer> intronRange = Range.between(previous.getContigEnd(), current.getContigStart());
                     Range<Integer> previousTranscriptRange = previous.getTranscriptRange();
@@ -215,7 +215,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
         }
-        
+
         logger.info(variant.toString());
         return variant;
     }
@@ -456,6 +456,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
                             proteinRange, variant.getTranscriptPosition()));
+
                     switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
                         case "+":
                             variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
@@ -647,6 +648,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 if (variant.getInframe()) {
                                     variant.setAminoAcidEnd(
                                             (variant.getCodingSequencePosition() + variant.getReferenceAllele().length() - 1) / 3);
+                                } else {
+                                    variant.setAminoAcidEnd(
+                                            (variant.getCodingSequencePosition() + variant.getReferenceAllele().length()) / 3);
                                 }
                             }
 
@@ -697,7 +701,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                             originalProteinSequence.getCompoundAt(variant.getAminoAcidEnd()).getLongName(),
                                             variant.getAminoAcidEnd(), longNames.toString()));
 
-                                } else if ("ins".equals(variant.getVariantType().getId())) {
+                                } else if (Arrays.asList("sub", "ins").contains(variant.getVariantType().getId())) {
 
                                     Integer aaEnd = variant.getAminoAcidEnd() + (variant.getAlternateAllele().length() / 3);
                                     if (aaEnd >= finalProteinSequence.getLength()) {
