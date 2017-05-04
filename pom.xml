@@ -12,7 +12,7 @@
   <packaging>pom</packaging>
   <properties>
     <maven.site.plugin.skip>false</maven.site.plugin.skip>
-    <renci.canvas.dao.version>0.0.30</renci.canvas.dao.version>    
+    <renci.canvas.dao.version>0.0.31</renci.canvas.dao.version>    
     <biojava.version>4.2.4</biojava.version>
     <activiti.version>5.22.0</activiti.version>
   </properties>
