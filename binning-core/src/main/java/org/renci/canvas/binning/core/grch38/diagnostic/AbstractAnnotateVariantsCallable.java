@@ -69,9 +69,10 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                 ExecutorService es = Executors.newFixedThreadPool(2);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
-                    logger.info(locatedVariant.toString());
 
                     es.submit(() -> {
+
+                        logger.info(locatedVariant.toString());
 
                         try {
                             final List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
