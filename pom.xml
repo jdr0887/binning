@@ -12,9 +12,10 @@
   <packaging>pom</packaging>
   <properties>
     <maven.site.plugin.skip>false</maven.site.plugin.skip>
-    <renci.canvas.dao.version>0.0.28</renci.canvas.dao.version>    
+    <renci.canvas.dao.version>0.0.29</renci.canvas.dao.version>    
     <biojava.version>4.2.4</biojava.version>
     <activiti.version>5.22.0</activiti.version>
+    <!-- <hibernate.version>5.2.10.Final</hibernate.version> -->
   </properties>
   <issueManagement>
     <system>GitHub Issues</system>
