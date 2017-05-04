@@ -20,8 +20,10 @@ import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.canvas.dao.jpa.CANVASDAOManager;
 import org.renci.canvas.dao.ref.model.GenomeRef;
+import org.renci.canvas.dao.refseq.model.LocationType;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
+import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -61,6 +63,9 @@ public class AnnotateVariantsFromDiagnosticJobTest {
             }
             return ret;
         });
+
+        List<LocationType> allLocationTypes = daoMgr.getDAOBean().getLocationTypeDAO().findAll();
+        List<VariantEffect> allVariantEffects = daoMgr.getDAOBean().getVariantEffectDAO().findAll();
 
         List<Variants_61_2> variants = new ArrayList<>();
         try {
@@ -102,10 +107,10 @@ public class AnnotateVariantsFromDiagnosticJobTest {
                                 Variants_61_2 variant = null;
                                 if (transcriptMapsExons == null) {
                                     variant = variantsFactory.createIntronicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList, tMap,
-                                            transcriptMapsExonsList);
+                                            transcriptMapsExonsList, allLocationTypes, allVariantEffects);
                                 } else {
                                     variant = variantsFactory.createExonicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList,
-                                            transcriptMapsExonsList, transcriptMapsExons);
+                                            transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                                 }
                                 logger.info(variant.toString());
                                 // daoMgr.getDAOBean().getVariants_61_2_DAO().save(variant);

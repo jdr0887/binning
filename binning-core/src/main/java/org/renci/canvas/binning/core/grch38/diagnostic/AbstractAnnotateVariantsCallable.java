@@ -16,10 +16,13 @@ import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.canvas.dao.ref.model.GenomeRef;
+import org.renci.canvas.dao.refseq.model.LocationType;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
+import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
+import org.renci.canvas.dao.var.model.VariantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +55,9 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
             GenomeRef genomeRef = diagnosticResultVersion.getGenomeRef();
             logger.info(genomeRef.toString());
+
+            List<LocationType> allLocationTypes = daoBean.getLocationTypeDAO().findAll();
+            List<VariantEffect> allVariantEffects = daoBean.getVariantEffectDAO().findAll();
 
             List<LocatedVariant> locatedVariantList = daoBean.getLocatedVariantDAO().findByAssemblyId(binningJob.getAssembly().getId());
 
@@ -116,15 +122,15 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                                 || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                                         && "+".equals(tMap.getStrand()))) {
                                             variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                                    transcriptMapsExonsList, transcriptMapsExons);
+                                                    transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                                         } else {
                                             variant = variantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList,
-                                                    transcriptMapsExonsList, transcriptMapsExons);
+                                                    transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                                         }
 
                                     } else {
                                         variant = variantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap,
-                                                transcriptMapsExonsList);
+                                                transcriptMapsExonsList, allLocationTypes, allVariantEffects);
                                     }
                                     Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                     if (foundVariant == null) {
@@ -176,11 +182,11 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                             TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                                             logger.debug(transcriptMapsExons.toString());
                                             variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                                    transcriptMapsExonsList, transcriptMapsExons);
+                                                    transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                                         } else {
                                             // we have a border crossing variant starting in an intron
                                             variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                                    transcriptMapsExonsList, null);
+                                                    transcriptMapsExonsList, null, allLocationTypes, allVariantEffects);
                                         }
                                         Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                         if (foundVariant == null) {
@@ -228,11 +234,12 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                                 TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                                                 logger.debug(transcriptMapsExons.toString());
                                                 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap,
-                                                        mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                                                        mapsList, transcriptMapsExonsList, transcriptMapsExons, allLocationTypes,
+                                                        allVariantEffects);
                                             } else {
                                                 // we have a border crossing variant starting in an intron
                                                 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap,
-                                                        mapsList, transcriptMapsExonsList, null);
+                                                        mapsList, transcriptMapsExonsList, null, allLocationTypes, allVariantEffects);
                                             }
                                             Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                             if (foundVariant == null) {

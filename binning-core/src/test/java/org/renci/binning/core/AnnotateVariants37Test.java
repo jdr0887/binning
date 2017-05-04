@@ -27,8 +27,10 @@ import org.renci.canvas.dao.jpa.refseq.TranscriptMapsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
+import org.renci.canvas.dao.refseq.model.LocationType;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
+import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -111,6 +113,9 @@ public class AnnotateVariants37Test {
         org.renci.canvas.binning.core.grch37.VariantsFactory variantsFactory = org.renci.canvas.binning.core.grch37.VariantsFactory
                 .getInstance();
 
+        List<LocationType> allLocationTypes = daoBean.getLocationTypeDAO().findAll();
+        List<VariantEffect> allVariantEffects = daoBean.getVariantEffectDAO().findAll();
+
         final List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
                 .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61", locatedVariant.getGenomeRefSeq().getId(),
                         locatedVariant.getPosition());
@@ -145,14 +150,15 @@ public class AnnotateVariants37Test {
                             || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                     && "+".equals(tMap.getStrand()))) {
                         variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons);
+                                transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                     } else {
                         variant = variantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList, transcriptMapsExonsList,
-                                transcriptMapsExons);
+                                transcriptMapsExons, allLocationTypes, allVariantEffects);
                     }
 
                 } else {
-                    variant = variantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap, transcriptMapsExonsList);
+                    variant = variantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap, transcriptMapsExonsList,
+                            allLocationTypes, allVariantEffects);
                 }
 
                 variants.add(variant);
@@ -191,12 +197,12 @@ public class AnnotateVariants37Test {
                         TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                         logger.info(transcriptMapsExons.toString());
                         Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons);
+                                transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                         variants.add(variant);
                     } else {
                         // we have a border crossing variant starting in an intron
                         Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, null);
+                                transcriptMapsExonsList, null, allLocationTypes, allVariantEffects);
                         variants.add(variant);
                     }
 
@@ -232,12 +238,12 @@ public class AnnotateVariants37Test {
                         TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                         logger.info(transcriptMapsExons.toString());
                         Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons);
+                                transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
                         variants.add(variant);
                     } else {
                         // we have a border crossing variant starting in an intron
                         Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, null);
+                                transcriptMapsExonsList, null, allLocationTypes, allVariantEffects);
                         variants.add(variant);
                     }
                 }

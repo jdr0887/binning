@@ -93,7 +93,7 @@ public abstract class AbstractVariantsFactory {
         return ret;
     }
 
-    protected LocationType getLocationType(CANVASDAOBeanService daoBean, Range<Integer> locatedVariantRange,
+    protected String getLocationType(CANVASDAOBeanService daoBean, Range<Integer> locatedVariantRange,
             Range<Integer> transcriptMapsExonsContigRange, Range<Integer> transcriptMapsExonsTranscriptRange, Range<Integer> proteinRange,
             TranscriptMaps tMap, Integer transcriptPosition) throws CANVASDAOException {
 
@@ -114,8 +114,7 @@ public abstract class AbstractVariantsFactory {
             }
 
         }
-        LocationType locationType = daoBean.getLocationTypeDAO().findById(locationTypeValue);
-        return locationType;
+        return locationTypeValue;
     }
 
     protected Integer getIntronExonDistance(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
