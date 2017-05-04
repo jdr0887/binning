@@ -66,7 +66,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                     return ret;
                 });
 
-                ExecutorService es = Executors.newFixedThreadPool(2);
+                ExecutorService es = Executors.newFixedThreadPool(4);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
@@ -128,7 +128,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                     }
                                     Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                     if (foundVariant == null) {
-                                        daoBean.getVariants_80_4_DAO().save(variant);
+                                        // daoBean.getVariants_80_4_DAO().save(variant);
                                     }
 
                                 }
@@ -184,7 +184,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                         }
                                         Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                         if (foundVariant == null) {
-                                            daoBean.getVariants_80_4_DAO().save(variant);
+                                            // daoBean.getVariants_80_4_DAO().save(variant);
                                         }
 
                                     }
@@ -236,7 +236,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                             }
                                             Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                             if (foundVariant == null) {
-                                                daoBean.getVariants_80_4_DAO().save(variant);
+                                                // daoBean.getVariants_80_4_DAO().save(variant);
                                             }
                                         }
                                     }
