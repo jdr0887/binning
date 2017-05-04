@@ -55,7 +55,7 @@ public abstract class AbstractVariantsFactory {
             case "sub":
                 if (useComplement) {
                     ret = String.format("%s:%s.%s_%ddelins%s", accession, accessionType, Integer.valueOf(position - ref.length() + 1),
-                            intronExonDistance, position, alt);
+                            position, alt);
                 } else {
                     ret = String.format("%s:%s.%s_%ddelins%s", accession, accessionType, position,
                             Integer.valueOf(position + ref.length() - 1), alt);
@@ -233,6 +233,9 @@ public abstract class AbstractVariantsFactory {
 
             Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
             Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+            if ("sub".equals(locatedVariant.getVariantType().getId())) {
+                left = transcriptPosition - proteinExonIntersection.getMinimum();
+            }
             return Math.abs(left) < Math.abs(right) ? left : right;
 
         }
@@ -320,25 +323,32 @@ public abstract class AbstractVariantsFactory {
             return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
                     originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
 
-        } else {
+        }
 
-            if ("ins".equals(variantType)) {
+        if ("ins".equals(variantType)) {
 
-                if ("-".equals(strand)) {
-                    return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
-                            originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
-                }
-
-                return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
-                        originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
-
-            } else {
-
+            if ("-".equals(strand)) {
                 return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
                         originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
             }
 
+            return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
+                    originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
         }
+
+        if ("sub".equals(variantType)) {
+
+            if ("-".equals(strand)) {
+                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
+                        originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
+            }
+
+            return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
+                    originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
+        }
+
+        return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
+                originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
 
     }
 
@@ -348,6 +358,26 @@ public abstract class AbstractVariantsFactory {
 
         if ("snp".equals(variantType) && frameshift && !inframe) {
             ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue();
+        }
+
+        if ("sub".equals(variantType)) {
+            if ("-".equals(strand)) {
+
+                if (!frameshift && !inframe) {
+                    ret = Double.valueOf(Math.ceil((codingSequencePosition - 1) / 3D)).intValue();
+                }
+
+                if (!frameshift && inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3) + 1;
+                }
+
+                if (frameshift && !inframe) {
+                    ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3) + 1;
+                }
+
+            } else {
+                ret = Double.valueOf(Math.ceil((codingSequencePosition - 1) / 3D)).intValue();
+            }
         }
 
         if ("del".equals(variantType)) {
@@ -367,7 +397,7 @@ public abstract class AbstractVariantsFactory {
                 }
 
             } else {
-                ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue();
+                ret = Double.valueOf(Math.ceil((codingSequencePosition - 1) / 3D)).intValue();
             }
 
         }
@@ -389,7 +419,7 @@ public abstract class AbstractVariantsFactory {
                 }
 
             } else {
-                ret = Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue();
+                ret = Double.valueOf(Math.ceil((codingSequencePosition) / 3D)).intValue();
             }
 
         }
