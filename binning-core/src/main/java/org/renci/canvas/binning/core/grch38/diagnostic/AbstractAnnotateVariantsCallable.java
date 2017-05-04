@@ -72,7 +72,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                     return ret;
                 });
 
-                ExecutorService es = Executors.newFixedThreadPool(4);
+                ExecutorService es = Executors.newFixedThreadPool(6);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
