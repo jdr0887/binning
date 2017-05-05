@@ -416,6 +416,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             List<Feature> featureList = daoBean.getFeatureDAO().findByRefSeqVersionAndTranscriptIdAndTranscriptPosition(getRefSeqVersion(),
                     transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), variant.getTranscriptPosition());
+
             featureList.sort((a, b) -> b.getRegionGroup().getId().compareTo(a.getRegionGroup().getId()));
             if (CollectionUtils.isNotEmpty(featureList)) {
                 Feature feature = featureList.get(0);
@@ -441,6 +442,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
 
             Range<Integer> proteinRange = null;
+
             List<RefSeqCodingSequence> refSeqCodingSequenceList = daoBean.getRefSeqCodingSequenceDAO().findByRefSeqVersionAndTranscriptId(
                     getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId());
 
@@ -514,8 +516,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     DNAToRNATranslator dna2RnaTranslator = engine.getDnaRnaTranslator();
                     RNAToAminoAcidTranslator rna2AminoAcidTranslator = engine.getRnaAminoAcidTranslator();
 
-                    String originalDNASeq = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
-                    originalDNASeq = originalDNASeq.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
+                    String transcriptDNASequence = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
+                    String originalDNASeq = transcriptDNASequence.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
 
                     DNASequence originalDNASequence = new DNASequence(originalDNASeq);
                     Sequence<NucleotideCompound> originalRNASequence = dna2RnaTranslator.createSequence(originalDNASequence);
@@ -593,15 +595,22 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             variant.setInframe(variant.getCodingSequencePosition() % 3 == 0 && !variant.getFrameshift());
                         }
 
-                        variant.setAminoAcidStart(getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
+                        Integer aaStart = getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
                                 variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
-                                transcriptMapsExons.getTranscriptMaps().getStrand()));
+                                transcriptMapsExons.getTranscriptMaps().getStrand());
+
+                        if (Double.valueOf(Math.ceil((variant.getTranscriptPosition()) / 3D))
+                                .intValue() == (Double.valueOf(Math.ceil((proteinRange.getMaximum()) / 3D)).intValue())) {
+                            --aaStart;
+                        }
+
+                        variant.setAminoAcidStart(aaStart);
 
                         AminoAcidCompound originalAACompound = originalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
 
                         Pair<String, String> dnaSequenceParts = getDNASequenceParts(variant.getVariantType().getId(),
-                                transcriptMapsExons.getTranscriptMaps().getStrand(), originalDNASeq, variant.getCodingSequencePosition(),
-                                variant.getReferenceAllele());
+                                transcriptMapsExons.getTranscriptMaps().getStrand(), transcriptDNASequence, proteinRange,
+                                variant.getCodingSequencePosition(), variant.getReferenceAllele(), variant.getAlternateAllele());
 
                         String finalDNASeq = String.format("%s%s%s", dnaSequenceParts.getLeft(), variant.getAlternateAllele(),
                                 dnaSequenceParts.getRight());
@@ -644,9 +653,15 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 variant.setAminoAcidEnd(originalProteinSequence.getLength() + variant.getAlternateAllele().length());
                             }
 
-                            if (refSeqCDS != null && Arrays.asList("snp", "del").contains(variant.getVariantType().getId())) {
-                                variant.setHgvsProtein(String.format("%s:p.%s%dfs", refSeqCDS.getProteinId(),
-                                        originalAACompound.getLongName(), variant.getAminoAcidStart()));
+                            if (refSeqCDS != null) {
+                                if (Arrays.asList("snp", "del").contains(variant.getVariantType().getId())) {
+                                    variant.setHgvsProtein(String.format("%s:p.%s%dfs", refSeqCDS.getProteinId(),
+                                            originalAACompound.getLongName(), variant.getAminoAcidStart()));
+                                } else if ((variant.getCodingSequencePosition() + variant.getAlternateAllele().length()
+                                        - 1) > originalDNASeq.length()) {
+                                    variant.setHgvsProtein(String.format("%s:p.Ter%d%sext*?", refSeqCDS.getProteinId(),
+                                            variant.getAminoAcidStart(), originalAACompound.getLongName()));
+                                }
                             }
 
                             if ("del".equals(variant.getLocatedVariant().getVariantType().getId())
@@ -692,32 +707,45 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                             if (refSeqCDS != null) {
 
-                                if ("del".equals(variant.getVariantType().getId()) && !variant.getInframe()) {
-                                    List<AminoAcidCompound> aaCompounds = new LinkedList<>();
+                                if ((variant.getCodingSequencePosition() + variant.getReferenceAllele().length() - 1) > originalDNASeq
+                                        .length()) {
 
-                                    int tmpStart = variant.getAminoAcidStart() - 1;
-                                    AminoAcidCompound tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
-                                    AminoAcidCompound tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
-                                    while (tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
+                                    variant.setHgvsProtein(String.format("%s:p.Ter%d%sext*?", refSeqCDS.getProteinId(),
+                                            variant.getAminoAcidStart(), originalAACompound.getLongName()));
 
-                                        ++tmpStart;
-                                        tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
-                                        tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
-                                        if (!tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
-                                            aaCompounds.add(tmpFinalAACompound);
-                                            break;
+                                } else if ("del".equals(variant.getVariantType().getId()) && !variant.getInframe()) {
+
+                                    if (variant.getAminoAcidStart() == originalProteinSequence.getLength()) {
+
+                                    } else {
+
+                                        List<AminoAcidCompound> aaCompounds = new LinkedList<>();
+
+                                        int tmpStart = variant.getAminoAcidStart() - 1;
+                                        AminoAcidCompound tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
+                                        AminoAcidCompound tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
+                                        while (tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
+
+                                            ++tmpStart;
+                                            tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
+                                            tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
+                                            if (!tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
+                                                aaCompounds.add(tmpFinalAACompound);
+                                                break;
+                                            }
+
                                         }
 
+                                        aaCompounds.forEach(a -> shortNames.append(a.getBase()));
+                                        variant.setFinalAminoAcid(shortNames.toString());
+
+                                        aaCompounds.forEach(a -> longNames.append(a.getLongName()));
+                                        variant.setHgvsProtein(String.format("%s:p.%s%d_%s%ddelins%s", refSeqCDS.getProteinId(),
+                                                originalAACompound.getLongName(), variant.getAminoAcidStart(),
+                                                originalProteinSequence.getCompoundAt(variant.getAminoAcidEnd()).getLongName(),
+                                                variant.getAminoAcidEnd(), longNames.toString()));
+
                                     }
-
-                                    aaCompounds.forEach(a -> shortNames.append(a.getBase()));
-                                    variant.setFinalAminoAcid(shortNames.toString());
-
-                                    aaCompounds.forEach(a -> longNames.append(a.getLongName()));
-                                    variant.setHgvsProtein(String.format("%s:p.%s%d_%s%ddelins%s", refSeqCDS.getProteinId(),
-                                            originalAACompound.getLongName(), variant.getAminoAcidStart(),
-                                            originalProteinSequence.getCompoundAt(variant.getAminoAcidEnd()).getLongName(),
-                                            variant.getAminoAcidEnd(), longNames.toString()));
 
                                 } else if (Arrays.asList("sub", "ins").contains(variant.getVariantType().getId())) {
 

@@ -513,8 +513,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     DNAToRNATranslator dna2RnaTranslator = engine.getDnaRnaTranslator();
                     RNAToAminoAcidTranslator rna2AminoAcidTranslator = engine.getRnaAminoAcidTranslator();
 
-                    String originalDNASeq = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
-                    originalDNASeq = originalDNASeq.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
+                    String transcriptDNASequence = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
+                    String originalDNASeq = transcriptDNASequence.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
 
                     DNASequence originalDNASequence = new DNASequence(originalDNASeq);
                     Sequence<NucleotideCompound> originalRNASequence = dna2RnaTranslator.createSequence(originalDNASequence);
@@ -592,15 +592,22 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             variant.setInframe(variant.getCodingSequencePosition() % 3 == 0 && !variant.getFrameshift());
                         }
 
-                        variant.setAminoAcidStart(getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
+                        Integer aaStart = getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
                                 variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
-                                transcriptMapsExons.getTranscriptMaps().getStrand()));
+                                transcriptMapsExons.getTranscriptMaps().getStrand());
+
+                        if (Double.valueOf(Math.ceil((variant.getTranscriptPosition()) / 3D))
+                                .intValue() == (Double.valueOf(Math.ceil((proteinRange.getMaximum()) / 3D)).intValue())) {
+                            --aaStart;
+                        }
+
+                        variant.setAminoAcidStart(aaStart);
 
                         AminoAcidCompound originalAACompound = originalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
 
                         Pair<String, String> dnaSequenceParts = getDNASequenceParts(variant.getVariantType().getId(),
-                                transcriptMapsExons.getTranscriptMaps().getStrand(), originalDNASeq, variant.getCodingSequencePosition(),
-                                variant.getReferenceAllele());
+                                transcriptMapsExons.getTranscriptMaps().getStrand(), transcriptDNASequence, proteinRange,
+                                variant.getCodingSequencePosition(), variant.getReferenceAllele(), variant.getAlternateAllele());
 
                         String finalDNASeq = String.format("%s%s%s", dnaSequenceParts.getLeft(), variant.getAlternateAllele(),
                                 dnaSequenceParts.getRight());
