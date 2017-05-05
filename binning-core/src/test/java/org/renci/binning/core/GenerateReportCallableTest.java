@@ -32,11 +32,11 @@ public class GenerateReportCallableTest {
                 .findAnalyzedVariantsCount(diagnosticBinningJob.getParticipant());
         report.setNumberOfAnalyzedVariants(analyzedVariantsCount.intValue());
 
-        report.setNumberOfHGMDKnownPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+        report.setNumberOfHGMDKnownPathogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
                 .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 1).intValue());
-        report.setNumberOfHGMDLikelyPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+        report.setNumberOfHGMDLikelyPathogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
                 .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 2).intValue());
-        report.setNumberOfHGMDPossiblyPathenogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
+        report.setNumberOfHGMDPossiblyPathogenic(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
                 .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 3).intValue());
         report.setNumberOfHGMDVariantsOfUncertainSignificance(daoMgr.getDAOBean().getBinResultsFinalDiagnosticDAO()
                 .findByAssemblyIdAndHGMDDiseaseClassId(diagnosticBinningJob.getAssembly().getId(), 4).intValue());
