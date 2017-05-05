@@ -45,11 +45,11 @@ public abstract class AbstractGenerateReportCallable implements Callable<Report>
             report.setNumberOfAnalyzedVariants(analyzedVariantsCount.intValue());
 
             // hgmd
-            report.setNumberOfHGMDKnownPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+            report.setNumberOfHGMDKnownPathogenic(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 1).intValue());
-            report.setNumberOfHGMDLikelyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+            report.setNumberOfHGMDLikelyPathogenic(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 2).intValue());
-            report.setNumberOfHGMDPossiblyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+            report.setNumberOfHGMDPossiblyPathogenic(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 3).intValue());
             report.setNumberOfHGMDVariantsOfUncertainSignificance(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 4).intValue());
@@ -59,11 +59,11 @@ public abstract class AbstractGenerateReportCallable implements Callable<Report>
                     .findByAssemblyIdAndHGMDDiseaseClassId(binningJob.getAssembly().getId(), 6).intValue());
 
             // clinvar
-            report.setNumberOfClinVarKnownPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+            report.setNumberOfClinVarKnownPathogenic(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 1).intValue());
-            report.setNumberOfClinVarLikelyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+            report.setNumberOfClinVarLikelyPathogenic(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 2).intValue());
-            report.setNumberOfClinVarPossiblyPathenogenic(daoBean.getBinResultsFinalDiagnosticDAO()
+            report.setNumberOfClinVarPossiblyPathogenic(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 3).intValue());
             report.setNumberOfClinVarVariantsOfUncertainSignificance(daoBean.getBinResultsFinalDiagnosticDAO()
                     .findByAssemblyIdAndClinVarDiseaseClassId(binningJob.getAssembly().getId(), 4).intValue());
