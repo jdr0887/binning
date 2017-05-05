@@ -390,29 +390,33 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                             locatedVariant.setVariantType(allVariantTypes.stream()
                                                                     .filter(a -> a.getId().equals("ins")).findAny().get());
 
-                                                            for (int i = 0; i < referenceChars.length; ++i) {
-                                                                if (referenceChars[i] != alternateChars[i]) {
-                                                                    break;
+                                                            if (referenceChars.length > 1 && alternateChars.length > 1) {
+
+                                                                for (int i = 0; i < referenceChars.length; ++i) {
+                                                                    if (referenceChars[i] != alternateChars[i]) {
+                                                                        break;
+                                                                    }
+                                                                    frontChars2Remove.append(referenceChars[i]);
                                                                 }
-                                                                frontChars2Remove.append(referenceChars[i]);
-                                                            }
 
-                                                            for (int i = referenceChars.length - 1; i > 0; --i) {
-                                                                if (referenceChars[i] != alternateChars[i]) {
-                                                                    break;
+                                                                for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                                    if (referenceChars[i] != alternateChars[i]) {
+                                                                        break;
+                                                                    }
+                                                                    backChars2Remove.append(referenceChars[i]);
                                                                 }
-                                                                backChars2Remove.append(referenceChars[i]);
-                                                            }
 
-                                                            if (frontChars2Remove.length() > 0) {
-                                                                ref = ref.replaceFirst(frontChars2Remove.toString(), "");
-                                                                alt = alt.replaceFirst(frontChars2Remove.toString(), "");
-                                                            }
+                                                                if (frontChars2Remove.length() > 0) {
+                                                                    ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+                                                                    alt = alt.replaceFirst(frontChars2Remove.toString(), "");
+                                                                }
 
-                                                            if (backChars2Remove.length() > 0) {
-                                                                backChars2Remove.reverse();
-                                                                ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
-                                                                alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+                                                                if (backChars2Remove.length() > 0) {
+                                                                    backChars2Remove.reverse();
+                                                                    ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
+                                                                    alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+                                                                }
+
                                                             }
 
                                                             locatedVariant
@@ -427,29 +431,31 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                             locatedVariant.setVariantType(allVariantTypes.stream()
                                                                     .filter(a -> a.getId().equals("snp")).findAny().get());
 
-                                                            for (int i = 0; i < referenceChars.length; ++i) {
-                                                                if (referenceChars[i] != alternateChars[i]) {
-                                                                    break;
+                                                            if (referenceChars.length > 1 && alternateChars.length > 1) {
+                                                                for (int i = 0; i < referenceChars.length; ++i) {
+                                                                    if (referenceChars[i] != alternateChars[i]) {
+                                                                        break;
+                                                                    }
+                                                                    frontChars2Remove.append(referenceChars[i]);
                                                                 }
-                                                                frontChars2Remove.append(referenceChars[i]);
-                                                            }
 
-                                                            for (int i = referenceChars.length - 1; i > 0; --i) {
-                                                                if (referenceChars[i] != alternateChars[i]) {
-                                                                    break;
+                                                                for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                                    if (referenceChars[i] != alternateChars[i]) {
+                                                                        break;
+                                                                    }
+                                                                    backChars2Remove.append(referenceChars[i]);
                                                                 }
-                                                                backChars2Remove.append(referenceChars[i]);
-                                                            }
 
-                                                            if (frontChars2Remove.length() > 0) {
-                                                                ref = ref.replaceFirst(frontChars2Remove.toString(), "");
-                                                                alt = alt.replaceFirst(frontChars2Remove.toString(), "");
-                                                            }
+                                                                if (frontChars2Remove.length() > 0) {
+                                                                    ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+                                                                    alt = alt.replaceFirst(frontChars2Remove.toString(), "");
+                                                                }
 
-                                                            if (backChars2Remove.length() > 0) {
-                                                                backChars2Remove.reverse();
-                                                                ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
-                                                                alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+                                                                if (backChars2Remove.length() > 0) {
+                                                                    backChars2Remove.reverse();
+                                                                    ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
+                                                                    alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+                                                                }
                                                             }
 
                                                             locatedVariant
