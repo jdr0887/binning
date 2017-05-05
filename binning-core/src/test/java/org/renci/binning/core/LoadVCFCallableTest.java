@@ -30,6 +30,53 @@ public class LoadVCFCallableTest {
     private static final Logger logger = LoggerFactory.getLogger(LoadVCFCallableTest.class);
 
     @Test
+    public void scratch() {
+
+        Integer position = 104951923;
+        String ref = "TGACG";
+        String alt = "TGTCG";
+        
+        char[] referenceChars = ref.toCharArray();
+        char[] alternateChars = alt.toCharArray();
+
+        StringBuilder frontChars2Remove = new StringBuilder();
+        StringBuilder backChars2Remove = new StringBuilder();
+
+        for (int i = 0; i < referenceChars.length; ++i) {
+            if (referenceChars[i] != alternateChars[i]) {
+                break;
+            }
+            frontChars2Remove.append(referenceChars[i]);
+        }
+
+        for (int i = referenceChars.length - 1; i > 0; --i) {
+            if (referenceChars[i] != alternateChars[i]) {
+                break;
+            }
+            backChars2Remove.append(referenceChars[i]);
+        }
+
+        LocatedVariant locatedVariant = new LocatedVariant();
+
+        if (frontChars2Remove.length() > 0) {
+            ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+            alt = alt.replaceFirst(frontChars2Remove.toString(), "");
+        }
+
+        if (backChars2Remove.length() > 0) {
+            backChars2Remove.reverse();
+            ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
+            alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+        }
+
+        locatedVariant.setPosition(position + frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0);
+        locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+        locatedVariant.setRef(ref);
+        locatedVariant.setSeq(alt);
+        System.out.println(locatedVariant.toString());
+    }   
+
+    @Test
     public void test() throws CANVASDAOException, BinningException, IOException {
 
         // File vcfFile = new File("/tmp", "GSK_007006.merged.fb.sorted.va.vcf");
