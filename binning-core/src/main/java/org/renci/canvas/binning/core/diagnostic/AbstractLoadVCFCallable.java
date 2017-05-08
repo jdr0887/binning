@@ -377,6 +377,14 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
                                         String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
                                         switch (type) {
+                                            case "del":
+                                                locatedVariant.setVariantType(
+                                                        allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get());
+                                                locatedVariant.setPosition(variantContext.getStart() + 1);
+                                                locatedVariant.setEndPosition(variantContext.getStart() + 1 + ref.length());
+                                                locatedVariant.setRef(ref);
+                                                locatedVariant.setSeq(ref);
+                                                break;
                                             case "ins":
                                                 locatedVariant.setVariantType(
                                                         allVariantTypes.stream().filter(a -> a.getId().equals("ins")).findAny().get());
