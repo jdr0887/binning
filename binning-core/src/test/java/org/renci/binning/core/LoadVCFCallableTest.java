@@ -167,7 +167,7 @@ public class LoadVCFCallableTest {
 
                     for (Allele altAllele : variantContext.getAlternateAlleles()) {
                         LocatedVariant locatedVariant = new LocatedVariant();
-                        if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+                        if (variantContext.isSimpleInsertion()) {
                             locatedVariant.setPosition(variantContext.getStart());
                             locatedVariant.setVariantType(new VariantType("ins"));
                             String ref = variantContext.getReference().getDisplayString();
@@ -184,7 +184,7 @@ public class LoadVCFCallableTest {
 
                     for (Allele altAllele : variantContext.getAlternateAlleles()) {
                         LocatedVariant locatedVariant = new LocatedVariant();
-                        if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+                        if (variantContext.isSimpleDeletion()) {
                             locatedVariant.setPosition(variantContext.getStart() + 1);
                             locatedVariant.setRef(
                                     variantContext.getReference().getDisplayString().replaceFirst(altAllele.getDisplayString(), ""));
@@ -214,6 +214,14 @@ public class LoadVCFCallableTest {
                                 LocatedVariant locatedVariant = new LocatedVariant();
                                 String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
                                 switch (type) {
+                                    case "del":
+                                        locatedVariant.setPosition(variantContext.getStart() + 1);
+                                        locatedVariant.setVariantType(new VariantType("del"));
+                                        locatedVariant.setRef(variantContext.getReference().getDisplayString()
+                                                .replaceFirst(altAllele.getDisplayString(), ""));
+                                        locatedVariant.setSeq(locatedVariant.getRef());
+                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
+                                        break;
                                     case "ins":
                                         locatedVariant.setVariantType(new VariantType("ins"));
                                         locatedVariant.setPosition(variantContext.getStart());
