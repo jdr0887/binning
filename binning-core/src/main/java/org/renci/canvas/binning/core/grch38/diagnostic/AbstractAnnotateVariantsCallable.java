@@ -22,7 +22,6 @@ import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
-import org.renci.canvas.dao.var.model.VariantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
