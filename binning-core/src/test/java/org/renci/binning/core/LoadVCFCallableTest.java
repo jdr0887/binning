@@ -35,7 +35,7 @@ public class LoadVCFCallableTest {
         Integer position = 104951923;
         String ref = "TGACG";
         String alt = "TGTCG";
-        
+
         char[] referenceChars = ref.toCharArray();
         char[] alternateChars = alt.toCharArray();
 
@@ -74,7 +74,7 @@ public class LoadVCFCallableTest {
         locatedVariant.setRef(ref);
         locatedVariant.setSeq(alt);
         System.out.println(locatedVariant.toString());
-    }   
+    }
 
     @Test
     public void test() throws CANVASDAOException, BinningException, IOException {
@@ -82,7 +82,7 @@ public class LoadVCFCallableTest {
         // File vcfFile = new File("/tmp", "GSK_007006.merged.fb.sorted.va.vcf");
         // File vcfFile = new File("/tmp", "GSK_007217.merged.fb.sorted.va.vcf");
         // File vcfFile = new File("/tmp", "NCG_00020.merged.rg.deduped.filtered_by_dxid_7_v22.vcf");
-        File vcfFile = new File("/tmp", "HRC061-1.merged.rg.deduped.filtered.sorted.va.vcf");
+        File vcfFile = new File("/tmp/NCX_00004", "NCX_00004.merged.rg.deduped.filtered.srd.ps.va.vcf");
 
         int refSkippedCount = 0;
         int errorCount = 0;
@@ -147,154 +147,169 @@ public class LoadVCFCallableTest {
             List<VariantContext> variantContextList = variantContext2SampleNameMap.get(sampleName);
 
             if (CollectionUtils.isNotEmpty(variantContextList)) {
-                System.out.println("variantContextList.size(): " + variantContextList.size());
                 for (VariantContext variantContext : variantContextList) {
 
-                    try {
-
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
-                            LocatedVariant locatedVariant = new LocatedVariant();
-                            if (variantContext.isSNP()) {
-                                locatedVariant.setSeq(altAllele.getDisplayString());
-                                locatedVariant.setRef(variantContext.getReference().getDisplayString());
-                                locatedVariant.setPosition(variantContext.getStart());
-                                locatedVariant.setVariantType(new VariantType("snp"));
-                                locatedVariant.setEndPosition(variantContext.getStart() + locatedVariant.getRef().length());
-                                locatedVariantList.add(locatedVariant);
-                            }
+                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                        LocatedVariant locatedVariant = new LocatedVariant();
+                        if (variantContext.isSNP()) {
+                            locatedVariant.setSeq(altAllele.getDisplayString());
+                            locatedVariant.setRef(variantContext.getReference().getDisplayString());
+                            locatedVariant.setPosition(variantContext.getStart());
+                            locatedVariant.setVariantType(new VariantType("snp"));
+                            locatedVariant.setEndPosition(variantContext.getStart() + locatedVariant.getRef().length());
+                            locatedVariantList.add(locatedVariant);
                         }
+                    }
 
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
-                            LocatedVariant locatedVariant = new LocatedVariant();
-                            if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
-                                locatedVariant.setPosition(variantContext.getStart());
-                                locatedVariant.setVariantType(new VariantType("ins"));
-                                String ref = variantContext.getReference().getDisplayString();
-                                locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
-                                locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
-                                locatedVariant.setRef("");
-                                locatedVariantList.add(locatedVariant);
-                            }
+                }
+
+                for (VariantContext variantContext : variantContextList) {
+
+                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                        LocatedVariant locatedVariant = new LocatedVariant();
+                        if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+                            locatedVariant.setPosition(variantContext.getStart());
+                            locatedVariant.setVariantType(new VariantType("ins"));
+                            String ref = variantContext.getReference().getDisplayString();
+                            locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
+                            locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
+                            locatedVariant.setRef("");
+                            locatedVariantList.add(locatedVariant);
                         }
+                    }
 
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
-                            LocatedVariant locatedVariant = new LocatedVariant();
-                            if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
-                                locatedVariant.setPosition(variantContext.getStart() + 1);
-                                locatedVariant.setRef(
-                                        variantContext.getReference().getDisplayString().replaceFirst(altAllele.getDisplayString(), ""));
-                                locatedVariant.setSeq(locatedVariant.getRef());
-                                locatedVariant.setVariantType(new VariantType("del"));
-                                locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
-                                locatedVariantList.add(locatedVariant);
-                            }
+                }
+
+                for (VariantContext variantContext : variantContextList) {
+
+                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                        LocatedVariant locatedVariant = new LocatedVariant();
+                        if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
+                            locatedVariant.setPosition(variantContext.getStart() + 1);
+                            locatedVariant.setRef(
+                                    variantContext.getReference().getDisplayString().replaceFirst(altAllele.getDisplayString(), ""));
+                            locatedVariant.setSeq(locatedVariant.getRef());
+                            locatedVariant.setVariantType(new VariantType("del"));
+                            locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
+                            locatedVariantList.add(locatedVariant);
                         }
+                    }
 
-                        // cant trust htsjdk to parse properly...switch on freebayes type (if available)
-                        List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
-                            if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
+                }
 
-                                String ref = variantContext.getReference().getDisplayString();
-                                String alt = altAllele.getDisplayString();
+                for (VariantContext variantContext : variantContextList) {
 
-                                char[] referenceChars = ref.toCharArray();
-                                char[] alternateChars = alt.toCharArray();
+                    // cant trust htsjdk to parse properly...switch on freebayes type (if available)
+                    List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
+                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                        if ((variantContext.isIndel() && variantContext.isComplexIndel()) || variantContext.isMNP()) {
 
-                                StringBuilder charsToRemove = new StringBuilder();
+                            String ref = variantContext.getReference().getDisplayString();
+                            String alt = altAllele.getDisplayString();
 
-                                if (CollectionUtils.isNotEmpty(types)) {
-                                    LocatedVariant locatedVariant = new LocatedVariant();
-                                    String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
-                                    switch (type) {
-                                        case "ins":
-                                            locatedVariant.setVariantType(new VariantType("ins"));
-                                            locatedVariant.setRef("");
+                            char[] referenceChars = ref.toCharArray();
+                            char[] alternateChars = alt.toCharArray();
+
+                            if (CollectionUtils.isNotEmpty(types)) {
+                                LocatedVariant locatedVariant = new LocatedVariant();
+                                String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
+                                switch (type) {
+                                    case "ins":
+                                        locatedVariant.setVariantType(new VariantType("ins"));
+                                        locatedVariant.setPosition(variantContext.getStart());
+
+                                        if (referenceChars.length > 1 && alternateChars.length > 1) {
+
+                                            StringBuilder frontChars2Remove = new StringBuilder();
+                                            StringBuilder backChars2Remove = new StringBuilder();
 
                                             for (int i = 0; i < referenceChars.length; ++i) {
                                                 if (referenceChars[i] != alternateChars[i]) {
                                                     break;
                                                 }
-                                                charsToRemove.append(referenceChars[i]);
+                                                frontChars2Remove.append(referenceChars[i]);
                                             }
 
-                                            if (charsToRemove.length() > 0) {
-                                                // remove from front
-                                                locatedVariant.setPosition(variantContext.getStart() + charsToRemove.length());
-                                                locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
-                                                locatedVariant.setEndPosition(locatedVariant.getPosition() + charsToRemove.length());
-                                            } else {
-                                                // remove from back
-                                                for (int i = referenceChars.length - 1; i > 0; --i) {
-                                                    if (referenceChars[i] != alternateChars[i]) {
-                                                        break;
-                                                    }
-                                                    charsToRemove.append(referenceChars[i]);
+                                            for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                if (referenceChars[i] != alternateChars[i]) {
+                                                    break;
                                                 }
-
-                                                if (charsToRemove.length() > 0) {
-                                                    charsToRemove.reverse();
-                                                    locatedVariant.setPosition(variantContext.getStart());
-                                                    locatedVariant.setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
-                                                    locatedVariant.setEndPosition(
-                                                            locatedVariant.getPosition() + locatedVariant.getSeq().length());
-                                                }
+                                                backChars2Remove.append(referenceChars[i]);
                                             }
 
-                                            break;
-                                        case "snp":
-                                            locatedVariant.setVariantType(new VariantType("snp"));
+                                            if (frontChars2Remove.length() > 0) {
+                                                ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+                                                alt = alt.replaceFirst(frontChars2Remove.toString(), "");
+                                            }
+
+                                            if (backChars2Remove.length() > 0) {
+                                                backChars2Remove.reverse();
+                                                ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
+                                                alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+                                            }
+
+                                            locatedVariant.setPosition(variantContext.getStart()
+                                                    + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
+                                        }
+
+                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                        locatedVariant.setRef("");
+                                        locatedVariant.setSeq(alt);
+
+                                        break;
+                                    case "snp":
+                                        locatedVariant.setVariantType(new VariantType("snp"));
+                                        locatedVariant.setPosition(variantContext.getStart());
+
+                                        if (referenceChars.length > 1 && alternateChars.length > 1) {
+
+                                            StringBuilder frontChars2Remove = new StringBuilder();
+                                            StringBuilder backChars2Remove = new StringBuilder();
 
                                             for (int i = 0; i < referenceChars.length; ++i) {
                                                 if (referenceChars[i] != alternateChars[i]) {
                                                     break;
                                                 }
-                                                charsToRemove.append(referenceChars[i]);
+                                                frontChars2Remove.append(referenceChars[i]);
                                             }
 
-                                            if (charsToRemove.length() > 0) {
-                                                // remove from front
-                                                locatedVariant.setPosition(variantContext.getStart() + charsToRemove.length());
-                                                locatedVariant.setRef(ref.replaceFirst(charsToRemove.toString(), ""));
-                                                locatedVariant.setSeq(alt.replaceFirst(charsToRemove.toString(), ""));
-                                                locatedVariant
-                                                        .setEndPosition(locatedVariant.getPosition() + locatedVariant.getSeq().length());
-                                            } else {
-                                                // remove from back
-                                                for (int i = referenceChars.length - 1; i > 0; --i) {
-                                                    if (referenceChars[i] != alternateChars[i]) {
-                                                        break;
-                                                    }
-                                                    charsToRemove.append(referenceChars[i]);
+                                            for (int i = referenceChars.length - 1; i > 0; --i) {
+                                                if (referenceChars[i] != alternateChars[i]) {
+                                                    break;
                                                 }
-
-                                                if (charsToRemove.length() > 0) {
-                                                    charsToRemove.reverse();
-                                                    locatedVariant.setPosition(variantContext.getStart());
-                                                    locatedVariant.setRef(StringUtils.removeEnd(ref, charsToRemove.toString()));
-                                                    locatedVariant.setSeq(StringUtils.removeEnd(alt, charsToRemove.toString()));
-                                                    locatedVariant.setEndPosition(
-                                                            locatedVariant.getPosition() + locatedVariant.getSeq().length());
-                                                }
+                                                backChars2Remove.append(referenceChars[i]);
                                             }
 
-                                            break;
-                                        default:
-                                            locatedVariant.setVariantType(new VariantType("sub"));
-                                            locatedVariant.setPosition(variantContext.getStart());
-                                            locatedVariant.setRef(ref);
-                                            locatedVariant.setSeq(alt);
-                                            locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
-                                            break;
-                                    }
-                                    locatedVariantList.add(locatedVariant);
+                                            if (frontChars2Remove.length() > 0) {
+                                                ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+                                                alt = alt.replaceFirst(frontChars2Remove.toString(), "");
+                                            }
+
+                                            if (backChars2Remove.length() > 0) {
+                                                backChars2Remove.reverse();
+                                                ref = StringUtils.removeEnd(ref, backChars2Remove.toString());
+                                                alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
+                                            }
+
+                                            locatedVariant.setPosition(variantContext.getStart()
+                                                    + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
+                                        }
+                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                        locatedVariant.setRef(ref);
+                                        locatedVariant.setSeq(alt);
+
+                                        break;
+                                    default:
+                                        locatedVariant.setVariantType(new VariantType("sub"));
+                                        locatedVariant.setPosition(variantContext.getStart());
+                                        locatedVariant.setRef(ref);
+                                        locatedVariant.setSeq(alt);
+                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
+                                        break;
                                 }
+                                locatedVariantList.add(locatedVariant);
                             }
                         }
-
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                        e.printStackTrace();
                     }
 
                 }
