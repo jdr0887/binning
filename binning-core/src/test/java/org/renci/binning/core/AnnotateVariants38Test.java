@@ -221,7 +221,20 @@ public class AnnotateVariants38Test {
 
         return variants;
     }
+    
+    
+    @Test
+    public void testLocatedVariant588231648() throws Exception {
 
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(588231648L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 2);
+
+    }
+
+    
     @Test
     public void testLocatedVariant588227131() throws Exception {
 
