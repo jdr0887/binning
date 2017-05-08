@@ -193,7 +193,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                 if (CollectionUtils.isNotEmpty(variantContextList)) {
 
-                    ExecutorService es = Executors.newFixedThreadPool(4);
+                    ExecutorService es = Executors.newFixedThreadPool(6);
 
                     // snp
                     for (VariantContext variantContext : variantContextList) {
@@ -245,7 +245,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         es.shutdownNow();
                     }
 
-                    es = Executors.newFixedThreadPool(4);
+                    es = Executors.newFixedThreadPool(6);
                     // ins
                     for (VariantContext variantContext : variantContextList) {
 
@@ -296,7 +296,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         es.shutdownNow();
                     }
 
-                    es = Executors.newFixedThreadPool(4);
+                    es = Executors.newFixedThreadPool(6);
                     // del
                     for (VariantContext variantContext : variantContextList) {
 
@@ -349,7 +349,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         es.shutdownNow();
                     }
 
-                    es = Executors.newFixedThreadPool(4);
+                    es = Executors.newFixedThreadPool(6);
+
                     for (VariantContext variantContext : variantContextList) {
 
                         Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.parallelStream()
@@ -518,7 +519,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     });
                 }
                 es.shutdown();
-                if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
+                if (!es.awaitTermination(2L, TimeUnit.HOURS)) {
                     es.shutdownNow();
                 }
 
