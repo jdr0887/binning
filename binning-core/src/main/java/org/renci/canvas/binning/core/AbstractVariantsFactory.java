@@ -345,15 +345,15 @@ public abstract class AbstractVariantsFactory {
                         originalDNASeq.substring(codingSequencePosition + altAllele.length() - 1, originalDNASeq.length()));
             }
 
-            if ((codingSequencePosition + altAllele.length() - 1) > originalDNASeq.length()) {
+            if ((codingSequencePosition + altAllele.length()) > originalDNASeq.length()) {
                 originalDNASeq = transcriptDNASequence.substring(proteinRange.getMinimum() - 1,
-                        proteinRange.getMaximum() + refAllele.length());
+                        proteinRange.getMaximum() + altAllele.length());
                 return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
-                        originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
+                        originalDNASeq.substring(codingSequencePosition + altAllele.length() - 1, originalDNASeq.length()));
             }
 
             return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
-                    originalDNASeq.substring(codingSequencePosition + altAllele.length(), originalDNASeq.length()));
+                    originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
         }
 
         if ("sub".equals(variantType)) {
