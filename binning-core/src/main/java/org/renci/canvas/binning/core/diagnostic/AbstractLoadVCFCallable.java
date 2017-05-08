@@ -176,7 +176,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             }
             logger.info("expectecedLocatedVariantCount: {}", expectecedLocatedVariantCount);
 
-            final List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByGenomeRefIdAndSeqType(genomeRef.getId(), "Chromosome");
+            final List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByGenomeRefIdAndSeqType(genomeRef.getId(),
+                    "Chromosome");
 
             final Set<LocatedVariant> locatedVariantSet = new HashSet<>();
 
@@ -348,6 +349,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                         es.shutdownNow();
                     }
 
+                    es = Executors.newFixedThreadPool(4);
                     for (VariantContext variantContext : variantContextList) {
 
                         Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.parallelStream()
@@ -359,17 +361,18 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
                             for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
-                                if (!variantContext.isSNP() && !(variantContext.isIndel() && variantContext.isSimpleInsertion())
+                                if (CollectionUtils.isNotEmpty(types) && !variantContext.isSNP()
+                                        && !(variantContext.isIndel() && variantContext.isSimpleInsertion())
                                         && !(variantContext.isIndel() && variantContext.isSimpleDeletion())
                                         && (variantContext.isComplexIndel() || variantContext.isMNP())) {
 
-                                    String ref = variantContext.getReference().getDisplayString();
-                                    String alt = altAllele.getDisplayString();
+                                    es.submit(() -> {
+                                        String ref = variantContext.getReference().getDisplayString();
+                                        String alt = altAllele.getDisplayString();
 
-                                    char[] referenceChars = ref.toCharArray();
-                                    char[] alternateChars = alt.toCharArray();
+                                        char[] referenceChars = ref.toCharArray();
+                                        char[] alternateChars = alt.toCharArray();
 
-                                    if (CollectionUtils.isNotEmpty(types)) {
                                         LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
                                         String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
                                         switch (type) {
@@ -470,37 +473,54 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                 break;
                                         }
 
-                                        List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                                .findByExample(locatedVariant);
-                                        if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                            locatedVariant = foundLocatedVariants.get(0);
-                                        } else {
-                                            locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                        try {
+                                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                                    .findByExample(locatedVariant);
+                                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                                locatedVariant = foundLocatedVariants.get(0);
+                                            } else {
+                                                locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
+                                            }
+
+                                            if (!locatedVariantSet.contains(locatedVariant)) {
+                                                logger.info(locatedVariant.toString());
+                                                createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
+                                                locatedVariantSet.add(locatedVariant);
+                                            }
+                                        } catch (CANVASDAOException | BinningException e) {
+                                            logger.error(e.getMessage(), e);
                                         }
 
-                                        if (!locatedVariantSet.contains(locatedVariant)) {
-                                            logger.info(locatedVariant.toString());
-                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                            locatedVariantSet.add(locatedVariant);
-                                        }
+                                    });
 
-                                    }
                                 }
+
                             }
 
                         }
 
                     }
+                    es.shutdown();
+                    if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
+                        es.shutdownNow();
+                    }
                 }
 
-                locatedVariantSet.forEach(locatedVariant -> {
-                    try {
-                        logger.info(locatedVariant.toString());
-                        canonicalize(locatedVariant);
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                    }
-                });
+                ExecutorService es = Executors.newFixedThreadPool(4);
+                for (LocatedVariant locatedVariant : locatedVariantSet) {
+                    es.submit(() -> {
+                        try {
+                            logger.info(locatedVariant.toString());
+                            canonicalize(locatedVariant);
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    });
+                }
+                es.shutdown();
+                if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
+                    es.shutdownNow();
+                }
 
                 VariantSetLoad variantSetLoad = new VariantSetLoad();
                 variantSetLoad.setLoadFilename(vcfFile.getAbsolutePath());
