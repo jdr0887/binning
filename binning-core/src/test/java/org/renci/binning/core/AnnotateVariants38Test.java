@@ -190,7 +190,7 @@ public class AnnotateVariants38Test {
                 }
             } else {
                 transcriptMapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(
-                        2, "80", locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() - locatedVariant.getRef().length());
+                        4, "80", locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() - locatedVariant.getRef().length());
                 if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
                     transcriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
@@ -221,8 +221,18 @@ public class AnnotateVariants38Test {
 
         return variants;
     }
-    
-    
+
+    @Test
+    public void testLocatedVariant586786468() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(586786468L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 2);
+
+    }
+
     @Test
     public void testLocatedVariant588231648() throws Exception {
 
@@ -234,7 +244,6 @@ public class AnnotateVariants38Test {
 
     }
 
-    
     @Test
     public void testLocatedVariant588227131() throws Exception {
 
@@ -245,8 +254,7 @@ public class AnnotateVariants38Test {
         assertTrue(variants.size() == 2);
 
     }
-    
-    
+
     @Test
     public void testLocatedVariant588229844() throws Exception {
 
@@ -257,7 +265,20 @@ public class AnnotateVariants38Test {
         assertTrue(variants.size() == 1);
 
     }
+    
+    
+    @Test
+    public void testLocatedVariant588246290() throws Exception {
 
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(588246290L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+    }
+
+    
     
     
     @Test
