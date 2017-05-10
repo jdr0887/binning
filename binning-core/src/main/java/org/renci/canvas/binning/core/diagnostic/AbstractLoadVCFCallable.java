@@ -315,7 +315,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                         GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
                                         LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
 
-                                        locatedVariant.setPosition(variantContext.getStart() + 1);
+                                        locatedVariant.setPosition(variantContext.getStart());
                                         locatedVariant.setRef(variantContext.getReference().getDisplayString()
                                                 .replaceFirst(altAllele.getDisplayString(), ""));
                                         locatedVariant.setSeq(locatedVariant.getRef());
@@ -382,7 +382,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             case "del":
                                                 locatedVariant.setVariantType(
                                                         allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get());
-                                                locatedVariant.setPosition(variantContext.getStart() + 1);
+                                                locatedVariant.setPosition(variantContext.getStart());
 
                                                 if (referenceChars.length > 1 && alternateChars.length > 1) {
 
@@ -399,7 +399,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         ref = ref.replaceFirst(frontChars2Remove.toString(), "");
                                                     }
 
-                                                    locatedVariant.setPosition(variantContext.getStart() + 1
+                                                    locatedVariant.setPosition(variantContext.getStart()
                                                             + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
                                                 }
                                                 locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
