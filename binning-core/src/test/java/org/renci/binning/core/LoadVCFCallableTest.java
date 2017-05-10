@@ -215,12 +215,35 @@ public class LoadVCFCallableTest {
                                 String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
                                 switch (type) {
                                     case "del":
-                                        locatedVariant.setPosition(variantContext.getStart() + 1);
+
+                                        if (variantContext.getContig().equals("NC_000023.11") && variantContext.getStart() == 51496443) {
+                                            System.out.println("");
+                                        }
+                                        
                                         locatedVariant.setVariantType(new VariantType("del"));
-                                        locatedVariant.setRef(variantContext.getReference().getDisplayString()
-                                                .replaceFirst(altAllele.getDisplayString(), ""));
-                                        locatedVariant.setSeq(locatedVariant.getRef());
-                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
+                                        locatedVariant.setPosition(variantContext.getStart() + 1);
+                                        
+                                        if (referenceChars.length > 1 && alternateChars.length > 1) {
+
+                                            StringBuilder frontChars2Remove = new StringBuilder();
+
+                                            for (int i = 0; i < referenceChars.length; ++i) {
+                                                if (i == alternateChars.length || referenceChars[i] != alternateChars[i]) {
+                                                    break;
+                                                }
+                                                frontChars2Remove.append(referenceChars[i]);
+                                            }
+
+                                            if (frontChars2Remove.length() > 0) {
+                                                ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+                                            }
+
+                                            locatedVariant.setPosition(variantContext.getStart() + 1
+                                                    + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
+                                        }
+                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
+                                        locatedVariant.setRef(ref);
+                                        locatedVariant.setSeq(ref);
                                         break;
                                     case "ins":
                                         locatedVariant.setVariantType(new VariantType("ins"));
