@@ -212,6 +212,11 @@ public abstract class AbstractVariantsFactory {
                 }
 
             }
+            // if ("del".equals(variant.getLocatedVariant().getVariantType().getId())
+            // && "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+            // variant.setIntronExonDistance(
+            // Math.abs(locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum() - 2));
+            // }
 
             if (exonIndex == transcriptMapsExonsList.size() - 1) {
 
@@ -235,6 +240,11 @@ public abstract class AbstractVariantsFactory {
             if ("sub".equals(locatedVariant.getVariantType().getId())) {
                 left = transcriptPosition - proteinExonIntersection.getMinimum();
             }
+
+            if ("del".equals(locatedVariant.getVariantType().getId())) {
+                left = Math.abs(locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum() - 2);
+            }
+
             return Math.abs(left) < Math.abs(right) ? left : right;
 
         }
@@ -305,7 +315,9 @@ public abstract class AbstractVariantsFactory {
                 break;
             case "-":
                 if (proteinRange.contains(transcriptPosition)) {
-                    ret = transcriptPosition - proteinRange.getMinimum() + 1;
+                    ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum()
+                            - (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd()) + 1;
+                    // ret = transcriptPosition - proteinRange.getMinimum() + 1;
                 } else {
                     ret = (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition() + 1);
                 }
@@ -322,6 +334,14 @@ public abstract class AbstractVariantsFactory {
         if ("del".equals(variantType)) {
 
             if ("-".equals(strand)) {
+
+                if ((codingSequencePosition - refAllele.length()) < 0) {
+                    originalDNASeq = transcriptDNASequence.substring(proteinRange.getMinimum() - refAllele.length(),
+                            proteinRange.getMaximum());
+                    return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
+                            originalDNASeq.substring(codingSequencePosition + 1, originalDNASeq.length()));
+                }
+
                 return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
                         originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
             }
@@ -342,7 +362,7 @@ public abstract class AbstractVariantsFactory {
 
             if ("-".equals(strand)) {
                 return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
-                        originalDNASeq.substring(codingSequencePosition + altAllele.length() - 1, originalDNASeq.length()));
+                        originalDNASeq.substring(codingSequencePosition - 1, originalDNASeq.length()));
             }
 
             if ((codingSequencePosition + altAllele.length()) > originalDNASeq.length()) {
@@ -365,6 +385,17 @@ public abstract class AbstractVariantsFactory {
 
             return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
                     originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
+        }
+
+        if ("snp".equals(variantType)) {
+
+            if ("-".equals(strand)) {
+                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
+                        originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
+            }
+
+            return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
+                    originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
         }
 
         return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
