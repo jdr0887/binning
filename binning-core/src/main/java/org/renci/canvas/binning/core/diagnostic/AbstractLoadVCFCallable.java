@@ -67,7 +67,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     public abstract String getStudyName();
 
-    public abstract GenomeRef getGenomeRef();
+    public abstract GenomeRef getDefaultGenomeRef();
+
+    public abstract GenomeRef getLiftOverGenomeRef();
 
     public abstract LocatedVariant liftOver(LocatedVariant locatedVariant) throws BinningException;
 
@@ -107,7 +109,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             }
             logger.info(binningJob.toString());
 
-            final GenomeRef genomeRef = getGenomeRef();
+            final GenomeRef genomeRef = getDefaultGenomeRef();
             logger.info(genomeRef.toString());
 
             Map<String, List<VariantContext>> variantContext2SampleNameMap = new HashMap<String, List<VariantContext>>();
@@ -381,7 +383,26 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                 locatedVariant.setVariantType(
                                                         allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get());
                                                 locatedVariant.setPosition(variantContext.getStart() + 1);
-                                                locatedVariant.setEndPosition(variantContext.getStart() + 1 + ref.length());
+
+                                                if (referenceChars.length > 1 && alternateChars.length > 1) {
+
+                                                    StringBuilder frontChars2Remove = new StringBuilder();
+
+                                                    for (int i = 0; i < referenceChars.length; ++i) {
+                                                        if (i == alternateChars.length || referenceChars[i] != alternateChars[i]) {
+                                                            break;
+                                                        }
+                                                        frontChars2Remove.append(referenceChars[i]);
+                                                    }
+
+                                                    if (frontChars2Remove.length() > 0) {
+                                                        ref = ref.replaceFirst(frontChars2Remove.toString(), "");
+                                                    }
+
+                                                    locatedVariant.setPosition(variantContext.getStart() + 1
+                                                            + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
+                                                }
+                                                locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
                                                 locatedVariant.setRef(ref);
                                                 locatedVariant.setSeq(ref);
                                                 break;
@@ -586,52 +607,43 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO().findByLocatedVariantId(locatedVariant.getId());
             if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
                 canonicalAllele = foundCanonicalAlleles.get(0);
-            }
-
-            LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
-            if (liftOverLocatedVariant != null) {
-                if (locatedVariant.getVariantType().getId().equals("ins")) {
-                    // could have had a deletion in ref
-                    liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
-                }
-                List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
-                if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                    liftOverLocatedVariant = foundLocatedVariants.get(0);
-                } else {
-                    liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
-                }
-                logger.info("liftOver: {}", liftOverLocatedVariant.toString());
-            }
-
-            // if not found, try to find CanonicalAllele by liftover LocatedVariant
-            if (liftOverLocatedVariant != null && canonicalAllele == null) {
-                List<CanonicalAllele> foundCanonicalAllelesByLiftOverLocatedVariant = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(liftOverLocatedVariant.getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAllelesByLiftOverLocatedVariant)) {
-                    canonicalAllele = foundCanonicalAlleles.get(0);
-                }
-            }
-
-            // if still null, it doesn't exist...so create it
-            if (canonicalAllele == null) {
+            } else {
                 canonicalAllele = new CanonicalAllele();
                 daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
                 canonicalAllele.getLocatedVariants().add(locatedVariant);
-                if (liftOverLocatedVariant != null) {
-                    canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
-                }
-                daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
-            } else {
-
-                if (!canonicalAllele.getLocatedVariants().contains(locatedVariant)) {
-                    canonicalAllele.getLocatedVariants().add(locatedVariant);
-                }
-
-                if (liftOverLocatedVariant != null && !canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
-                    canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
-                }
                 daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
             }
+
+            // does canonical allele have liftOver LocatedVariant?
+            Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                    .filter(a -> a.getGenomeRef().getId().equals(getLiftOverGenomeRef().getId())).findAny();
+            if (!optionalLocatedVariant.isPresent()) {
+
+                LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
+                if (liftOverLocatedVariant != null) {
+
+                    if (locatedVariant.getVariantType().getId().equals("ins")) {
+                        // could have had a deletion in ref
+                        liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
+                    }
+
+                    List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
+                    if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                        liftOverLocatedVariant = foundLocatedVariants.get(0);
+                    } else {
+                        liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
+                    }
+                    logger.info("liftOver: {}", liftOverLocatedVariant.toString());
+
+                    if (!canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
+                        canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                        daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                    }
+
+                }
+
+            }
+
         } catch (CANVASDAOException e) {
             throw new BinningException(e);
         }
@@ -770,7 +782,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             if (CollectionUtils.isEmpty(foundAssemblies)) {
 
                 VariantSet variantSet = new VariantSet();
-                variantSet.setGenomeRef(getGenomeRef());
+                variantSet.setGenomeRef(getDefaultGenomeRef());
                 variantSet.setId(daoBean.getVariantSetDAO().save(variantSet));
 
                 assembly = new Assembly();
