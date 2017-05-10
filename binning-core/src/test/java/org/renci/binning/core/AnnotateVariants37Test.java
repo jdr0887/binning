@@ -255,6 +255,49 @@ public class AnnotateVariants37Test {
     }
 
     @Test
+    public void testLocatedVariant477725576() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(477725576L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+        Variants_61_2 variant = variants.get(0);
+
+        // assertTrue(variant.getId().getMapNumber().equals(1));
+        // assertTrue(variant.getNumberOfTranscriptMaps().equals(2));
+        assertTrue(variant.getLocatedVariant().getId().equals(477725576L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000002.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(240982394));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001080835.1"));
+        assertTrue(variant.getRefSeqGene().equals("PRR21"));
+        assertTrue(variant.getHgncGene().equals("PRR21"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(6));
+        assertTrue(variant.getCodingSequencePosition().equals(6));
+        assertTrue(variant.getAminoAcidStart().equals(1));
+        assertTrue(variant.getAminoAcidEnd().equals(391));
+        assertTrue(variant.getOriginalAminoAcid().equals("MHACS..."));
+        assertTrue(variant.getFinalAminoAcid().equals("SLFIH..."));
+        assertTrue(variant.getFrameshift().equals(Boolean.TRUE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-1165));
+        assertTrue(variant.getId().getVariantEffect().equals("frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(22939));
+        assertTrue(variant.getReferenceAllele().equals("ATGCA"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000002.11:g.240982394_240982398delATGCA"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001080835.1:c.2_6delTGCAT"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001080835.1:g.2_6delTGCAT"));
+        assertTrue(variant.getHgvsProtein().equals("NP_001074304.1:p.Met1fs"));
+        assertTrue(variant.getNonCanonicalExon().equals(1));
+        assertTrue(variant.getFeatureId().equals(0));
+
+    }
+
+    @Test
     public void testLocatedVariant385391408() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(385391408L);
