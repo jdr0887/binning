@@ -523,17 +523,19 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     Sequence<NucleotideCompound> originalRNASequence = dna2RnaTranslator.createSequence(originalDNASequence);
                     Sequence<AminoAcidCompound> originalProteinSequence = rna2AminoAcidTranslator.createSequence(originalRNASequence);
 
-                    String dnaSeqPart1, dnaSeqPart2;
-
                     if (variant.getReferenceAllele().length() == variant.getAlternateAllele().length()
                             && variant.getReferenceAllele().length() == 1) {
 
-                        variant.setAminoAcidStart(Double.valueOf(Math.ceil(variant.getCodingSequencePosition() / 3D)).intValue());
+                        Integer aaStart = getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
+                                variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
+                                transcriptMapsExons.getTranscriptMaps().getStrand());
 
-                        if ((variant.getCodingSequencePosition() / 3D) % 3 != 0
-                                && variant.getAminoAcidStart() >= originalProteinSequence.getLength()) {
-                            variant.setAminoAcidStart(variant.getAminoAcidStart() - 1);
+                        if (Double.valueOf(Math.ceil((variant.getTranscriptPosition()) / 3D))
+                                .intValue() == (Double.valueOf(Math.ceil((proteinRange.getMaximum()) / 3D)).intValue())) {
+                            --aaStart;
                         }
+
+                        variant.setAminoAcidStart(aaStart);
 
                         AminoAcidCompound originalAACompound = originalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
 
@@ -542,14 +544,15 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         variant.setAminoAcidEnd(
                                 variant.getAminoAcidStart() + (locatedVariant.getEndPosition() - locatedVariant.getPosition()));
 
-                        dnaSeqPart1 = originalDNASeq.substring(0, variant.getCodingSequencePosition() - 1);
-                        dnaSeqPart2 = originalDNASeq.substring(
-                                variant.getCodingSequencePosition() - 1 + (locatedVariant.getEndPosition() - locatedVariant.getPosition()));
+                        Pair<String, String> dnaSequenceParts = getDNASequenceParts(variant.getVariantType().getId(),
+                                transcriptMapsExons.getTranscriptMaps().getStrand(), transcriptDNASequence, proteinRange,
+                                variant.getCodingSequencePosition(), variant.getReferenceAllele(), variant.getAlternateAllele());
 
-                        String finalDNASeq = String.format("%s%s%s", dnaSeqPart1, variant.getAlternateAllele(), dnaSeqPart2);
+                        String finalDNASeq = String.format("%s%s%s", dnaSequenceParts.getLeft(), variant.getAlternateAllele(),
+                                dnaSequenceParts.getRight());
                         if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
                             String altAllele = new DNASequence(variant.getAlternateAllele()).getReverseComplement().getSequenceAsString();
-                            finalDNASeq = String.format("%s%s%s", dnaSeqPart1, altAllele, dnaSeqPart2);
+                            finalDNASeq = String.format("%s%s%s", dnaSequenceParts.getLeft(), altAllele, dnaSequenceParts.getRight());
                         }
 
                         DNASequence finalDNASequence = new DNASequence(finalDNASeq);
@@ -601,6 +604,11 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                         if (Double.valueOf(Math.ceil((variant.getTranscriptPosition()) / 3D))
                                 .intValue() == (Double.valueOf(Math.ceil((proteinRange.getMaximum()) / 3D)).intValue())) {
+                            --aaStart;
+                        }
+                        
+                        if ("del".equals(variant.getVariantType().getId())
+                                && variant.getCodingSequencePosition().equals(variant.getTranscriptPosition())) {
                             --aaStart;
                         }
 
@@ -664,11 +672,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 }
                             }
 
-                            if ("del".equals(variant.getLocatedVariant().getVariantType().getId())
-                                    && "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-                                variant.setIntronExonDistance(
-                                        Math.abs(locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum() - 2));
-                            }
                             variant.setVariantEffect(allVariantEffects.parallelStream().filter(a -> a.getId().equals("frameshifting indel"))
                                     .findFirst().get());
                             variant.getId().setVariantEffect(variant.getVariantEffect().getId());
