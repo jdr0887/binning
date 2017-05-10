@@ -71,6 +71,10 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                     return ret;
                 });
 
+                for (LocatedVariant locatedVariant : locatedVariantList) {
+                    daoBean.getVariants_80_4_DAO().deleteByLocatedVariantId(locatedVariant.getId());
+                }
+                
                 ExecutorService es = Executors.newFixedThreadPool(6);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
