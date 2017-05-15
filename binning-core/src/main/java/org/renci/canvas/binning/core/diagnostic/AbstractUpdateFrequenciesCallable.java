@@ -1,6 +1,5 @@
 package org.renci.canvas.binning.core.diagnostic;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +21,7 @@ import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractUpdateFrequenciesCallable implements Callable<List<MaxFrequency>> {
+public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractUpdateFrequenciesCallable.class);
 
@@ -37,10 +36,8 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
     }
 
     @Override
-    public List<MaxFrequency> call() throws BinningException {
+    public Void call() throws BinningException {
         logger.debug("ENTERING call()");
-        List<MaxFrequency> results = new ArrayList<>();
-
         try {
 
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO().findById(binningJob.getListVersion());
@@ -55,7 +52,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
 
-                ExecutorService es = Executors.newFixedThreadPool(2);
+                ExecutorService es = Executors.newFixedThreadPool(4);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
                     logger.info(locatedVariant.toString());
@@ -79,7 +76,8 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
                                 maxFrequency = new MaxFrequency(key, snpMaxFrequencySource);
                                 maxFrequency.setMaxAlleleFreq(snpPopulationMaxFrequencyList.get(0).getMaxAlleleFrequency());
                                 maxFrequency.setLocatedVariant(locatedVariant);
-                                results.add(maxFrequency);
+                                logger.info(maxFrequency.toString());
+                                daoBean.getMaxFrequencyDAO().save(maxFrequency);
                                 return;
                             }
 
@@ -98,7 +96,8 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
                                 maxFrequency = new MaxFrequency(key, indelMaxFrequencySource);
                                 maxFrequency.setMaxAlleleFreq(indelMaxFrequencyList.get(0).getMaxAlleleFrequency());
                                 maxFrequency.setLocatedVariant(locatedVariant);
-                                results.add(maxFrequency);
+                                logger.info(maxFrequency.toString());
+                                daoBean.getMaxFrequencyDAO().save(maxFrequency);
                                 return;
                             }
 
@@ -112,16 +111,21 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
                                 maxFrequency = new MaxFrequency(key, noneMaxFrequencySource);
                                 maxFrequency.setMaxAlleleFreq(0D);
                                 maxFrequency.setLocatedVariant(locatedVariant);
-                                results.add(maxFrequency);
+
+                                logger.info(maxFrequency.toString());
+                                daoBean.getMaxFrequencyDAO().save(maxFrequency);
                             }
+
                         } catch (CANVASDAOException e) {
-                            e.printStackTrace();
+                            logger.error(e.getMessage(), e);
                         }
 
                     });
 
-                    es.shutdown();
-                    es.awaitTermination(1L, TimeUnit.HOURS);
+                }
+                es.shutdown();
+                if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
+                    es.shutdownNow();
                 }
 
             }
@@ -131,7 +135,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<List
             throw new BinningException(e);
         }
 
-        return results;
+        return null;
     }
 
     public DiagnosticBinningJob getBinningJob() {
