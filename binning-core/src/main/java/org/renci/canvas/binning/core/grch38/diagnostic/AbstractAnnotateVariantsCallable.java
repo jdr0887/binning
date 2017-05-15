@@ -71,11 +71,23 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                     return ret;
                 });
 
+                logger.info("deleting Variants_80_4 instances");
+                ExecutorService es = Executors.newFixedThreadPool(4);
                 for (LocatedVariant locatedVariant : locatedVariantList) {
-                    daoBean.getVariants_80_4_DAO().deleteByLocatedVariantId(locatedVariant.getId());
+                    es.submit(() -> {
+                        try {
+                            daoBean.getVariants_80_4_DAO().deleteByLocatedVariantId(locatedVariant.getId());
+                        } catch (CANVASDAOException e) {
+                            logger.error(e.getMessage(), e);
+                        }
+                    });
                 }
-                
-                ExecutorService es = Executors.newFixedThreadPool(6);
+                es.shutdown();
+                if (!es.awaitTermination(1L, TimeUnit.DAYS)) {
+                    es.shutdownNow();
+                }
+
+                es = Executors.newFixedThreadPool(6);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
