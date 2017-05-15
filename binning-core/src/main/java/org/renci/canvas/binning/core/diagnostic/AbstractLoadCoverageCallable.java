@@ -73,8 +73,8 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
                     end = start;
                 }
 
-                List<DXExons> dxExonList = daoBean.getDXExonsDAO().findByListVersionAndChromosomeAndRange(binningJob.getListVersion(),
-                        chromosome, start, end);
+                DXExons example = new DXExons(binningJob.getListVersion(), null, null, null, chromosome, start, end, null);
+                List<DXExons> dxExonList = daoBean.getDXExonsDAO().findByExample(example);
                 if (CollectionUtils.isNotEmpty(dxExonList)) {
 
                     ExecutorService es = Executors.newFixedThreadPool(4);
