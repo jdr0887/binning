@@ -19,7 +19,6 @@ import org.renci.canvas.dao.clinbin.model.NCGenesFrequencies;
 import org.renci.canvas.dao.clinbin.model.NCGenesFrequenciesPK;
 import org.renci.canvas.dao.clinbin.model.UnimportantExon;
 import org.renci.canvas.dao.clinbin.model.UnimportantExonPK;
-import org.renci.canvas.dao.clinvar.model.AssertionRanking;
 import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertion;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
@@ -35,8 +34,23 @@ public class BinResultsFinalDiagnosticFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(BinResultsFinalDiagnosticFactory.class);
 
-    public static List<BinResultsFinalDiagnostic> findHGMDKnownPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
+    private static BinResultsFinalDiagnosticFactory instance;
+
+    private List<Integer> knownPathogenicClinVarAssertionRankings = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+
+    public static BinResultsFinalDiagnosticFactory getInstance() {
+        if (instance == null) {
+            instance = new BinResultsFinalDiagnosticFactory();
+        }
+        return instance;
+    }
+
+    private BinResultsFinalDiagnosticFactory() {
+        super();
+    }
+
+    public List<BinResultsFinalDiagnostic> findHGMDKnownPathogenic(CANVASDAOBeanService daoBean, DiagnosticBinningJob diagnosticBinningJob,
+            List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findHGMDKnownPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_61_2>)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -104,7 +118,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findClinVarKnownPathogenic(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findClinVarKnownPathogenic(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findClinVarKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -125,17 +139,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (!containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (!containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -172,8 +183,8 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findHGMDLikelyPathogenic(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
+    public List<BinResultsFinalDiagnostic> findHGMDLikelyPathogenic(CANVASDAOBeanService daoBean, DiagnosticBinningJob diagnosticBinningJob,
+            List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findHGMDLikelyPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_61_2>)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -249,7 +260,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findClinVarLikelyPathogenic(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findClinVarLikelyPathogenic(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findClinVarLikelyPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -273,17 +284,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -330,7 +338,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findHGMDPossiblyPathogenic(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findHGMDPossiblyPathogenic(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -397,7 +405,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findClinVarPossiblyPathogenic(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findClinVarPossiblyPathogenic(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -420,17 +428,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -466,7 +471,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findHGMDUncertainSignificance(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findHGMDUncertainSignificance(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -600,7 +605,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findClinVarUncertainSignificance(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findClinVarUncertainSignificance(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -627,17 +632,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -687,17 +689,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -739,8 +738,8 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findHGMDLikelyBenign(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
+    public List<BinResultsFinalDiagnostic> findHGMDLikelyBenign(CANVASDAOBeanService daoBean, DiagnosticBinningJob diagnosticBinningJob,
+            List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(5);
@@ -818,8 +817,8 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findClinVarLikelyBenign(CANVASDAOBeanService daoBean,
-            DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
+    public List<BinResultsFinalDiagnostic> findClinVarLikelyBenign(CANVASDAOBeanService daoBean, DiagnosticBinningJob diagnosticBinningJob,
+            List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         DiseaseClass diseaseClass = daoBean.getDiseaseClassDAO().findById(5);
@@ -840,17 +839,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -902,7 +898,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findHGMDAlmostCertainlyBenign(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findHGMDAlmostCertainlyBenign(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -979,7 +975,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    public static List<BinResultsFinalDiagnostic> findClinVarAlmostCertainlyBenign(CANVASDAOBeanService daoBean,
+    public List<BinResultsFinalDiagnostic> findClinVarAlmostCertainlyBenign(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -1001,17 +997,14 @@ public class BinResultsFinalDiagnosticFactory {
                                 diagnosticResultVersion.getClinvarVersion().getId(),
                                 Arrays.asList("no assertion criteria provided", "no assertion provided", "not classified by submitter"));
 
-                List<AssertionRanking> foundAssertionRankings = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                    for (ReferenceClinicalAssertion rca : foundReferenceClinicalAssersions) {
-                        foundAssertionRankings.addAll(daoBean.getAssertionRankingDAO().findByAssertion(rca.getAccession()));
-                    }
-                }
 
-                boolean containsKnownPathogenic = foundAssertionRankings.stream()
-                        .anyMatch((s) -> s.getId().getRank().equals(1) || s.getId().getRank().equals(2));
-                if (containsKnownPathogenic) {
-                    continue;
+                    boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                            .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    if (containsKnownPathogenic) {
+                        continue;
+                    }
+
                 }
 
                 SNPMappingAgg snpMappingAgg = null;
@@ -1061,7 +1054,7 @@ public class BinResultsFinalDiagnosticFactory {
         return results;
     }
 
-    private static BinResultsFinalDiagnostic createClinVarBinResultsFinalDiagnostic(CANVASDAOBeanService daoBean,
+    private BinResultsFinalDiagnostic createClinVarBinResultsFinalDiagnostic(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant, DiseaseClass clinvarDiseaseClass,
             DiagnosticGene diagnosticGene, MaxFrequency maxFrequency, Integer maxNCGenesFrequenciesVersion, SNPMappingAgg snpMappingAgg)
             throws CANVASDAOException {
@@ -1101,7 +1094,7 @@ public class BinResultsFinalDiagnosticFactory {
         return binResultsFinalDiagnostic;
     }
 
-    private static BinResultsFinalDiagnostic createHGMDBinResultsFinalDiagnostic(CANVASDAOBeanService daoBean,
+    private BinResultsFinalDiagnostic createHGMDBinResultsFinalDiagnostic(CANVASDAOBeanService daoBean,
             DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant, DiseaseClass hgmdDiseaseClass, DiagnosticGene diagnosticGene,
             MaxFrequency maxFrequency, HGMDLocatedVariant hgmdLocatedVariant, Integer maxNCGenesFrequenciesVersion,
             SNPMappingAgg snpMappingAgg) throws CANVASDAOException {
