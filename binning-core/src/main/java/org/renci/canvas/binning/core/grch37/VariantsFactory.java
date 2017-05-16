@@ -42,6 +42,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
     private static VariantsFactory instance;
 
+    private DNAToRNATranslator dna2RnaTranslator;
+
+    private RNAToAminoAcidTranslator rna2AminoAcidTranslator;
+
     public static VariantsFactory getInstance() {
         if (instance == null) {
             instance = new VariantsFactory();
@@ -51,6 +55,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
     private VariantsFactory() {
         super();
+        TranscriptionEngine engine = TranscriptionEngine.getDefault();
+        this.dna2RnaTranslator = engine.getDnaRnaTranslator();
+        this.rna2AminoAcidTranslator = engine.getRnaAminoAcidTranslator();
     }
 
     @Override
@@ -511,10 +518,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     variant.setCodingSequencePosition(
                             getCodingSequencePosition(locatedVariant, transcriptMapsExons, variant.getTranscriptPosition(), proteinRange));
 
-                    TranscriptionEngine engine = TranscriptionEngine.getDefault();
-                    DNAToRNATranslator dna2RnaTranslator = engine.getDnaRnaTranslator();
-                    RNAToAminoAcidTranslator rna2AminoAcidTranslator = engine.getRnaAminoAcidTranslator();
-
                     String transcriptDNASequence = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
                     String originalDNASeq = transcriptDNASequence.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
 
@@ -605,7 +608,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 .intValue() == (Double.valueOf(Math.ceil((proteinRange.getMaximum()) / 3D)).intValue())) {
                             --aaStart;
                         }
-                        
+
                         if ("del".equals(variant.getVariantType().getId())
                                 && variant.getCodingSequencePosition().equals(variant.getTranscriptPosition())) {
                             --aaStart;
