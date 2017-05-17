@@ -39,11 +39,11 @@ public class InitializeDelegate implements JavaDelegate {
         }
 
         DiagnosticBinningJob binningJob = daoBean.getDiagnosticBinningJobDAO().findById(binningJobId);
-        Integer listVersion = binningJob.getListVersion();
-        if (listVersion == null) {
-            logger.warn("listVersion was null");
-            binningJob.setListVersion(daoBean.getDXExonsDAO().findMaxListVersion());
-        }
+        // Integer listVersion = binningJob.getListVersion();
+        // if (listVersion == null) {
+        // logger.warn("listVersion was null");
+        // binningJob.setListVersion(daoBean.getDXExonsDAO().findMaxListVersion());
+        // }
 
         binningJob.setStart(new Date());
         binningJob.setStop(null);

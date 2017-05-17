@@ -14,10 +14,8 @@ import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
 import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.canvas.dao.ref.model.GenomeRef;
-import org.renci.canvas.dao.refseq.model.LocationType;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
-import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -47,16 +45,13 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
             VariantsFactory variantsFactory = VariantsFactory.getInstance(daoBean);
 
-            DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO().findById(binningJob.getListVersion());
+            DiagnosticResultVersion diagnosticResultVersion = binningJob.getDiagnosticResultVersion();
             logger.info(diagnosticResultVersion.toString());
 
             String refseqVersion = diagnosticResultVersion.getRefseqVersion().toString();
 
             GenomeRef genomeRef = diagnosticResultVersion.getGenomeRef();
             logger.info(genomeRef.toString());
-
-            List<LocationType> allLocationTypes = daoBean.getLocationTypeDAO().findAll();
-            List<VariantEffect> allVariantEffects = daoBean.getVariantEffectDAO().findAll();
 
             List<LocatedVariant> locatedVariantList = daoBean.getLocatedVariantDAO().findByAssemblyId(binningJob.getAssembly().getId());
 

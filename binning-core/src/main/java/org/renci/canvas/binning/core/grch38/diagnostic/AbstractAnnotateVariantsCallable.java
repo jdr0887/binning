@@ -44,7 +44,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
         try {
             VariantsFactory variantsFactory = VariantsFactory.getInstance(daoBean);
 
-            DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO().findById(binningJob.getListVersion());
+            DiagnosticResultVersion diagnosticResultVersion = binningJob.getDiagnosticResultVersion();
             logger.info(diagnosticResultVersion.toString());
 
             String refseqVersion = diagnosticResultVersion.getRefseqVersion().toString();
@@ -56,14 +56,6 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
-
-                locatedVariantList.sort((a, b) -> {
-                    int ret = a.getGenomeRefSeq().getId().compareTo(b.getGenomeRefSeq().getId());
-                    if (ret == 0) {
-                        ret = a.getPosition().compareTo(b.getPosition());
-                    }
-                    return ret;
-                });
 
                 logger.info("deleting Variants_80_4 instances");
                 ExecutorService es = Executors.newFixedThreadPool(4);
@@ -81,8 +73,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                     es.shutdownNow();
                 }
 
+                logger.info("annotating");
                 es = Executors.newFixedThreadPool(6);
-
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
                     es.submit(() -> {

@@ -43,8 +43,7 @@ public class AnnotateVariantsFromDiagnosticJobTest {
         DiagnosticBinningJob binningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4093);
         logger.info(binningJob.toString());
 
-        DiagnosticResultVersion diagnosticResultVersion = daoMgr.getDAOBean().getDiagnosticResultVersionDAO()
-                .findById(binningJob.getListVersion());
+        DiagnosticResultVersion diagnosticResultVersion = binningJob.getDiagnosticResultVersion();
         logger.info(diagnosticResultVersion.toString());
 
         String refseqVersion = diagnosticResultVersion.getRefseqVersion().toString();

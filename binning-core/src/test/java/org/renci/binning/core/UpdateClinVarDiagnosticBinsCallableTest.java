@@ -21,8 +21,6 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdateClinVarDiagnosticBinsCallableTest.class);
 
-    private static final BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory.getInstance();
-
     private static final CANVASDAOManager daoMgr = CANVASDAOManager.getInstance();
 
     public UpdateClinVarDiagnosticBinsCallableTest() {
@@ -31,6 +29,9 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testKnownPathogenic() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
+
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4207);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
 
@@ -45,8 +46,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(
-                    binResultsFinalDiagnosticFactory.findClinVarKnownPathogenic(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findClinVarKnownPathogenic(diagnosticBinningJob, variants));
         }
 
         assertTrue(CollectionUtils.isNotEmpty(results));
@@ -57,6 +57,8 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testKnownPathogenicForGSU_000136() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
         // DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4218);
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4272);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
@@ -72,7 +74,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(diagnosticBinningJob, variants));
         }
 
         assertTrue(CollectionUtils.isNotEmpty(results));
@@ -88,6 +90,8 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testLikelyPathenogenic() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4218);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         List<LocatedVariant> locatedVariantList = daoMgr.getDAOBean().getLocatedVariantDAO()
@@ -101,7 +105,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         results.forEach(a -> logger.info(a.toString()));
@@ -111,6 +115,8 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testPossiblyPathenogenic() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4207);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         List<LocatedVariant> locatedVariantList = daoMgr.getDAOBean().getLocatedVariantDAO()
@@ -124,8 +130,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(
-                    binResultsFinalDiagnosticFactory.findHGMDPossiblyPathogenic(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findHGMDPossiblyPathogenic(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
@@ -135,6 +140,8 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testUncertainSignificance() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4207);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         List<LocatedVariant> locatedVariantList = daoMgr.getDAOBean().getLocatedVariantDAO()
@@ -148,8 +155,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(
-                    binResultsFinalDiagnosticFactory.findHGMDUncertainSignificance(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findHGMDUncertainSignificance(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
@@ -159,6 +165,8 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testLikelyBenign() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4207);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         List<LocatedVariant> locatedVariantList = daoMgr.getDAOBean().getLocatedVariantDAO()
@@ -172,7 +180,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyBenign(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyBenign(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
@@ -182,6 +190,9 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
 
     @Test
     public void testAlmostCertainlyBenign() throws CANVASDAOException {
+        BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory
+                .getInstance(daoMgr.getDAOBean());
+
         DiagnosticBinningJob diagnosticBinningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4207);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         List<LocatedVariant> locatedVariantList = daoMgr.getDAOBean().getLocatedVariantDAO()
@@ -195,8 +206,7 @@ public class UpdateClinVarDiagnosticBinsCallableTest {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(
-                    binResultsFinalDiagnosticFactory.findHGMDAlmostCertainlyBenign(daoMgr.getDAOBean(), diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findHGMDAlmostCertainlyBenign(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());

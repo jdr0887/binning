@@ -19,6 +19,7 @@ import org.renci.canvas.dao.clinbin.model.DXCoverage;
 import org.renci.canvas.dao.clinbin.model.DXCoveragePK;
 import org.renci.canvas.dao.clinbin.model.DXExons;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
+import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,12 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
 
         try {
 
-            File allIntervalsFile = getAllIntervalsFile(binningJob.getListVersion());
+            logger.info(binningJob.toString());
+
+            DiagnosticResultVersion diagnosticResultVersion = binningJob.getDiagnosticResultVersion();
+            logger.info(diagnosticResultVersion.toString());
+
+            File allIntervalsFile = getAllIntervalsFile(diagnosticResultVersion.getId());
 
             List<String> allIntervals = FileUtils.readLines(allIntervalsFile, "UTF-8");
             if (allIntervals.contains("Targets")) {
@@ -59,9 +65,9 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
             SortedSet<GATKDepthInterval> allIntervalSet = new TreeSet<GATKDepthInterval>();
             allIntervals.forEach(a -> allIntervalSet.add(new GATKDepthInterval(a)));
 
-            File depthFile = getDepthFile(binningJob.getParticipant(), binningJob.getListVersion());
+            File depthFile = getDepthFile(binningJob.getParticipant(), diagnosticResultVersion.getId());
 
-            processIntervals(allIntervalSet, depthFile, binningJob.getParticipant(), binningJob.getListVersion());
+            processIntervals(allIntervalSet, depthFile, binningJob.getParticipant(), diagnosticResultVersion.getId());
 
             // load exon coverage
             for (GATKDepthInterval interval : allIntervalSet) {
@@ -73,7 +79,7 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
                     end = start;
                 }
 
-                DXExons example = new DXExons(binningJob.getListVersion(), null, null, null, chromosome, start, end, null);
+                DXExons example = new DXExons(diagnosticResultVersion.getId(), null, null, null, chromosome, start, end, null);
                 List<DXExons> dxExonList = daoBean.getDXExonsDAO().findByExample(example);
                 if (CollectionUtils.isNotEmpty(dxExonList)) {
 

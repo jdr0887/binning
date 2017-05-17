@@ -261,128 +261,21 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     }
 
                     es = Executors.newFixedThreadPool(6);
-                    // ins
                     for (VariantContext variantContext : variantContextList) {
 
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                        es.submit(() -> {
 
-                            if (variantContext.isIndel() && variantContext.isSimpleInsertion()) {
+                            Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
+                                    .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
+                            if (genomeRefSeqOptional.isPresent()) {
+                                GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
 
-                                es.submit(() -> {
+                                // cant trust htsjdk to parse properly...switch on freebayes type (if available)
+                                List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
+                                for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
-                                    Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.stream()
-                                            .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
-                                    if (genomeRefSeqOptional.isPresent()) {
-                                        GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
+                                    if (CollectionUtils.isNotEmpty(types) && !variantContext.isSNP()) {
 
-                                        LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
-                                        locatedVariant.setPosition(variantContext.getStart());
-                                        locatedVariant.setVariantType(
-                                                allVariantTypes.stream().filter(a -> a.getId().equals("ins")).findAny().get());
-                                        String ref = variantContext.getReference().getDisplayString();
-                                        locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
-                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
-                                        locatedVariant.setRef("");
-
-                                        try {
-                                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                                    .findByExample(locatedVariant);
-                                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                                locatedVariant = foundLocatedVariants.get(0);
-                                            } else {
-                                                locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
-                                            }
-                                            logger.info(locatedVariant.toString());
-                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                            locatedVariantSet.add(locatedVariant);
-                                        } catch (CANVASDAOException | BinningException e) {
-                                            logger.error(e.getMessage(), e);
-                                        }
-                                    }
-
-                                });
-
-                            }
-                        }
-
-                    }
-                    es.shutdown();
-                    if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
-                        es.shutdownNow();
-                    }
-
-                    es = Executors.newFixedThreadPool(6);
-                    // del
-                    for (VariantContext variantContext : variantContextList) {
-
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
-
-                            if (variantContext.isIndel() && variantContext.isSimpleDeletion()) {
-
-                                es.submit(() -> {
-
-                                    Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.parallelStream()
-                                            .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
-                                    if (genomeRefSeqOptional.isPresent()) {
-
-                                        GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
-                                        LocatedVariant locatedVariant = new LocatedVariant(genomeRef, genomeRefSeq);
-
-                                        locatedVariant.setPosition(variantContext.getStart());
-                                        locatedVariant.setRef(variantContext.getReference().getDisplayString()
-                                                .replaceFirst(altAllele.getDisplayString(), ""));
-                                        locatedVariant.setSeq(locatedVariant.getRef());
-                                        locatedVariant.setVariantType(
-                                                allVariantTypes.stream().filter(a -> a.getId().equals("del")).findAny().get());
-                                        locatedVariant.setEndPosition(locatedVariant.getPosition() + locatedVariant.getRef().length());
-
-                                        try {
-                                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                                    .findByExample(locatedVariant);
-                                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                                locatedVariant = foundLocatedVariants.get(0);
-                                            } else {
-                                                locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
-                                            }
-                                            logger.info(locatedVariant.toString());
-                                            createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
-                                            locatedVariantSet.add(locatedVariant);
-                                        } catch (CANVASDAOException | BinningException e) {
-                                            logger.error(e.getMessage(), e);
-                                        }
-
-                                    }
-
-                                });
-
-                            }
-                        }
-
-                    }
-                    es.shutdown();
-                    if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
-                        es.shutdownNow();
-                    }
-
-                    es = Executors.newFixedThreadPool(6);
-
-                    for (VariantContext variantContext : variantContextList) {
-
-                        Optional<GenomeRefSeq> genomeRefSeqOptional = allGenomeRefSeqs.parallelStream()
-                                .filter(a -> a.getId().equals(variantContext.getContig())).findAny();
-                        if (genomeRefSeqOptional.isPresent()) {
-                            GenomeRefSeq genomeRefSeq = genomeRefSeqOptional.get();
-
-                            // cant trust htsjdk to parse properly...switch on freebayes type (if available)
-                            List<String> types = variantContext.getAttributeAsStringList("TYPE", null);
-                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
-
-                                if (CollectionUtils.isNotEmpty(types) && !variantContext.isSNP()
-                                        && !(variantContext.isIndel() && variantContext.isSimpleInsertion())
-                                        && !(variantContext.isIndel() && variantContext.isSimpleDeletion())
-                                        && (variantContext.isComplexIndel() || variantContext.isMNP())) {
-
-                                    es.submit(() -> {
                                         String ref = variantContext.getReference().getDisplayString();
                                         String alt = altAllele.getDisplayString();
 
@@ -534,13 +427,12 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             logger.error(e.getMessage(), e);
                                         }
 
-                                    });
+                                    }
 
                                 }
 
                             }
-
-                        }
+                        });
 
                     }
                     es.shutdown();

@@ -40,7 +40,9 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
         logger.debug("ENTERING call()");
         try {
 
-            DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO().findById(binningJob.getListVersion());
+            logger.info(binningJob.toString());
+
+            DiagnosticResultVersion diagnosticResultVersion = binningJob.getDiagnosticResultVersion();
             logger.info(diagnosticResultVersion.toString());
 
             MaxFrequencySource snpMaxFrequencySource = daoBean.getMaxFrequencySourceDAO().findById("snp");
