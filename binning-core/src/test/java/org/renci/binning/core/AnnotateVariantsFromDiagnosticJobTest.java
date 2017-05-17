@@ -38,8 +38,7 @@ public class AnnotateVariantsFromDiagnosticJobTest {
     @Test
     public void testDiagnostic() throws CANVASDAOException {
 
-        org.renci.canvas.binning.core.grch37.VariantsFactory variantsFactory = org.renci.canvas.binning.core.grch37.VariantsFactory
-                .getInstance();
+        VariantsFactory variantsFactory = VariantsFactory.getInstance(daoMgr.getDAOBean());
 
         DiagnosticBinningJob binningJob = daoMgr.getDAOBean().getDiagnosticBinningJobDAO().findById(4093);
         logger.info(binningJob.toString());
@@ -63,9 +62,6 @@ public class AnnotateVariantsFromDiagnosticJobTest {
             }
             return ret;
         });
-
-        List<LocationType> allLocationTypes = daoMgr.getDAOBean().getLocationTypeDAO().findAll();
-        List<VariantEffect> allVariantEffects = daoMgr.getDAOBean().getVariantEffectDAO().findAll();
 
         List<Variants_61_2> variants = new ArrayList<>();
         try {
@@ -106,11 +102,11 @@ public class AnnotateVariantsFromDiagnosticJobTest {
 
                                 Variants_61_2 variant = null;
                                 if (transcriptMapsExons == null) {
-                                    variant = variantsFactory.createIntronicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList, tMap,
-                                            transcriptMapsExonsList, allLocationTypes, allVariantEffects);
+                                    variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap,
+                                            transcriptMapsExonsList);
                                 } else {
-                                    variant = variantsFactory.createExonicVariant(daoMgr.getDAOBean(), locatedVariant, mapsList,
-                                            transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                                    variant = variantsFactory.createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList,
+                                            transcriptMapsExons);
                                 }
                                 logger.info(variant.toString());
                                 // daoMgr.getDAOBean().getVariants_61_2_DAO().save(variant);
