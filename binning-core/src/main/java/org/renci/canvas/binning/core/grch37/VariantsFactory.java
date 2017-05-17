@@ -20,6 +20,7 @@ import org.biojava.nbio.core.sequence.transcription.TranscriptionEngine;
 import org.renci.canvas.binning.core.AbstractVariantsFactory;
 import org.renci.canvas.binning.core.BinningException;
 import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.annotation.model.AnnotationGeneExternalId;
 import org.renci.canvas.dao.hgnc.model.HGNCGene;
 import org.renci.canvas.dao.refseq.model.Feature;
@@ -42,19 +43,32 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
     private static VariantsFactory instance;
 
+    private CANVASDAOBeanService daoBean;
+
     private DNAToRNATranslator dna2RnaTranslator;
 
     private RNAToAminoAcidTranslator rna2AminoAcidTranslator;
 
-    public static VariantsFactory getInstance() {
+    private List<LocationType> allLocationTypes;
+
+    private List<VariantEffect> allVariantEffects;
+
+    public static VariantsFactory getInstance(CANVASDAOBeanService daoBean) {
         if (instance == null) {
-            instance = new VariantsFactory();
+            instance = new VariantsFactory(daoBean);
         }
         return instance;
     }
 
-    private VariantsFactory() {
+    private VariantsFactory(CANVASDAOBeanService daoBean) {
         super();
+        this.daoBean = daoBean;
+        try {
+            this.allLocationTypes = daoBean.getLocationTypeDAO().findAll();
+            this.allVariantEffects = daoBean.getVariantEffectDAO().findAll();
+        } catch (CANVASDAOException e) {
+            e.printStackTrace();
+        }
         TranscriptionEngine engine = TranscriptionEngine.getDefault();
         this.dna2RnaTranslator = engine.getDnaRnaTranslator();
         this.rna2AminoAcidTranslator = engine.getRnaAminoAcidTranslator();
@@ -65,11 +79,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
         return "61";
     }
 
-    public Variants_61_2 createIntronicVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant, List<TranscriptMaps> mapsList,
-            TranscriptMaps tMap, List<TranscriptMapsExons> transcriptMapsExonsList, List<LocationType> allLocationTypes,
-            List<VariantEffect> allVariantEffects) throws BinningException {
+    public Variants_61_2 createIntronicVariant(LocatedVariant locatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps tMap,
+            List<TranscriptMapsExons> transcriptMapsExonsList) throws BinningException {
         logger.debug(
-                "ENTERING createIntronicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>)");
+                "ENTERING createIntronicVariant(LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>)");
 
         Variants_61_2PK variantKey = new Variants_61_2PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getId(),
                 locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), tMap.getTranscript().getId(), null, null,
@@ -233,11 +246,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
         return variant;
     }
 
-    public Variants_61_2 createBorderCrossingVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant, TranscriptMaps tMap,
-            List<TranscriptMaps> mapsList, List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons,
-            List<LocationType> allLocationTypes, List<VariantEffect> allVariantEffects) throws BinningException {
+    public Variants_61_2 createBorderCrossingVariant(LocatedVariant locatedVariant, TranscriptMaps tMap, List<TranscriptMaps> mapsList,
+            List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
-                "ENTERING createBorderCrossingVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
+                "ENTERING createBorderCrossingVariant(LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
         Variants_61_2PK variantKey = new Variants_61_2PK(locatedVariant.getId(), tMap.getGenomeRefSeq().getId(),
                 locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), tMap.getTranscript().getId(), null, null,
                 mapsList.indexOf(tMap) + 1);
@@ -362,11 +374,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
         return variant;
     }
 
-    public Variants_61_2 createExonicVariant(CANVASDAOBeanService daoBean, LocatedVariant locatedVariant, List<TranscriptMaps> mapsList,
-            List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons, List<LocationType> allLocationTypes,
-            List<VariantEffect> allVariantEffects) throws BinningException {
+    public Variants_61_2 createExonicVariant(LocatedVariant locatedVariant, List<TranscriptMaps> mapsList,
+            List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
-                "ENTERING createExonicVariant(String, LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
+                "ENTERING createExonicVariant(LocatedVariant, List<TranscriptMaps> mapsList, TranscriptMaps, List<TranscriptMapsExons>, TranscriptMapsExons)");
 
         Variants_61_2PK variantKey = new Variants_61_2PK(locatedVariant.getId(),
                 transcriptMapsExons.getTranscriptMaps().getGenomeRefSeq().getId(), locatedVariant.getPosition(),
