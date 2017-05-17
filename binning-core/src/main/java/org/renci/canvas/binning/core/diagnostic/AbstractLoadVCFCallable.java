@@ -192,7 +192,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 if (getBinningJob().getAssembly() == null) {
                     Assembly assembly = createAssembly(sampleName);
                     getBinningJob().setAssembly(assembly);
-                    daoBean.getDiagnosticBinningJobDAO().save(binningJob);
+                    daoBean.getDiagnosticBinningJobDAO().save(getBinningJob());
                 } else {
                     logger.info("deleting AssemblyLocatedVariant instances");
                     daoBean.getAssemblyLocatedVariantDAO().deleteByAssemblyId(getBinningJob().getAssembly().getId());
@@ -746,7 +746,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     private Assembly createAssembly(String sampleName) throws BinningException {
         logger.debug("ENTERING createAssembly(String)");
-        Assembly ret = null; 
+        Assembly ret = null;
         try {
             Lab lab = null;
             List<Lab> foundLabs = daoBean.getLabDAO().findByName(getLabName());
@@ -794,13 +794,13 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             variantSet.setGenomeRef(getDefaultGenomeRef());
             variantSet.setId(daoBean.getVariantSetDAO().save(variantSet));
 
-            Assembly assembly = new Assembly();
-            assembly.setLibrary(library);
-            assembly.setVariantSet(variantSet);
-            assembly.setId(daoBean.getAssemblyDAO().save(assembly));
-            
+            ret = new Assembly();
+            ret.setLibrary(library);
+            ret.setVariantSet(variantSet);
+            ret.setId(daoBean.getAssemblyDAO().save(ret));
+
         } catch (CANVASDAOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return ret;
     }
