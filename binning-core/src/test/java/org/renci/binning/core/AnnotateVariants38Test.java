@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.renci.canvas.binning.core.grch38.VariantsFactory;
 import org.renci.canvas.dao.jpa.CANVASDAOBeanServiceImpl;
 import org.renci.canvas.dao.jpa.annotation.AnnotationGeneExternalIdDAOImpl;
 import org.renci.canvas.dao.jpa.hgnc.HGNCGeneDAOImpl;
@@ -26,10 +27,8 @@ import org.renci.canvas.dao.jpa.refseq.TranscriptMapsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
-import org.renci.canvas.dao.refseq.model.LocationType;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
-import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -109,11 +108,7 @@ public class AnnotateVariants38Test {
     private List<Variants_80_4> annotateLocatedVariant(LocatedVariant locatedVariant) throws Exception {
         List<Variants_80_4> variants = new ArrayList<>();
 
-        org.renci.canvas.binning.core.grch38.VariantsFactory variantsFactory = org.renci.canvas.binning.core.grch38.VariantsFactory
-                .getInstance();
-
-        List<LocationType> allLocationTypes = daoBean.getLocationTypeDAO().findAll();
-        List<VariantEffect> allVariantEffects = daoBean.getVariantEffectDAO().findAll();
+        VariantsFactory variantsFactory = VariantsFactory.getInstance(daoBean);
 
         List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
                 .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(4, "80", locatedVariant.getGenomeRefSeq().getId(),
@@ -144,16 +139,15 @@ public class AnnotateVariants38Test {
                     if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
                             || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                     && "+".equals(tMap.getStrand()))) {
-                        variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                        variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
+                                transcriptMapsExons);
                     } else {
-                        variant = variantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList, transcriptMapsExonsList,
-                                transcriptMapsExons, allLocationTypes, allVariantEffects);
+                        variant = variantsFactory.createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList,
+                                transcriptMapsExons);
                     }
 
                 } else {
-                    variant = variantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap, transcriptMapsExonsList,
-                            allLocationTypes, allVariantEffects);
+                    variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
                 }
                 variants.add(variant);
 
@@ -182,8 +176,8 @@ public class AnnotateVariants38Test {
                         logger.info(transcriptMapsExons.toString());
                         List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(4,
                                 "80", tMap.getTranscript().getId());
-                        Variants_80_4 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                        Variants_80_4 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
+                                transcriptMapsExonsList, transcriptMapsExons);
                         variants.add(variant);
                     }
 
@@ -208,8 +202,8 @@ public class AnnotateVariants38Test {
                             logger.info(transcriptMapsExons.toString());
                             List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
                                     .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(4, "80", tMap.getTranscript().getId());
-                            Variants_80_4 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                    transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                            Variants_80_4 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
+                                    transcriptMapsExonsList, transcriptMapsExons);
                             variants.add(variant);
                         }
 
