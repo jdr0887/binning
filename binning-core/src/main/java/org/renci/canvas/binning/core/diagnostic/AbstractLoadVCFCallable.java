@@ -188,7 +188,20 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 if (!sampleName.equals(binningJob.getParticipant())) {
                     throw new BinningException("sampleName does match participant");
                 }
-                Assembly assembly = buildAssembly(sampleName);
+
+                if (getBinningJob().getAssembly() == null) {
+                    Assembly assembly = createAssembly(sampleName);
+                    getBinningJob().setAssembly(assembly);
+                    daoBean.getDiagnosticBinningJobDAO().save(binningJob);
+                } else {
+                    logger.info("deleting AssemblyLocatedVariant instances");
+                    daoBean.getAssemblyLocatedVariantDAO().deleteByAssemblyId(getBinningJob().getAssembly().getId());
+
+                    logger.info("deleting AssemblyLocatedVariantQC instances");
+                    daoBean.getAssemblyLocatedVariantQCDAO().deleteByAssemblyId(getBinningJob().getAssembly().getId());
+                }
+
+                Assembly assembly = getBinningJob().getAssembly();
                 logger.info(assembly.toString());
 
                 List<VariantContext> variantContextList = variantContext2SampleNameMap.get(sampleName);
@@ -731,10 +744,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
     }
 
-    private Assembly buildAssembly(String sampleName) throws BinningException {
-        logger.debug("ENTERING buildAssembly(String)");
-        Assembly assembly = null;
-
+    private Assembly createAssembly(String sampleName) throws BinningException {
+        logger.debug("ENTERING createAssembly(String)");
+        Assembly ret = null; 
         try {
             Lab lab = null;
             List<Lab> foundLabs = daoBean.getLabDAO().findByName(getLabName());
@@ -778,33 +790,19 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             }
             logger.info(library.toString());
 
-            List<Assembly> foundAssemblies = daoBean.getAssemblyDAO().findByLibraryId(library.getId());
-            if (CollectionUtils.isEmpty(foundAssemblies)) {
+            VariantSet variantSet = new VariantSet();
+            variantSet.setGenomeRef(getDefaultGenomeRef());
+            variantSet.setId(daoBean.getVariantSetDAO().save(variantSet));
 
-                VariantSet variantSet = new VariantSet();
-                variantSet.setGenomeRef(getDefaultGenomeRef());
-                variantSet.setId(daoBean.getVariantSetDAO().save(variantSet));
-
-                assembly = new Assembly();
-                assembly.setLibrary(library);
-                assembly.setVariantSet(variantSet);
-                assembly.setId(daoBean.getAssemblyDAO().save(assembly));
-
-                binningJob.setAssembly(assembly);
-                daoBean.getDiagnosticBinningJobDAO().save(binningJob);
-
-            } else {
-                assembly = binningJob.getAssembly();
-                // delete asm loc var & qc instances
-                logger.info("deleting AssemblyLocatedVariant instances");
-                daoBean.getAssemblyLocatedVariantDAO().deleteByAssemblyId(binningJob.getAssembly().getId());
-                logger.info("deleting AssemblyLocatedVariantQC instances");
-                daoBean.getAssemblyLocatedVariantQCDAO().deleteByAssemblyId(binningJob.getAssembly().getId());
-            }
+            Assembly assembly = new Assembly();
+            assembly.setLibrary(library);
+            assembly.setVariantSet(variantSet);
+            assembly.setId(daoBean.getAssemblyDAO().save(assembly));
+            
         } catch (CANVASDAOException e) {
             e.printStackTrace();
         }
-        return assembly;
+        return ret;
     }
 
     public CANVASDAOBeanService getDaoBean() {
