@@ -27,8 +27,6 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAnnotateVariantsCallable.class);
 
-    private static final VariantsFactory variantsFactory = VariantsFactory.getInstance();
-
     private CANVASDAOBeanService daoBean;
 
     private DiagnosticBinningJob binningJob;
@@ -46,6 +44,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
         List<Variants_61_2> variants = new ArrayList<>();
 
         try {
+
+            VariantsFactory variantsFactory = VariantsFactory.getInstance(daoBean);
 
             DiagnosticResultVersion diagnosticResultVersion = daoBean.getDiagnosticResultVersionDAO().findById(binningJob.getListVersion());
             logger.info(diagnosticResultVersion.toString());
@@ -123,8 +123,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                             Variants_61_2 variant = null;
 
                             if (transcriptMapsExons == null) {
-                                variant = variantsFactory.createIntronicVariant(daoBean, locatedVariant, mapsList, tMap,
-                                        transcriptMapsExonsList, allLocationTypes, allVariantEffects);
+                                variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
                             } else {
 
                                 if (!"snp".equals(locatedVariant.getVariantType().getId())
@@ -132,11 +131,11 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                                 && "-".equals(tMap.getStrand()))
                                                 || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
                                                         && "+".equals(tMap.getStrand())))) {
-                                    variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                            transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                                    variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
+                                            transcriptMapsExonsList, transcriptMapsExons);
                                 } else {
-                                    variant = variantsFactory.createExonicVariant(daoBean, locatedVariant, mapsList,
-                                            transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                                    variant = variantsFactory.createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList,
+                                            transcriptMapsExons);
                                 }
 
                             }
@@ -194,8 +193,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                         .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                 tMap.getTranscript().getId());
 
-                                Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap, mapsList,
-                                        transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                                Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
+                                        transcriptMapsExonsList, transcriptMapsExons);
                                 variants.add(variant);
                             }
                         } else {
@@ -245,8 +244,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<List<
                                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRef.getId(), refseqVersion,
                                                     tMap.getTranscript().getId());
 
-                                    Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(daoBean, locatedVariant, tMap,
-                                            mapsList, transcriptMapsExonsList, transcriptMapsExons, allLocationTypes, allVariantEffects);
+                                    Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
+                                            transcriptMapsExonsList, transcriptMapsExons);
                                     variants.add(variant);
                                 }
                             }
