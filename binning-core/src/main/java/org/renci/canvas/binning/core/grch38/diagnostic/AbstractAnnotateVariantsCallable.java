@@ -58,9 +58,9 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
 
                 logger.info("deleting Variants_80_4 instances");
-                ExecutorService es = Executors.newFixedThreadPool(4);
+                ExecutorService deleteES = Executors.newFixedThreadPool(4);
                 for (LocatedVariant locatedVariant : locatedVariantList) {
-                    es.submit(() -> {
+                    deleteES.submit(() -> {
                         try {
                             daoBean.getVariants_80_4_DAO().deleteByLocatedVariantId(locatedVariant.getId());
                         } catch (CANVASDAOException e) {
@@ -68,13 +68,13 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                         }
                     });
                 }
-                es.shutdown();
-                if (!es.awaitTermination(1L, TimeUnit.DAYS)) {
-                    es.shutdownNow();
+                deleteES.shutdown();
+                if (!deleteES.awaitTermination(1L, TimeUnit.DAYS)) {
+                    deleteES.shutdownNow();
                 }
 
                 logger.info("annotating");
-                es = Executors.newFixedThreadPool(6);
+                ExecutorService es = Executors.newFixedThreadPool(6);
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
                     es.submit(() -> {
@@ -88,17 +88,18 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
                             if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
+                                logger.info("transcriptMapsList.size(): {}", transcriptMapsList.size());
+
                                 List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream()
                                         .map(a -> a.getTranscript().getId())
                                         .distinct().map(a -> transcriptMapsList.parallelStream()
                                                 .filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
                                         .collect(Collectors.toList());
 
+                                logger.info("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
                                 distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
                                 // handling non boundary crossing variants (intron/exon/utr*)
-                                logger.info("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
-
                                 for (TranscriptMaps tMap : distinctTranscriptMapsList) {
 
                                     logger.info(tMap.toString());
@@ -114,7 +115,9 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
                                     Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.parallelStream()
                                             .filter(a -> a.getContigRange().contains(locatedVariant.getPosition())).findAny();
+
                                     if (optionalTranscriptMapsExons.isPresent()) {
+
                                         TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                                         logger.debug(transcriptMapsExons.toString());
 
@@ -130,10 +133,14 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                         }
 
                                     } else {
+
                                         variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap,
                                                 transcriptMapsExonsList);
+
                                     }
+
                                     Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
+
                                     if (foundVariant == null) {
                                         daoBean.getVariants_80_4_DAO().save(variant);
                                     }
