@@ -79,8 +79,8 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
                     end = start;
                 }
 
-                DXExons example = new DXExons(diagnosticResultVersion.getId(), null, null, null, chromosome, start, end, null);
-                List<DXExons> dxExonList = daoBean.getDXExonsDAO().findByExample(example);
+                List<DXExons> dxExonList = daoBean.getDXExonsDAO().findByListVersionAndChromosomeAndRange(diagnosticResultVersion.getId(),
+                        chromosome, start, end);
                 if (CollectionUtils.isNotEmpty(dxExonList)) {
 
                     ExecutorService es = Executors.newFixedThreadPool(4);
