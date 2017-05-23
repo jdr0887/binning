@@ -17,7 +17,6 @@ import org.renci.canvas.binning.core.grch38.BinResultsFinalDiagnosticFactory;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.BinResultsFinalDiagnostic;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
-import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.jpa.CANVASDAOBeanServiceImpl;
 import org.renci.canvas.dao.jpa.annotation.AnnotationGeneExternalIdDAOImpl;
 import org.renci.canvas.dao.jpa.clinbin.DiagnosticBinningJobDAOImpl;
@@ -158,14 +157,10 @@ public class UpdateDiagnosticBinsCallable38Test {
 
     @Test
     public void testKnownPathogenic() throws CANVASDAOException {
-
         BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory.getInstance(daoBean);
-
-        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5001);
-
+        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5002);
         List<LocatedVariant> locatedVariantList = daoBean.getLocatedVariantDAO()
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
-
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
             for (LocatedVariant locatedVariant : locatedVariantList) {
@@ -176,7 +171,6 @@ public class UpdateDiagnosticBinsCallable38Test {
                 }
             }
         }
-
         assertTrue(CollectionUtils.isNotEmpty(results));
         results.forEach(a -> logger.info(a.toString()));
         logger.info("results.size(): {}", results.size());
