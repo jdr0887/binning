@@ -410,7 +410,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
                     .findByExternalId(refSeqGene.getId());
-            Optional<AnnotationGeneExternalId> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.stream()
+            Optional<AnnotationGeneExternalId> optionalAnnotationGeneExternalIds = annotationGeneExternalIdsList.parallelStream()
                     .filter(a -> !"OMIM".equals(a.getId().getNamespace())).findFirst();
 
             if (!optionalAnnotationGeneExternalIds.isPresent()) {
@@ -550,14 +550,19 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             --aaStart;
                         }
 
+                        Integer aaEnd = aaStart + (locatedVariant.getEndPosition() - locatedVariant.getPosition());
+
+                        if ((variant.getCodingSequencePosition() / 3) == originalProteinSequence.getLength()) {
+                            aaStart = originalProteinSequence.getLength();
+                            aaEnd = originalProteinSequence.getLength();
+                        }
+
                         variant.setAminoAcidStart(aaStart);
+                        variant.setAminoAcidEnd(aaEnd);
 
                         AminoAcidCompound originalAACompound = originalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
 
                         variant.setOriginalAminoAcid(originalAACompound.getBase());
-
-                        variant.setAminoAcidEnd(
-                                variant.getAminoAcidStart() + (locatedVariant.getEndPosition() - locatedVariant.getPosition()));
 
                         Pair<String, String> dnaSequenceParts = getDNASequenceParts(variant.getVariantType().getId(),
                                 transcriptMapsExons.getTranscriptMaps().getStrand(), transcriptDNASequence, proteinRange,
