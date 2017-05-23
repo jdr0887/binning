@@ -13,7 +13,9 @@ import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.MaxFrequency;
 import org.renci.canvas.dao.clinbin.model.MaxFrequencyPK;
 import org.renci.canvas.dao.genome1k.model.IndelMaxFrequency;
+import org.renci.canvas.dao.genome1k.model.IndelMaxFrequencyPK;
 import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequency;
+import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequencyPK;
 import org.renci.canvas.dao.jpa.CANVASDAOManager;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -37,48 +39,42 @@ public class UpdateFrequenciesCallableTest {
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 logger.debug(locatedVariant.toString());
 
-                List<SNPPopulationMaxFrequency> snpPopulationMaxFrequencyList = daoMgr.getDAOBean().getSNPPopulationMaxFrequencyDAO()
-                        .findByLocatedVariantIdAndVersion(locatedVariant.getId(), 2);
+                SNPPopulationMaxFrequency snpPopulationMaxFrequency = daoMgr.getDAOBean().getSNPPopulationMaxFrequencyDAO()
+                        .findById(new SNPPopulationMaxFrequencyPK(locatedVariant.getId(), 2));
 
-                if (CollectionUtils.isNotEmpty(snpPopulationMaxFrequencyList)) {
+                if (snpPopulationMaxFrequency != null) {
                     MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 2);
                     MaxFrequency maxFrequency = daoMgr.getDAOBean().getMaxFrequencyDAO().findById(key);
-                    if (maxFrequency != null) {
-                        // has already been created
-                        continue;
+                    if (maxFrequency == null) {
+                        maxFrequency = new MaxFrequency(key, daoMgr.getDAOBean().getMaxFrequencySourceDAO().findById("snp"));
+                        maxFrequency.setMaxAlleleFreq(snpPopulationMaxFrequency.getMaxAlleleFrequency());
+                        results.add(maxFrequency);
                     }
-                    maxFrequency = new MaxFrequency(key, daoMgr.getDAOBean().getMaxFrequencySourceDAO().findById("snp"));
-                    maxFrequency.setMaxAlleleFreq(snpPopulationMaxFrequencyList.get(0).getMaxAlleleFrequency());
-                    results.add(maxFrequency);
                     continue;
                 }
 
-                List<IndelMaxFrequency> indelMaxFrequencyList = daoMgr.getDAOBean().getIndelMaxFrequencyDAO()
-                        .findByLocatedVariantIdAndVersion(locatedVariant.getId(), 1);
+                IndelMaxFrequency indelMaxFrequency = daoMgr.getDAOBean().getIndelMaxFrequencyDAO()
+                        .findById(new IndelMaxFrequencyPK(locatedVariant.getId(), 1));
 
-                if (CollectionUtils.isNotEmpty(indelMaxFrequencyList)) {
+                if (indelMaxFrequency != null) {
                     MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 1);
                     MaxFrequency maxFrequency = daoMgr.getDAOBean().getMaxFrequencyDAO().findById(key);
-                    if (maxFrequency != null) {
-                        // has already been created
-                        continue;
+                    if (maxFrequency == null) {
+                        maxFrequency = new MaxFrequency(key, daoMgr.getDAOBean().getMaxFrequencySourceDAO().findById("indel"));
+                        maxFrequency.setMaxAlleleFreq(indelMaxFrequency.getMaxAlleleFrequency());
+                        results.add(maxFrequency);
                     }
-                    maxFrequency = new MaxFrequency(key, daoMgr.getDAOBean().getMaxFrequencySourceDAO().findById("indel"));
-                    maxFrequency.setMaxAlleleFreq(indelMaxFrequencyList.get(0).getMaxAlleleFrequency());
-                    results.add(maxFrequency);
                     continue;
                 }
 
-                if (CollectionUtils.isEmpty(snpPopulationMaxFrequencyList) && CollectionUtils.isEmpty(indelMaxFrequencyList)) {
+                if (snpPopulationMaxFrequency == null && indelMaxFrequency == null) {
                     MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 0);
                     MaxFrequency maxFrequency = daoMgr.getDAOBean().getMaxFrequencyDAO().findById(key);
-                    if (maxFrequency != null) {
-                        // has already been created
-                        continue;
+                    if (maxFrequency == null) {
+                        maxFrequency = new MaxFrequency(key, daoMgr.getDAOBean().getMaxFrequencySourceDAO().findById("none"));
+                        maxFrequency.setMaxAlleleFreq(0D);
+                        results.add(maxFrequency);
                     }
-                    maxFrequency = new MaxFrequency(key, daoMgr.getDAOBean().getMaxFrequencySourceDAO().findById("none"));
-                    maxFrequency.setMaxAlleleFreq(0D);
-                    results.add(maxFrequency);
                 }
 
             }
