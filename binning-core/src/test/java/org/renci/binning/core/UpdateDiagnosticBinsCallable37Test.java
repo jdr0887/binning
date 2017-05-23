@@ -46,7 +46,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findKnownPathogenic(diagnosticBinningJob, variants));
         }
 
         assertTrue(CollectionUtils.isNotEmpty(results));
@@ -74,7 +74,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDKnownPathogenic(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findKnownPathogenic(diagnosticBinningJob, variants));
         }
 
         assertTrue(CollectionUtils.isNotEmpty(results));
@@ -105,7 +105,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findLikelyPathogenic(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         results.forEach(a -> logger.info(a.toString()));
@@ -130,7 +130,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDPossiblyPathogenic(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findPossiblyPathogenic(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
@@ -155,7 +155,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDUncertainSignificance(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findUncertainSignificance(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
@@ -180,7 +180,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyBenign(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findLikelyBenign(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
@@ -205,7 +205,7 @@ public class UpdateDiagnosticBinsCallable37Test {
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 variants.addAll(foundVariants);
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDAlmostCertainlyBenign(diagnosticBinningJob, variants));
+            results.addAll(binResultsFinalDiagnosticFactory.findAlmostCertainlyBenign(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
