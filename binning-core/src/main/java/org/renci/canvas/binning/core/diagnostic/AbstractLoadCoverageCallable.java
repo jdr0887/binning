@@ -83,7 +83,7 @@ public abstract class AbstractLoadCoverageCallable implements Callable<Void> {
                         chromosome, start, end);
                 if (CollectionUtils.isNotEmpty(dxExonList)) {
 
-                    ExecutorService es = Executors.newFixedThreadPool(6);
+                    ExecutorService es = Executors.newFixedThreadPool(4);
                     for (DXExons dxExon : dxExonList) {
                         es.submit(() -> {
 

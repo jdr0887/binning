@@ -60,7 +60,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
 
-                ExecutorService es = Executors.newFixedThreadPool(6);
+                ExecutorService es = Executors.newFixedThreadPool(4);
 
                 for (LocatedVariant locatedVariant : locatedVariantList) {
                     logger.info(locatedVariant.toString());
