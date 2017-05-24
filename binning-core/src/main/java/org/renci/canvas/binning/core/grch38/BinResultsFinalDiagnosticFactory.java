@@ -98,7 +98,7 @@ public class BinResultsFinalDiagnosticFactory {
             if (optionalHGMDLocatedVariant.isPresent()) {
 
                 HGMDLocatedVariant hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                logger.info(hgmdLocatedVariant.toString());
+                logger.debug(hgmdLocatedVariant.toString());
 
                 // should be able to find MaxFrequency by 38 LocatedVariant
                 List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
@@ -107,7 +107,7 @@ public class BinResultsFinalDiagnosticFactory {
                 if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
                     MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                    logger.info(locatedVariant37.toString());
+                    logger.debug(locatedVariant37.toString());
 
                     List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
                             diagnosticBinningJob.getDx().getId());
@@ -159,7 +159,7 @@ public class BinResultsFinalDiagnosticFactory {
                 if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
                     MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                    logger.info(maxFrequency.toString());
+                    logger.debug(maxFrequency.toString());
 
                     List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
                             diagnosticBinningJob.getDx().getId());
@@ -216,7 +216,7 @@ public class BinResultsFinalDiagnosticFactory {
                     .filter((s) -> !s.getId().getVersion().equals(2) || !s.getTag().equals("DM")).findFirst();
             if (optionalHGMDLocVar.isPresent()) {
                 hgmdLocatedVariant = optionalHGMDLocVar.get();
-                logger.info(hgmdLocatedVariant.toString());
+                logger.debug(hgmdLocatedVariant.toString());
             }
         }
 
@@ -225,7 +225,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             if (maxFrequency.getMaxAlleleFreq() < 0.01) {
 
@@ -280,7 +280,7 @@ public class BinResultsFinalDiagnosticFactory {
             }
             foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
             rca = foundReferenceClinicalAssersions.get(0);
-            logger.info(rca.toString());
+            logger.debug(rca.toString());
         }
 
         List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
@@ -288,7 +288,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             if (maxFrequency.getMaxAlleleFreq() < 0.01) {
 
@@ -340,7 +340,7 @@ public class BinResultsFinalDiagnosticFactory {
                     .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
             if (optionalHGMDLocatedVariant.isPresent()) {
                 hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                logger.info(hgmdLocatedVariant.toString());
+                logger.debug(hgmdLocatedVariant.toString());
             }
         }
 
@@ -349,7 +349,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
                     diagnosticBinningJob.getDx().getId());
@@ -405,7 +405,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
                     diagnosticBinningJob.getDx().getId());
@@ -462,7 +462,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
                     diagnosticBinningJob.getDx().getId());
@@ -477,14 +477,20 @@ public class BinResultsFinalDiagnosticFactory {
                 NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
                         .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
+                if (maxFrequency.getMaxAlleleFreq() < 0.01
+                        && (uncertainSignificanceAllowableVariantEffects.contains(variant.getVariantEffect().getId())
+                                || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId()))) {
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
                 List<String> allowableLocationTypes = Arrays.asList("exon", "intron/exon boundary");
                 allowableLocationTypes.addAll(uncertainSignificanceAllowableLocationTypes);
 
-                if ((maxFrequency.getMaxAlleleFreq() < 0.01
-                        && (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())
-                                || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())))
-                        || (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                                && allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                if (binResultsFinalDiagnostic == null && maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                     binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
                             maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
@@ -527,7 +533,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
                     diagnosticBinningJob.getDx().getId());
@@ -545,14 +551,20 @@ public class BinResultsFinalDiagnosticFactory {
                 NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
                         .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
+                if (maxFrequency.getMaxAlleleFreq() < 0.01
+                        && (uncertainSignificanceAllowableVariantEffects.contains(variant.getVariantEffect().getId())
+                                || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId()))) {
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
                 List<String> allowableLocationTypes = Arrays.asList("exon", "intron/exon boundary");
                 allowableLocationTypes.addAll(uncertainSignificanceAllowableLocationTypes);
 
-                if ((maxFrequency.getMaxAlleleFreq() < 0.01
-                        && (uncertainSignificanceAllowableVariantEffects.contains(variant.getVariantEffect().getId())
-                                || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())))
-                        || (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                                && allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                if (binResultsFinalDiagnostic == null && maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                     binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
                             maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
@@ -596,7 +608,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             if (maxFrequency.getMaxAlleleFreq() < 0.01) {
                 return null;
@@ -614,10 +626,17 @@ public class BinResultsFinalDiagnosticFactory {
                 NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
                         .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                if ((maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
-                        && allowableLocationTypes.contains(variant.getLocationType().getId()))
-                        || (maxFrequency.getMaxAlleleFreq() < 0.05
-                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
+                if (binResultsFinalDiagnostic == null && maxFrequency.getMaxAlleleFreq() < 0.05
+                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
+
                     binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
                             maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
@@ -660,7 +679,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             if (maxFrequency.getMaxAlleleFreq() < 0.01) {
                 return null;
@@ -678,10 +697,17 @@ public class BinResultsFinalDiagnosticFactory {
                 NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
                         .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                if ((maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
-                        && allowableLocationTypes.contains(variant.getLocationType().getId()))
-                        || (maxFrequency.getMaxAlleleFreq() < 0.05
-                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
+                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
+                if (binResultsFinalDiagnostic == null && maxFrequency.getMaxAlleleFreq() < 0.05
+                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
+
                     binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
                             maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
@@ -723,7 +749,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             if (maxFrequency.getMaxAlleleFreq() < 0.01) {
                 return null;
@@ -739,9 +765,15 @@ public class BinResultsFinalDiagnosticFactory {
                 NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
                         .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                if ((maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId()))
-                        || (maxFrequency.getMaxAlleleFreq() >= 0.05
-                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
+                if (binResultsFinalDiagnostic == null && (maxFrequency.getMaxAlleleFreq() >= 0.05
+                        && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
                     binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
                             maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
@@ -786,7 +818,7 @@ public class BinResultsFinalDiagnosticFactory {
         if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
             MaxFrequency maxFrequency = maxFrequencyList.get(0);
-            logger.info(maxFrequency.toString());
+            logger.debug(maxFrequency.toString());
 
             if (maxFrequency.getMaxAlleleFreq() < 0.01) {
                 return null;
@@ -802,9 +834,15 @@ public class BinResultsFinalDiagnosticFactory {
                 NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
                         .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                if ((maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId()))
-                        || (maxFrequency.getMaxAlleleFreq() >= 0.05
-                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
+                if (binResultsFinalDiagnostic == null && maxFrequency.getMaxAlleleFreq() >= 0.05
+                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                     binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
                             maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
@@ -824,101 +862,106 @@ public class BinResultsFinalDiagnosticFactory {
         logger.debug(
                 "ENTERING createBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, ReferenceClinicalAssertion, Integer, SNPMappingAgg)");
 
-        AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO()
-                .findById(new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
+        try {
+            AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO().findById(
+                    new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
 
-        AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO()
-                .findById(new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
+            AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO().findById(
+                    new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
 
-        UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
-                .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
+            UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
+                    .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
-        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
-        DX dx = diagnosticBinningJob.getDx();
+            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+            DX dx = diagnosticBinningJob.getDx();
 
-        BinResultsFinalDiagnosticPK binResultsFinalDiagnosticPK = new BinResultsFinalDiagnosticPK(diagnosticBinningJob.getParticipant(),
-                diagnosticResultVersion.getId(), dx.getId(), diagnosticBinningJob.getAssembly().getId(),
-                variant.getLocatedVariant().getId(), variant.getId().getMapNumber(), variant.getId().getTranscript());
+            BinResultsFinalDiagnosticPK binResultsFinalDiagnosticPK = new BinResultsFinalDiagnosticPK(diagnosticBinningJob.getParticipant(),
+                    diagnosticResultVersion.getId(), dx.getId(), diagnosticBinningJob.getAssembly().getId(),
+                    variant.getLocatedVariant().getId(), variant.getId().getMapNumber(), variant.getId().getTranscript());
 
-        BinResultsFinalDiagnostic binResultsFinalDiagnostic = new BinResultsFinalDiagnostic(binResultsFinalDiagnosticPK);
-        binResultsFinalDiagnostic.setLocatedVariant(variant.getLocatedVariant());
-        binResultsFinalDiagnostic.setAssembly(diagnosticBinningJob.getAssembly());
-        binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
-        binResultsFinalDiagnostic.setDiagnosticResultVersion(diagnosticResultVersion);
-        binResultsFinalDiagnostic.setDx(dx);
-        binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
-        binResultsFinalDiagnostic.setClinvarDiseaseClass(clinvarDiseaseClass);
+            binResultsFinalDiagnostic = new BinResultsFinalDiagnostic(binResultsFinalDiagnosticPK);
+            binResultsFinalDiagnostic.setLocatedVariant(variant.getLocatedVariant());
+            binResultsFinalDiagnostic.setAssembly(diagnosticBinningJob.getAssembly());
+            binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
+            binResultsFinalDiagnostic.setDiagnosticResultVersion(diagnosticResultVersion);
+            binResultsFinalDiagnostic.setDx(dx);
+            binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
+            binResultsFinalDiagnostic.setClinvarDiseaseClass(clinvarDiseaseClass);
 
-        // variant stuff
-        binResultsFinalDiagnostic.setChromosome(variant.getId().getGenomeRefSeq());
-        binResultsFinalDiagnostic.setAlternateAllele(variant.getAlternateAllele());
-        binResultsFinalDiagnostic.setAminoAcidStart(variant.getAminoAcidStart());
-        binResultsFinalDiagnostic.setAminoAcidEnd(variant.getAminoAcidEnd());
-        binResultsFinalDiagnostic.setCodingSequencePosition(variant.getCodingSequencePosition());
-        binResultsFinalDiagnostic.setFinalAminoAcid(variant.getFinalAminoAcid());
-        binResultsFinalDiagnostic.setFrameshift(variant.getFrameshift());
-        binResultsFinalDiagnostic.setGeneId(variant.getGene().getId());
-        binResultsFinalDiagnostic.setHgncGene(variant.getHgncGene());
-        binResultsFinalDiagnostic.setHgvsCodingSequence(variant.getHgvsCodingSequence());
-        binResultsFinalDiagnostic.setHgvsGenomic(variant.getHgvsGenomic());
-        binResultsFinalDiagnostic.setHgvsProtein(variant.getHgvsProtein());
-        binResultsFinalDiagnostic.setHgvsTranscript(variant.getHgvsTranscript());
-        binResultsFinalDiagnostic.setInframe(variant.getInframe());
-        binResultsFinalDiagnostic.setIntronExonDistance(variant.getIntronExonDistance());
-        binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
-        binResultsFinalDiagnostic.setNummaps(variant.getNumberOfTranscriptMaps());
-        binResultsFinalDiagnostic.setOriginalAminoAcid(variant.getOriginalAminoAcid());
-        binResultsFinalDiagnostic.setStrand(variant.getStrand());
-        binResultsFinalDiagnostic.setPosition(variant.getId().getPosition());
-        binResultsFinalDiagnostic.setReferenceAllele(variant.getReferenceAllele());
-        binResultsFinalDiagnostic.setRefseqGene(variant.getRefSeqGene());
-        binResultsFinalDiagnostic.setTranscriptPosition(variant.getTranscriptPosition());
-        binResultsFinalDiagnostic.setType(variant.getVariantType().getId());
-        binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
+            // variant stuff
+            binResultsFinalDiagnostic.setChromosome(variant.getId().getGenomeRefSeq());
+            binResultsFinalDiagnostic.setAlternateAllele(variant.getAlternateAllele());
+            binResultsFinalDiagnostic.setAminoAcidStart(variant.getAminoAcidStart());
+            binResultsFinalDiagnostic.setAminoAcidEnd(variant.getAminoAcidEnd());
+            binResultsFinalDiagnostic.setCodingSequencePosition(variant.getCodingSequencePosition());
+            binResultsFinalDiagnostic.setFinalAminoAcid(variant.getFinalAminoAcid());
+            binResultsFinalDiagnostic.setFrameshift(variant.getFrameshift());
+            binResultsFinalDiagnostic.setGeneId(variant.getGene().getId());
+            binResultsFinalDiagnostic.setHgncGene(variant.getHgncGene());
+            binResultsFinalDiagnostic.setHgvsCodingSequence(variant.getHgvsCodingSequence());
+            binResultsFinalDiagnostic.setHgvsGenomic(variant.getHgvsGenomic());
+            binResultsFinalDiagnostic.setHgvsProtein(variant.getHgvsProtein());
+            binResultsFinalDiagnostic.setHgvsTranscript(variant.getHgvsTranscript());
+            binResultsFinalDiagnostic.setInframe(variant.getInframe());
+            binResultsFinalDiagnostic.setIntronExonDistance(variant.getIntronExonDistance());
+            binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
+            binResultsFinalDiagnostic.setNummaps(variant.getNumberOfTranscriptMaps());
+            binResultsFinalDiagnostic.setOriginalAminoAcid(variant.getOriginalAminoAcid());
+            binResultsFinalDiagnostic.setStrand(variant.getStrand());
+            binResultsFinalDiagnostic.setPosition(variant.getId().getPosition());
+            binResultsFinalDiagnostic.setReferenceAllele(variant.getReferenceAllele());
+            binResultsFinalDiagnostic.setRefseqGene(variant.getRefSeqGene());
+            binResultsFinalDiagnostic.setTranscriptPosition(variant.getTranscriptPosition());
+            binResultsFinalDiagnostic.setType(variant.getVariantType().getId());
+            binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
 
-        if (rca != null) {
-            binResultsFinalDiagnostic.setClinvarAccession(rca.getAccession());
-            binResultsFinalDiagnostic.setClinvarAssertion(rca.getAssertion());
+            if (rca != null) {
+                binResultsFinalDiagnostic.setClinvarAccession(rca.getAccession());
+                binResultsFinalDiagnostic.setClinvarAssertion(rca.getAssertion());
+            }
+
+            if (assemblyLocatedVariant != null) {
+                binResultsFinalDiagnostic.setHomozygous(assemblyLocatedVariant.getHomozygous());
+                binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariant.getGenotypeQuality());
+            }
+
+            if (assemblyLocatedVariantQC != null) {
+                binResultsFinalDiagnostic.setAltDepth(assemblyLocatedVariantQC.getAltDepth());
+                binResultsFinalDiagnostic.setRefDepth(assemblyLocatedVariantQC.getRefDepth());
+                binResultsFinalDiagnostic.setDepth(assemblyLocatedVariantQC.getDepth());
+                binResultsFinalDiagnostic.setFracReadsWithDels(assemblyLocatedVariantQC.getFracReadsWithDels());
+                binResultsFinalDiagnostic.setHrun(assemblyLocatedVariantQC.getHomopolymerRun());
+                binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariantQC.getQualityByDepth());
+                binResultsFinalDiagnostic.setStrandScore(assemblyLocatedVariantQC.getStrandScore());
+                binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
+            }
+
+            if (maxFrequency != null) {
+                binResultsFinalDiagnostic.setMaxAlleleFrequency(maxFrequency.getMaxAlleleFreq());
+            }
+
+            if (diagnosticGene != null) {
+                binResultsFinalDiagnostic.setTier(diagnosticGene.getTier());
+                binResultsFinalDiagnostic.setInheritance(diagnosticGene.getInheritance());
+            }
+
+            if (snpMappingAgg != null) {
+                binResultsFinalDiagnostic.setRsId(snpMappingAgg.getRsIds());
+            }
+
+            binResultsFinalDiagnostic
+                    .setNCGenesAlternateFrequency((ncgenesFrequencies != null && ncgenesFrequencies.getAltAlleleFrequency() != null)
+                            ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
+
+            binResultsFinalDiagnostic.setNCGenesHWEP(
+                    (ncgenesFrequencies != null && ncgenesFrequencies.getHweP() != null) ? ncgenesFrequencies.getHweP() : 1D);
+
+            binResultsFinalDiagnostic.setExonTruncationCount(
+                    (unimportantExon != null && unimportantExon.getCount() != null) ? unimportantExon.getCount() : 0);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
-
-        if (assemblyLocatedVariant != null) {
-            binResultsFinalDiagnostic.setHomozygous(assemblyLocatedVariant.getHomozygous());
-            binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariant.getGenotypeQuality());
-        }
-
-        if (assemblyLocatedVariantQC != null) {
-            binResultsFinalDiagnostic.setAltDepth(assemblyLocatedVariantQC.getAltDepth());
-            binResultsFinalDiagnostic.setRefDepth(assemblyLocatedVariantQC.getRefDepth());
-            binResultsFinalDiagnostic.setDepth(assemblyLocatedVariantQC.getDepth());
-            binResultsFinalDiagnostic.setFracReadsWithDels(assemblyLocatedVariantQC.getFracReadsWithDels());
-            binResultsFinalDiagnostic.setHrun(assemblyLocatedVariantQC.getHomopolymerRun());
-            binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariantQC.getQualityByDepth());
-            binResultsFinalDiagnostic.setStrandScore(assemblyLocatedVariantQC.getStrandScore());
-            binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
-        }
-
-        if (maxFrequency != null) {
-            binResultsFinalDiagnostic.setMaxAlleleFrequency(maxFrequency.getMaxAlleleFreq());
-        }
-
-        if (diagnosticGene != null) {
-            binResultsFinalDiagnostic.setTier(diagnosticGene.getTier());
-            binResultsFinalDiagnostic.setInheritance(diagnosticGene.getInheritance());
-        }
-
-        if (snpMappingAgg != null) {
-            binResultsFinalDiagnostic.setRsId(snpMappingAgg.getRsIds());
-        }
-
-        binResultsFinalDiagnostic
-                .setNCGenesAlternateFrequency((ncgenesFrequencies != null && ncgenesFrequencies.getAltAlleleFrequency() != null)
-                        ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
-
-        binResultsFinalDiagnostic
-                .setNCGenesHWEP((ncgenesFrequencies != null && ncgenesFrequencies.getHweP() != null) ? ncgenesFrequencies.getHweP() : 1D);
-
-        binResultsFinalDiagnostic
-                .setExonTruncationCount((unimportantExon != null && unimportantExon.getCount() != null) ? unimportantExon.getCount() : 0);
 
         return binResultsFinalDiagnostic;
     }
@@ -931,101 +974,106 @@ public class BinResultsFinalDiagnosticFactory {
         logger.debug(
                 "ENTERING createHGMDBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, HGMDLocatedVariant, Integer, SNPMappingAgg)");
 
-        AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO()
-                .findById(new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
+        try {
+            AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO().findById(
+                    new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
 
-        AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO()
-                .findById(new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
+            AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO().findById(
+                    new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
 
-        UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
-                .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
+            UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
+                    .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
-        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
-        DX dx = diagnosticBinningJob.getDx();
+            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+            DX dx = diagnosticBinningJob.getDx();
 
-        BinResultsFinalDiagnosticPK binResultsFinalDiagnosticPK = new BinResultsFinalDiagnosticPK(diagnosticBinningJob.getParticipant(),
-                diagnosticResultVersion.getId(), dx.getId(), diagnosticBinningJob.getAssembly().getId(),
-                variant.getLocatedVariant().getId(), variant.getId().getMapNumber(), variant.getId().getTranscript());
+            BinResultsFinalDiagnosticPK binResultsFinalDiagnosticPK = new BinResultsFinalDiagnosticPK(diagnosticBinningJob.getParticipant(),
+                    diagnosticResultVersion.getId(), dx.getId(), diagnosticBinningJob.getAssembly().getId(),
+                    variant.getLocatedVariant().getId(), variant.getId().getMapNumber(), variant.getId().getTranscript());
 
-        BinResultsFinalDiagnostic binResultsFinalDiagnostic = new BinResultsFinalDiagnostic(binResultsFinalDiagnosticPK);
-        binResultsFinalDiagnostic.setLocatedVariant(variant.getLocatedVariant());
-        binResultsFinalDiagnostic.setAssembly(diagnosticBinningJob.getAssembly());
-        binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
-        binResultsFinalDiagnostic.setDiagnosticResultVersion(diagnosticResultVersion);
-        binResultsFinalDiagnostic.setDx(dx);
-        binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
-        binResultsFinalDiagnostic.setHgmdDiseaseClass(hgmdDiseaseClass);
+            binResultsFinalDiagnostic = new BinResultsFinalDiagnostic(binResultsFinalDiagnosticPK);
+            binResultsFinalDiagnostic.setLocatedVariant(variant.getLocatedVariant());
+            binResultsFinalDiagnostic.setAssembly(diagnosticBinningJob.getAssembly());
+            binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
+            binResultsFinalDiagnostic.setDiagnosticResultVersion(diagnosticResultVersion);
+            binResultsFinalDiagnostic.setDx(dx);
+            binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
+            binResultsFinalDiagnostic.setHgmdDiseaseClass(hgmdDiseaseClass);
 
-        // variant stuff
-        binResultsFinalDiagnostic.setChromosome(variant.getId().getGenomeRefSeq());
-        binResultsFinalDiagnostic.setAlternateAllele(variant.getAlternateAllele());
-        binResultsFinalDiagnostic.setAminoAcidStart(variant.getAminoAcidStart());
-        binResultsFinalDiagnostic.setAminoAcidEnd(variant.getAminoAcidEnd());
-        binResultsFinalDiagnostic.setCodingSequencePosition(variant.getCodingSequencePosition());
-        binResultsFinalDiagnostic.setFinalAminoAcid(variant.getFinalAminoAcid());
-        binResultsFinalDiagnostic.setFrameshift(variant.getFrameshift());
-        binResultsFinalDiagnostic.setGeneId(variant.getGene().getId());
-        binResultsFinalDiagnostic.setHgncGene(variant.getHgncGene());
-        binResultsFinalDiagnostic.setHgvsCodingSequence(variant.getHgvsCodingSequence());
-        binResultsFinalDiagnostic.setHgvsGenomic(variant.getHgvsGenomic());
-        binResultsFinalDiagnostic.setHgvsProtein(variant.getHgvsProtein());
-        binResultsFinalDiagnostic.setHgvsTranscript(variant.getHgvsTranscript());
-        binResultsFinalDiagnostic.setInframe(variant.getInframe());
-        binResultsFinalDiagnostic.setIntronExonDistance(variant.getIntronExonDistance());
-        binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
-        binResultsFinalDiagnostic.setNummaps(variant.getNumberOfTranscriptMaps());
-        binResultsFinalDiagnostic.setOriginalAminoAcid(variant.getOriginalAminoAcid());
-        binResultsFinalDiagnostic.setStrand(variant.getStrand());
-        binResultsFinalDiagnostic.setPosition(variant.getId().getPosition());
-        binResultsFinalDiagnostic.setReferenceAllele(variant.getReferenceAllele());
-        binResultsFinalDiagnostic.setRefseqGene(variant.getRefSeqGene());
-        binResultsFinalDiagnostic.setTranscriptPosition(variant.getTranscriptPosition());
-        binResultsFinalDiagnostic.setType(variant.getVariantType().getId());
-        binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
+            // variant stuff
+            binResultsFinalDiagnostic.setChromosome(variant.getId().getGenomeRefSeq());
+            binResultsFinalDiagnostic.setAlternateAllele(variant.getAlternateAllele());
+            binResultsFinalDiagnostic.setAminoAcidStart(variant.getAminoAcidStart());
+            binResultsFinalDiagnostic.setAminoAcidEnd(variant.getAminoAcidEnd());
+            binResultsFinalDiagnostic.setCodingSequencePosition(variant.getCodingSequencePosition());
+            binResultsFinalDiagnostic.setFinalAminoAcid(variant.getFinalAminoAcid());
+            binResultsFinalDiagnostic.setFrameshift(variant.getFrameshift());
+            binResultsFinalDiagnostic.setGeneId(variant.getGene().getId());
+            binResultsFinalDiagnostic.setHgncGene(variant.getHgncGene());
+            binResultsFinalDiagnostic.setHgvsCodingSequence(variant.getHgvsCodingSequence());
+            binResultsFinalDiagnostic.setHgvsGenomic(variant.getHgvsGenomic());
+            binResultsFinalDiagnostic.setHgvsProtein(variant.getHgvsProtein());
+            binResultsFinalDiagnostic.setHgvsTranscript(variant.getHgvsTranscript());
+            binResultsFinalDiagnostic.setInframe(variant.getInframe());
+            binResultsFinalDiagnostic.setIntronExonDistance(variant.getIntronExonDistance());
+            binResultsFinalDiagnostic.setLocationType(variant.getLocationType());
+            binResultsFinalDiagnostic.setNummaps(variant.getNumberOfTranscriptMaps());
+            binResultsFinalDiagnostic.setOriginalAminoAcid(variant.getOriginalAminoAcid());
+            binResultsFinalDiagnostic.setStrand(variant.getStrand());
+            binResultsFinalDiagnostic.setPosition(variant.getId().getPosition());
+            binResultsFinalDiagnostic.setReferenceAllele(variant.getReferenceAllele());
+            binResultsFinalDiagnostic.setRefseqGene(variant.getRefSeqGene());
+            binResultsFinalDiagnostic.setTranscriptPosition(variant.getTranscriptPosition());
+            binResultsFinalDiagnostic.setType(variant.getVariantType().getId());
+            binResultsFinalDiagnostic.setVariantEffect(variant.getVariantEffect());
 
-        if (hgmdLocatedVariant != null) {
-            binResultsFinalDiagnostic.setHgmdAccessionNumber(hgmdLocatedVariant.getId().getAccession());
-            binResultsFinalDiagnostic.setHgmdTag(hgmdLocatedVariant.getTag());
+            if (hgmdLocatedVariant != null) {
+                binResultsFinalDiagnostic.setHgmdAccessionNumber(hgmdLocatedVariant.getId().getAccession());
+                binResultsFinalDiagnostic.setHgmdTag(hgmdLocatedVariant.getTag());
+            }
+
+            if (assemblyLocatedVariant != null) {
+                binResultsFinalDiagnostic.setHomozygous(assemblyLocatedVariant.getHomozygous());
+                binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariant.getGenotypeQuality());
+            }
+
+            if (assemblyLocatedVariantQC != null) {
+                binResultsFinalDiagnostic.setAltDepth(assemblyLocatedVariantQC.getAltDepth());
+                binResultsFinalDiagnostic.setRefDepth(assemblyLocatedVariantQC.getRefDepth());
+                binResultsFinalDiagnostic.setDepth(assemblyLocatedVariantQC.getDepth());
+                binResultsFinalDiagnostic.setFracReadsWithDels(assemblyLocatedVariantQC.getFracReadsWithDels());
+                binResultsFinalDiagnostic.setHrun(assemblyLocatedVariantQC.getHomopolymerRun());
+                binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariantQC.getQualityByDepth());
+                binResultsFinalDiagnostic.setStrandScore(assemblyLocatedVariantQC.getStrandScore());
+                binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
+            }
+
+            if (maxFrequency != null) {
+                binResultsFinalDiagnostic.setMaxAlleleFrequency(maxFrequency.getMaxAlleleFreq());
+            }
+
+            if (diagnosticGene != null) {
+                binResultsFinalDiagnostic.setTier(diagnosticGene.getTier());
+                binResultsFinalDiagnostic.setInheritance(diagnosticGene.getInheritance());
+            }
+
+            if (snpMappingAgg != null) {
+                binResultsFinalDiagnostic.setRsId(snpMappingAgg.getRsIds());
+            }
+
+            binResultsFinalDiagnostic
+                    .setNCGenesAlternateFrequency((ncgenesFrequencies != null && ncgenesFrequencies.getAltAlleleFrequency() != null)
+                            ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
+
+            binResultsFinalDiagnostic.setNCGenesHWEP(
+                    (ncgenesFrequencies != null && ncgenesFrequencies.getHweP() != null) ? ncgenesFrequencies.getHweP() : 1D);
+
+            binResultsFinalDiagnostic.setExonTruncationCount(
+                    (unimportantExon != null && unimportantExon.getCount() != null) ? unimportantExon.getCount() : 0);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
         }
-
-        if (assemblyLocatedVariant != null) {
-            binResultsFinalDiagnostic.setHomozygous(assemblyLocatedVariant.getHomozygous());
-            binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariant.getGenotypeQuality());
-        }
-
-        if (assemblyLocatedVariantQC != null) {
-            binResultsFinalDiagnostic.setAltDepth(assemblyLocatedVariantQC.getAltDepth());
-            binResultsFinalDiagnostic.setRefDepth(assemblyLocatedVariantQC.getRefDepth());
-            binResultsFinalDiagnostic.setDepth(assemblyLocatedVariantQC.getDepth());
-            binResultsFinalDiagnostic.setFracReadsWithDels(assemblyLocatedVariantQC.getFracReadsWithDels());
-            binResultsFinalDiagnostic.setHrun(assemblyLocatedVariantQC.getHomopolymerRun());
-            binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariantQC.getQualityByDepth());
-            binResultsFinalDiagnostic.setStrandScore(assemblyLocatedVariantQC.getStrandScore());
-            binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
-        }
-
-        if (maxFrequency != null) {
-            binResultsFinalDiagnostic.setMaxAlleleFrequency(maxFrequency.getMaxAlleleFreq());
-        }
-
-        if (diagnosticGene != null) {
-            binResultsFinalDiagnostic.setTier(diagnosticGene.getTier());
-            binResultsFinalDiagnostic.setInheritance(diagnosticGene.getInheritance());
-        }
-
-        if (snpMappingAgg != null) {
-            binResultsFinalDiagnostic.setRsId(snpMappingAgg.getRsIds());
-        }
-
-        binResultsFinalDiagnostic
-                .setNCGenesAlternateFrequency((ncgenesFrequencies != null && ncgenesFrequencies.getAltAlleleFrequency() != null)
-                        ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
-
-        binResultsFinalDiagnostic
-                .setNCGenesHWEP((ncgenesFrequencies != null && ncgenesFrequencies.getHweP() != null) ? ncgenesFrequencies.getHweP() : 1D);
-
-        binResultsFinalDiagnostic
-                .setExonTruncationCount((unimportantExon != null && unimportantExon.getCount() != null) ? unimportantExon.getCount() : 0);
 
         return binResultsFinalDiagnostic;
     }
