@@ -422,15 +422,16 @@ public class UpdateDiagnosticBinsCallable38Test {
     @Test
     public void testAlmostCertainlyBenign() throws CANVASDAOException {
         BinResultsFinalDiagnosticFactory binResultsFinalDiagnosticFactory = BinResultsFinalDiagnosticFactory.getInstance(daoBean);
-        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(4207);
+        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5002);
         List<BinResultsFinalDiagnostic> results = new ArrayList<>();
         List<LocatedVariant> locatedVariantList = daoBean.getLocatedVariantDAO()
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
 
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
             for (LocatedVariant locatedVariant : locatedVariantList) {
+                logger.info(locatedVariant.toString());
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
-                assertTrue(CollectionUtils.isNotEmpty(foundVariants));
+                //assertTrue(CollectionUtils.isNotEmpty(foundVariants));
 
                 for (Variants_80_4 variant : foundVariants) {
 
