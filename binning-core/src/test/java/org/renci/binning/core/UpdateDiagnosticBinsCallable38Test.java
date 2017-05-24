@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -25,8 +26,10 @@ import org.renci.canvas.dao.jpa.clinbin.DiagnosticResultVersionDAOImpl;
 import org.renci.canvas.dao.jpa.clinbin.DiseaseClassDAOImpl;
 import org.renci.canvas.dao.jpa.clinbin.MaxFrequencyDAOImpl;
 import org.renci.canvas.dao.jpa.clinbin.NCGenesFrequenciesDAOImpl;
+import org.renci.canvas.dao.jpa.clinbin.UnimportantExonDAOImpl;
 import org.renci.canvas.dao.jpa.clinvar.ReferenceClinicalAssertionDAOImpl;
 import org.renci.canvas.dao.jpa.dbsnp.SNPMappingAggDAOImpl;
+import org.renci.canvas.dao.jpa.hgmd.HGMDLocatedVariantDAOImpl;
 import org.renci.canvas.dao.jpa.hgnc.HGNCGeneDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.FeatureDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.LocationTypeDAOImpl;
@@ -37,9 +40,12 @@ import org.renci.canvas.dao.jpa.refseq.TranscriptMapsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.Variants_80_4_DAOImpl;
+import org.renci.canvas.dao.jpa.var.AssemblyLocatedVariantDAOImpl;
+import org.renci.canvas.dao.jpa.var.AssemblyLocatedVariantQCDAOImpl;
 import org.renci.canvas.dao.jpa.var.CanonicalAlleleDAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
+import org.renci.canvas.dao.var.model.CanonicalAllele;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,6 +153,22 @@ public class UpdateDiagnosticBinsCallable38Test {
         snpMappingAggDAO.setEntityManager(em);
         daoBean.setSNPMappingAggDAO(snpMappingAggDAO);
 
+        HGMDLocatedVariantDAOImpl hgmdLocatedVariantDAO = new HGMDLocatedVariantDAOImpl();
+        hgmdLocatedVariantDAO.setEntityManager(em);
+        daoBean.setHGMDLocatedVariantDAO(hgmdLocatedVariantDAO);
+
+        AssemblyLocatedVariantDAOImpl assemblyLocatedVariantDAO = new AssemblyLocatedVariantDAOImpl();
+        assemblyLocatedVariantDAO.setEntityManager(em);
+        daoBean.setAssemblyLocatedVariantDAO(assemblyLocatedVariantDAO);
+
+        AssemblyLocatedVariantQCDAOImpl assemblyLocatedVariantQCDAO = new AssemblyLocatedVariantQCDAOImpl();
+        assemblyLocatedVariantQCDAO.setEntityManager(em);
+        daoBean.setAssemblyLocatedVariantQCDAO(assemblyLocatedVariantQCDAO);
+
+        UnimportantExonDAOImpl unimportantExonDAO = new UnimportantExonDAOImpl();
+        unimportantExonDAO.setEntityManager(em);
+        daoBean.setUnimportantExonDAO(unimportantExonDAO);
+
     }
 
     @AfterClass
@@ -167,7 +189,32 @@ public class UpdateDiagnosticBinsCallable38Test {
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                 // assertTrue(CollectionUtils.isNotEmpty(foundVariants));
                 if (CollectionUtils.isNotEmpty(foundVariants)) {
-                    results.addAll(binResultsFinalDiagnosticFactory.findClinVarKnownPathogenic(diagnosticBinningJob, foundVariants));
+                    for (Variants_80_4 variant : foundVariants) {
+
+                        List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+
+                        if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                            CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                            Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                    .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                            if (optionalLocatedVariant.isPresent()) {
+
+                                // we done't have hgmd data for 38, get from 37
+                                LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
+                                logger.info(locatedVariant37.toString());
+
+                                // BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                // .findClinVarKnownPathogenic(diagnosticBinningJob, variant);
+                                BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                        .findHGMDKnownPathogenic(diagnosticBinningJob, variant, locatedVariant37);
+                                if (binResultsFinalDiagnostic != null) {
+                                    results.add(binResultsFinalDiagnostic);
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -185,13 +232,38 @@ public class UpdateDiagnosticBinsCallable38Test {
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
 
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
-            List<Variants_80_4> variants = new ArrayList<>();
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
-                variants.addAll(foundVariants);
+
+                for (Variants_80_4 variant : foundVariants) {
+
+                    List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                            .findByLocatedVariantId(variant.getLocatedVariant().getId());
+
+                    if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                        CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                        Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                        if (optionalLocatedVariant.isPresent()) {
+
+                            // we done't have hgmd data for 38, get from 37
+                            LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
+                            logger.info(locatedVariant37.toString());
+
+                            // BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                            // .findClinVarLikelyPathogenic(diagnosticBinningJob, variant);
+                            BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                    .findHGMDLikelyPathogenic(diagnosticBinningJob, variant, locatedVariant37);
+                            if (binResultsFinalDiagnostic != null) {
+                                results.add(binResultsFinalDiagnostic);
+                            }
+
+                        }
+                    }
+                }
+
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyPathogenic(diagnosticBinningJob, variants));
         }
         assertTrue(CollectionUtils.isNotEmpty(results));
         results.forEach(a -> logger.info(a.toString()));
@@ -208,14 +280,40 @@ public class UpdateDiagnosticBinsCallable38Test {
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
 
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
-            List<Variants_80_4> variants = new ArrayList<>();
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
-                variants.addAll(foundVariants);
+
+                for (Variants_80_4 variant : foundVariants) {
+
+                    List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                            .findByLocatedVariantId(variant.getLocatedVariant().getId());
+
+                    if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                        CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                        Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                        if (optionalLocatedVariant.isPresent()) {
+
+                            // we done't have hgmd data for 38, get from 37
+                            LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
+                            logger.info(locatedVariant37.toString());
+
+                            // BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                            // .findClinVarPossiblyPathogenic(diagnosticBinningJob, variant);
+                            BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                    .findHGMDPossiblyPathogenic(diagnosticBinningJob, variant, locatedVariant37);
+                            if (binResultsFinalDiagnostic != null) {
+                                results.add(binResultsFinalDiagnostic);
+                            }
+
+                        }
+                    }
+                }
+
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDPossiblyPathogenic(diagnosticBinningJob, variants));
         }
+
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
         assertTrue(results.size() == 54);
@@ -231,14 +329,41 @@ public class UpdateDiagnosticBinsCallable38Test {
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
 
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
-            List<Variants_80_4> variants = new ArrayList<>();
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
-                variants.addAll(foundVariants);
+
+                for (Variants_80_4 variant : foundVariants) {
+
+                    List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                            .findByLocatedVariantId(variant.getLocatedVariant().getId());
+
+                    if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                        CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                        Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                        if (optionalLocatedVariant.isPresent()) {
+
+                            // we done't have hgmd data for 38, get from 37
+                            LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
+                            logger.info(locatedVariant37.toString());
+                            // BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                            // .findClinVarUncertainSignificance(diagnosticBinningJob, variant);
+
+                            BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                    .findHGMDUncertainSignificance(diagnosticBinningJob, variant, locatedVariant37);
+                            if (binResultsFinalDiagnostic != null) {
+                                results.add(binResultsFinalDiagnostic);
+                            }
+
+                        }
+                    }
+
+                }
+
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDUncertainSignificance(diagnosticBinningJob, variants));
         }
+
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
         assertTrue(results.size() == 151);
@@ -254,14 +379,40 @@ public class UpdateDiagnosticBinsCallable38Test {
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
 
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
-            List<Variants_80_4> variants = new ArrayList<>();
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
-                variants.addAll(foundVariants);
+
+                for (Variants_80_4 variant : foundVariants) {
+
+                    List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                            .findByLocatedVariantId(variant.getLocatedVariant().getId());
+
+                    if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                        CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                        Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                        if (optionalLocatedVariant.isPresent()) {
+
+                            // we done't have hgmd data for 38, get from 37
+                            LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
+                            logger.info(locatedVariant37.toString());
+
+                            // BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                            // .findClinVarLikelyBenign(diagnosticBinningJob, variant);
+                            BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                    .findHGMDLikelyBenign(diagnosticBinningJob, variant, locatedVariant37);
+                            if (binResultsFinalDiagnostic != null) {
+                                results.add(binResultsFinalDiagnostic);
+                            }
+
+                        }
+                    }
+                }
+
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDLikelyBenign(diagnosticBinningJob, variants));
         }
+
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
         assertTrue(results.size() == 1);
@@ -277,14 +428,40 @@ public class UpdateDiagnosticBinsCallable38Test {
                 .findByAssemblyId(diagnosticBinningJob.getAssembly().getId());
 
         if (CollectionUtils.isNotEmpty(locatedVariantList)) {
-            List<Variants_80_4> variants = new ArrayList<>();
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
                 assertTrue(CollectionUtils.isNotEmpty(foundVariants));
-                variants.addAll(foundVariants);
+
+                for (Variants_80_4 variant : foundVariants) {
+
+                    List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                            .findByLocatedVariantId(variant.getLocatedVariant().getId());
+
+                    if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                        CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                        Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                        if (optionalLocatedVariant.isPresent()) {
+
+                            // we done't have hgmd data for 38, get from 37
+                            LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
+                            logger.info(locatedVariant37.toString());
+
+                            // BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                            // .findClinVarAlmostCertainlyBenign(diagnosticBinningJob, variant);
+                            BinResultsFinalDiagnostic binResultsFinalDiagnostic = binResultsFinalDiagnosticFactory
+                                    .findHGMDAlmostCertainlyBenign(diagnosticBinningJob, variant, locatedVariant37);
+                            if (binResultsFinalDiagnostic != null) {
+                                results.add(binResultsFinalDiagnostic);
+                            }
+
+                        }
+                    }
+                }
+
             }
-            results.addAll(binResultsFinalDiagnosticFactory.findHGMDAlmostCertainlyBenign(diagnosticBinningJob, variants));
         }
+
         assertTrue(CollectionUtils.isNotEmpty(results));
         logger.info("results.size(): {}", results.size());
         assertTrue(results.size() == 318);
