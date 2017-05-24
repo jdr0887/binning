@@ -1,6 +1,5 @@
 package org.renci.canvas.binning.core.grch38;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,13 +21,13 @@ import org.renci.canvas.dao.clinbin.model.UnimportantExon;
 import org.renci.canvas.dao.clinbin.model.UnimportantExonPK;
 import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertion;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
+import org.renci.canvas.dao.dbsnp.model.SNPMappingAggPK;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariant;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariantPK;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQC;
 import org.renci.canvas.dao.var.model.AssemblyLocatedVariantQCPK;
-import org.renci.canvas.dao.var.model.CanonicalAllele;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,1185 +80,755 @@ public class BinResultsFinalDiagnosticFactory {
         }
     }
 
-    public List<BinResultsFinalDiagnostic> findHGMDKnownPathogenic(DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants)
-            throws CANVASDAOException {
-        logger.debug("ENTERING findHGMDKnownPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_61_2>)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+    public BinResultsFinalDiagnostic findHGMDKnownPathogenic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
+        logger.debug("ENTERING findHGMDKnownPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_80_4>)");
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(1)).findAny().get();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(1)).findAny().get();
+        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
+                .findByLocatedVariantId(locatedVariant37.getId());
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.parallelStream()
+                    .filter((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM")).findAny();
+
+            if (optionalHGMDLocatedVariant.isPresent()) {
+
+                HGMDLocatedVariant hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
+                logger.info(hgmdLocatedVariant.toString());
+
+                // should be able to find MaxFrequency by 38 LocatedVariant
+                List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
                         .findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                    MaxFrequency maxFrequency = maxFrequencyList.get(0);
+                    logger.info(locatedVariant37.toString());
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                    List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                            diagnosticBinningJob.getDx().getId());
 
-                    if (optionalLocatedVariant.isPresent()) {
+                    if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        // we done't have hgmd data for 38, get from 37
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+                        DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                        logger.info(diagnosticGene.toString());
 
-                        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
-                                .findByLocatedVariantId(locatedVariant37.getId());
+                        SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
+                        NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                                .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.parallelStream()
-                                    .filter((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM")).findAny();
-
-                            if (optionalHGMDLocatedVariant.isPresent()) {
-
-                                HGMDLocatedVariant hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                                logger.info(hgmdLocatedVariant.toString());
-
-                                // should be able to find MaxFrequency by 38 LocatedVariant
-                                List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-
-                                if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
-
-                                    MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                                    logger.info(locatedVariant37.toString());
-
-                                    List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                            .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                                    if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                        DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                        logger.info(diagnosticGene.toString());
-
-                                        List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                                .findByLocatedVariantId(locatedVariant37.getId());
-
-                                        SNPMappingAgg snpMappingAgg = null;
-                                        if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                            snpMappingAgg = snpMappingAggList.get(0);
-                                            logger.info(snpMappingAgg.toString());
-                                        }
-
-                                        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                                diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency,
-                                                hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                        results.add(binResultsFinalDiagnostic);
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
+                        binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass,
+                                diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg,
+                                ncgenesFrequencies);
 
                     }
+
                 }
 
             }
+
         }
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findClinVarKnownPathogenic(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findClinVarKnownPathogenic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findClinVarKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(1)).findAny().get();
+        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(1)).findAny().get();
-            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
+                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
+                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.parallelStream()
+                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            if (containsKnownPathogenic) {
+
+                List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
                         .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+                    MaxFrequency maxFrequency = maxFrequencyList.get(0);
+                    logger.info(maxFrequency.toString());
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+                    List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                            diagnosticBinningJob.getDx().getId());
 
-                    if (optionalLocatedVariant.isPresent()) {
+                    if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+                        DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                        logger.info(diagnosticGene.toString());
 
-                        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
-                                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
-                                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
+                        SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
+                        NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                                .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.parallelStream()
-                                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-                            if (containsKnownPathogenic) {
+                        foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+                        ReferenceClinicalAssertion rca = foundReferenceClinicalAssersions.get(0);
+                        logger.info(rca.toString());
 
-                                List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                                if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
-
-                                    MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                                    logger.info(maxFrequency.toString());
-
-                                    List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                            .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                                    if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                        DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                        logger.info(diagnosticGene.toString());
-
-                                        SNPMappingAgg snpMappingAgg = null;
-                                        List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                                .findByLocatedVariantId(locatedVariant37.getId());
-                                        if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                            snpMappingAgg = snpMappingAggList.get(0);
-                                            logger.info(snpMappingAgg.toString());
-                                        }
-
-                                        foundReferenceClinicalAssersions
-                                                .sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                                        ReferenceClinicalAssertion rca = foundReferenceClinicalAssersions.get(0);
-                                        logger.info(rca.toString());
-
-                                        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                                diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                                maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                        results.add(binResultsFinalDiagnostic);
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
+                        binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass,
+                                diagnosticGene, maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
                     }
 
                 }
+
             }
 
         }
-        return results;
+
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findHGMDLikelyPathogenic(DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants)
-            throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findHGMDLikelyPathogenic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findHGMDLikelyPathogenic(CANVASDAOBeanService, DiagnosticBinningJob, List<Variants_61_2>)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
         List<String> allowableVariantEffects = Arrays.asList("nonsense", "splice-site", "boundary-crossing indel", "stoploss",
                 "nonsense indel", "frameshifting indel");
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(2)).findAny().get();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(2)).findAny().get();
+        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
+                .findByLocatedVariantId(locatedVariant37.getId());
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        HGMDLocatedVariant hgmdLocatedVariant = null;
+        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            Optional<HGMDLocatedVariant> optionalHGMDLocVar = hgmdLocatedVariantList.parallelStream()
+                    .filter((s) -> !s.getId().getVersion().equals(2) || !s.getTag().equals("DM")).findFirst();
+            if (optionalHGMDLocVar.isPresent()) {
+                hgmdLocatedVariant = optionalHGMDLocVar.get();
+                logger.info(hgmdLocatedVariant.toString());
+            }
+        }
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                    if (optionalLocatedVariant.isPresent()) {
+            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+                List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                        diagnosticBinningJob.getDx().getId());
 
-                        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
-                                .findByLocatedVariantId(locatedVariant37.getId());
+                if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        HGMDLocatedVariant hgmdLocatedVariant = null;
-                        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
-                                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            Optional<HGMDLocatedVariant> optionalHGMDLocVar = hgmdLocatedVariantList.parallelStream()
-                                    .filter((s) -> !s.getId().getVersion().equals(2) || !s.getTag().equals("DM")).findFirst();
-                            if (optionalHGMDLocVar.isPresent()) {
-                                hgmdLocatedVariant = optionalHGMDLocVar.get();
-                                logger.info(hgmdLocatedVariant.toString());
-                            }
-                        }
+                    DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                    logger.info(diagnosticGene.toString());
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                    if (allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+                        SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
+                        NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                                .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
-
-                                List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                        .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                                if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                    DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                    logger.info(diagnosticGene.toString());
-
-                                    if (allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
-
-                                        SNPMappingAgg snpMappingAgg = null;
-                                        List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                                .findByLocatedVariantId(locatedVariant37.getId());
-                                        if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                            snpMappingAgg = snpMappingAggList.get(0);
-                                            logger.info(snpMappingAgg.toString());
-                                        }
-
-                                        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                                diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency,
-                                                hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                        results.add(binResultsFinalDiagnostic);
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
+                        binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass,
+                                diagnosticGene, maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg,
+                                ncgenesFrequencies);
 
                     }
+
                 }
 
             }
 
         }
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findClinVarLikelyPathogenic(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findClinVarLikelyPathogenic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findClinVarLikelyPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(2)).findAny().get();
+        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(2)).findAny().get();
-            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
+                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
+                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        ReferenceClinicalAssertion rca = null;
+        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+            rca = foundReferenceClinicalAssersions.get(0);
+            logger.info(rca.toString());
+        }
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    if (optionalLocatedVariant.isPresent()) {
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
 
-                        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
-                                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
-                                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
+                List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                        diagnosticBinningJob.getDx().getId());
 
-                        ReferenceClinicalAssertion rca = null;
-                        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
+                if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
-                                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            foundReferenceClinicalAssersions
-                                    .sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                            rca = foundReferenceClinicalAssersions.get(0);
-                            logger.info(rca.toString());
-                        }
+                    DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                    logger.info(diagnosticGene.toString());
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                    if (clinvarLikelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+                        SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
+                        NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                                .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
-
-                                List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                        .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                                if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                    DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                    logger.info(diagnosticGene.toString());
-
-                                    if (clinvarLikelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
-
-                                        SNPMappingAgg snpMappingAgg = null;
-                                        List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                                .findByLocatedVariantId(locatedVariant37.getId());
-                                        if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                            snpMappingAgg = snpMappingAggList.get(0);
-                                            logger.info(snpMappingAgg.toString());
-                                        }
-
-                                        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                                diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                                maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                        results.add(binResultsFinalDiagnostic);
-
-                                    }
-
-                                }
-
-                            }
-                        }
+                        binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass,
+                                diagnosticGene, maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
                     }
 
                 }
 
             }
-
         }
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findHGMDPossiblyPathogenic(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findHGMDPossiblyPathogenic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(3)).findAny().get();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(3)).findAny().get();
+        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
+                .findByLocatedVariantId(locatedVariant37.getId());
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        HGMDLocatedVariant hgmdLocatedVariant = null;
+        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
+                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
+            if (optionalHGMDLocatedVariant.isPresent()) {
+                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
+                logger.info(hgmdLocatedVariant.toString());
+            }
+        }
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                    if (optionalLocatedVariant.isPresent()) {
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
-                                .findByLocatedVariantId(locatedVariant37.getId());
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                logger.info(diagnosticGene.toString());
 
-                        HGMDLocatedVariant hgmdLocatedVariant = null;
-                        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
-                                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
-                                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
-                            if (optionalHGMDLocatedVariant.isPresent()) {
-                                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                                logger.info(hgmdLocatedVariant.toString());
-                            }
-                        }
+                if (maxFrequency.getMaxAlleleFreq() < 0.01
+                        && possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                    SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+                    NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                            .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                logger.info(diagnosticGene.toString());
-
-                                if (maxFrequency.getMaxAlleleFreq() < 0.01
-                                        && possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
-
-                                    List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                            .findByLocatedVariantId(locatedVariant37.getId());
-
-                                    SNPMappingAgg snpMappingAgg = null;
-                                    if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                        snpMappingAgg = snpMappingAggList.get(0);
-                                        logger.info(snpMappingAgg.toString());
-                                    }
-
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-
-                                }
-
-                            }
-
-                        }
-
-                    }
                 }
 
             }
+
         }
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findClinVarPossiblyPathogenic(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findClinVarPossiblyPathogenic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(3)).findAny().get();
+        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(3)).findAny().get();
-            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
+                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
+                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
-
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
-
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
-
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
-
-                    if (optionalLocatedVariant.isPresent()) {
-
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
-
-                        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
-                                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
-                                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
-
-                        ReferenceClinicalAssertion rca = null;
-                        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-                            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
-                                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            foundReferenceClinicalAssersions
-                                    .sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                            rca = foundReferenceClinicalAssersions.get(0);
-                        }
-
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
-
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
-
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                logger.info(diagnosticGene.toString());
-
-                                if (maxFrequency.getMaxAlleleFreq() < 0.01
-                                        && possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
-
-                                    List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                            .findByLocatedVariantId(locatedVariant37.getId());
-
-                                    SNPMappingAgg snpMappingAgg = null;
-                                    if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                        snpMappingAgg = snpMappingAggList.get(0);
-                                        logger.info(snpMappingAgg.toString());
-                                    }
-
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-
-                                }
-                            }
-
-                        }
-
-                    }
-                }
-
+        ReferenceClinicalAssertion rca = null;
+        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
+            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            if (containsKnownPathogenic) {
+                return null;
             }
+            foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+            rca = foundReferenceClinicalAssersions.get(0);
         }
-        return results;
+
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
+
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
+
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
+
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                logger.info(diagnosticGene.toString());
+
+                if (maxFrequency.getMaxAlleleFreq() < 0.01
+                        && possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
+
+                    SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
+
+                    NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                            .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
+
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+            }
+
+        }
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findHGMDUncertainSignificance(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findHGMDUncertainSignificance(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findHGMDUncertainSignificance(DiagnosticBinningJob, List<Variants_80_4>)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(4)).findAny().get();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(4)).findAny().get();
+        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
+                .findByLocatedVariantId(locatedVariant37.getId());
 
-            for (Variants_80_4 variant : variants) {
-                logger.debug(variant.toString());
+        HGMDLocatedVariant hgmdLocatedVariant = null;
+        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
+                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
+            if (optionalHGMDLocatedVariant.isPresent()) {
+                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
+            }
+        }
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                    if (optionalLocatedVariant.isPresent()) {
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
-                                .findByLocatedVariantId(locatedVariant37.getId());
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                logger.info(diagnosticGene.toString());
 
-                        HGMDLocatedVariant hgmdLocatedVariant = null;
-                        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
-                                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
-                                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
-                            if (optionalHGMDLocatedVariant.isPresent()) {
-                                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                            }
-                        }
+                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+                List<String> allowableLocationTypes = Arrays.asList("exon", "intron/exon boundary");
+                allowableLocationTypes.addAll(uncertainSignificanceAllowableLocationTypes);
 
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
+                if ((maxFrequency.getMaxAlleleFreq() < 0.01
+                        && (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())
+                                || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())))
+                        || (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
+                                && allowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                logger.info(diagnosticGene.toString());
-
-                                List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                        .findByLocatedVariantId(locatedVariant37.getId());
-
-                                SNPMappingAgg snpMappingAgg = null;
-                                if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                    snpMappingAgg = snpMappingAggList.get(0);
-                                    logger.info(snpMappingAgg.toString());
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() < 0.01 && (uncertainSignificanceFilteredVariantEffects
-                                        .contains(variant.getVariantEffect().getId())
-                                        || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId()))) {
-
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-
-                                }
-
-                                List<String> allowableLocationTypes = Arrays.asList("exon", "intron/exon boundary");
-                                allowableLocationTypes.addAll(uncertainSignificanceAllowableLocationTypes);
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
-
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                            }
-
-                        }
-
-                    }
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
                 }
 
             }
 
         }
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findClinVarUncertainSignificance(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findClinVarUncertainSignificance(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(4)).findAny().get();
+        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(4)).findAny().get();
-            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
+                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
+                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
 
-            for (Variants_80_4 variant : variants) {
-                logger.debug(variant.toString());
+        ReferenceClinicalAssertion rca = null;
+        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+            rca = foundReferenceClinicalAssersions.get(0);
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        }
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    if (optionalLocatedVariant.isPresent()) {
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
-                                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
-                                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        ReferenceClinicalAssertion rca = null;
-                        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                logger.info(diagnosticGene.toString());
 
-                            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
-                                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            foundReferenceClinicalAssersions
-                                    .sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                            rca = foundReferenceClinicalAssersions.get(0);
+                if (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())) {
+                    return null;
+                }
 
-                        }
+                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+                List<String> allowableLocationTypes = Arrays.asList("exon", "intron/exon boundary");
+                allowableLocationTypes.addAll(uncertainSignificanceAllowableLocationTypes);
 
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
+                if ((maxFrequency.getMaxAlleleFreq() < 0.01
+                        && (uncertainSignificanceAllowableVariantEffects.contains(variant.getVariantEffect().getId())
+                                || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())))
+                        || (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
+                                && allowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                logger.info(diagnosticGene.toString());
-
-                                if (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())) {
-                                    continue;
-                                }
-
-                                List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                        .findByLocatedVariantId(locatedVariant37.getId());
-
-                                SNPMappingAgg snpMappingAgg = null;
-                                if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                    snpMappingAgg = snpMappingAggList.get(0);
-                                    logger.info(snpMappingAgg.toString());
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() < 0.01 && (uncertainSignificanceAllowableVariantEffects
-                                        .contains(variant.getVariantEffect().getId())
-                                        || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId()))) {
-
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                                List<String> allowableLocationTypes = Arrays.asList("exon", "intron/exon boundary");
-                                allowableLocationTypes.addAll(uncertainSignificanceAllowableLocationTypes);
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
-
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                            }
-
-                        }
-
-                    }
                 }
 
             }
 
         }
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findHGMDLikelyBenign(DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants)
-            throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findHGMDLikelyBenign(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
         List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(5)).findAny().get();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(5)).findAny().get();
+        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
+                .findByLocatedVariantId(locatedVariant37.getId());
 
-            for (Variants_80_4 variant : variants) {
-                logger.debug(variant.toString());
+        HGMDLocatedVariant hgmdLocatedVariant = null;
+        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
+                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
+            if (optionalHGMDLocatedVariant.isPresent()) {
+                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
+            }
+        }
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                    if (optionalLocatedVariant.isPresent()) {
+            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
+                return null;
+            }
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
 
-                        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
-                                .findByLocatedVariantId(locatedVariant37.getId());
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                logger.info(diagnosticGene.toString());
 
-                        HGMDLocatedVariant hgmdLocatedVariant = null;
-                        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
-                                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
-                                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
-                            if (optionalHGMDLocatedVariant.isPresent()) {
-                                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                            }
-                        }
+                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
-
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
-
-                            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
-                                continue;
-                            }
-
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                logger.info(diagnosticGene.toString());
-
-                                List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                        .findByLocatedVariantId(locatedVariant37.getId());
-
-                                SNPMappingAgg snpMappingAgg = null;
-                                if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                    snpMappingAgg = snpMappingAggList.get(0);
-                                    logger.info(snpMappingAgg.toString());
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
-                                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() < 0.05
-                                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                            }
-
-                        }
-
-                    }
+                if ((maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
+                        && allowableLocationTypes.contains(variant.getLocationType().getId()))
+                        || (maxFrequency.getMaxAlleleFreq() < 0.05
+                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
                 }
+
             }
 
         }
-
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findClinVarLikelyBenign(DiagnosticBinningJob diagnosticBinningJob, List<Variants_80_4> variants)
-            throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findClinVarLikelyBenign(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
         List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(5)).findAny().get();
+        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(5)).findAny().get();
-            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
+                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
+                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
 
-            for (Variants_80_4 variant : variants) {
-                logger.debug(variant.toString());
+        ReferenceClinicalAssertion rca = null;
+        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
-
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
-
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
-
-                    if (optionalLocatedVariant.isPresent()) {
-
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
-
-                        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
-                                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
-                                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
-
-                        ReferenceClinicalAssertion rca = null;
-                        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
-
-                            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
-                                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            foundReferenceClinicalAssersions
-                                    .sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                            rca = foundReferenceClinicalAssersions.get(0);
-
-                        }
-
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                        if (CollectionUtils.isEmpty(maxFrequencyList)) {
-
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
-
-                            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
-                                continue;
-                            }
-
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-                                logger.info(diagnosticGene.toString());
-
-                                List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                        .findByLocatedVariantId(locatedVariant37.getId());
-                                SNPMappingAgg snpMappingAgg = null;
-                                if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                    snpMappingAgg = snpMappingAggList.get(0);
-                                    logger.info(snpMappingAgg.toString());
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
-                                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() < 0.05
-                                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                            }
-                        }
-
-                    }
-                }
-
+            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            if (containsKnownPathogenic) {
+                return null;
             }
+            foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+            rca = foundReferenceClinicalAssersions.get(0);
 
         }
 
-        return results;
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
+        if (CollectionUtils.isEmpty(maxFrequencyList)) {
+
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
+
+            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
+                return null;
+            }
+
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
+
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
+                logger.info(diagnosticGene.toString());
+
+                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
+
+                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
+
+                if ((maxFrequency.getMaxAlleleFreq() >= 0.05 && maxFrequency.getMaxAlleleFreq() < 0.1
+                        && allowableLocationTypes.contains(variant.getLocationType().getId()))
+                        || (maxFrequency.getMaxAlleleFreq() < 0.05
+                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
+
+                }
+
+            }
+        }
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findHGMDAlmostCertainlyBenign(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findHGMDAlmostCertainlyBenign(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
         List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(6)).findAny().get();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(6)).findAny().get();
+        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
+                .findByLocatedVariantId(locatedVariant37.getId());
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        HGMDLocatedVariant hgmdLocatedVariant = null;
+        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
+                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
+            if (optionalHGMDLocatedVariant.isPresent()) {
+                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
+            }
+        }
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                    if (optionalLocatedVariant.isPresent()) {
+            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
+                return null;
+            }
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                        List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
-                                .findByLocatedVariantId(locatedVariant37.getId());
+                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        HGMDLocatedVariant hgmdLocatedVariant = null;
-                        if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
-                                    .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
-                                    .filter(a -> !a.getId().getVersion().equals(2)).findFirst();
-                            if (optionalHGMDLocatedVariant.isPresent()) {
-                                hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                            }
-                        }
+                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                if ((maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId()))
+                        || (maxFrequency.getMaxAlleleFreq() >= 0.05
+                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, hgmdLocatedVariant, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
-
-                            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
-                                continue;
-                            }
-
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-
-                                List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                        .findByLocatedVariantId(locatedVariant37.getId());
-
-                                SNPMappingAgg snpMappingAgg = null;
-                                if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                    snpMappingAgg = snpMappingAggList.get(0);
-                                    logger.info(snpMappingAgg.toString());
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.1
-                                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.05
-                                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-                            }
-
-                        }
-
-                    }
                 }
 
             }
 
         }
-
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
-    public List<BinResultsFinalDiagnostic> findClinVarAlmostCertainlyBenign(DiagnosticBinningJob diagnosticBinningJob,
-            List<Variants_80_4> variants) throws CANVASDAOException {
+    public BinResultsFinalDiagnostic findClinVarAlmostCertainlyBenign(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
+            LocatedVariant locatedVariant37) throws CANVASDAOException {
         logger.debug("ENTERING findKnownPathogenic(DiagnosticBinningJob)");
-        List<BinResultsFinalDiagnostic> results = new ArrayList<>();
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
         List<String> allowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon", "intron/exon boundary");
 
-        if (CollectionUtils.isNotEmpty(variants)) {
+        DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(6)).findAny().get();
+        DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
 
-            DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(6)).findAny().get();
-            DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
+        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
+                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
+                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
 
-            for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+        ReferenceClinicalAssertion rca = null;
+        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
-                List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                        .findByLocatedVariantId(variant.getLocatedVariant().getId());
-                if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
+                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            if (containsKnownPathogenic) {
+                return null;
+            }
+            foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+            rca = foundReferenceClinicalAssersions.get(0);
 
-                    CanonicalAllele canonicalAllele = foundCanonicalAlleles.get(0);
+        }
 
-                    Optional<LocatedVariant> optionalLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                            .filter(a -> a.getGenomeRef().getId().equals(2)).findAny();
+        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO().findByLocatedVariantId(variant.getLocatedVariant().getId());
 
-                    if (optionalLocatedVariant.isPresent()) {
+        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
 
-                        LocatedVariant locatedVariant37 = optionalLocatedVariant.get();
-                        logger.info(locatedVariant37.toString());
+            MaxFrequency maxFrequency = maxFrequencyList.get(0);
+            logger.info(maxFrequency.toString());
 
-                        List<ReferenceClinicalAssertion> foundReferenceClinicalAssersions = daoBean.getReferenceClinicalAssertionDAO()
-                                .findByLocatedVariantIdAndVersionAndAssertionStatusExclusionList(locatedVariant37.getId(),
-                                        diagnosticResultVersion.getClinvarVersion().getId(), clinVarAssertionStatusExcludes);
+            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
+                return null;
+            }
 
-                        ReferenceClinicalAssertion rca = null;
-                        if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
+            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO().findByGeneIdAndDXId(variant.getGene().getId(),
+                    diagnosticBinningJob.getDx().getId());
+            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
+                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
 
-                            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.stream()
-                                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-                            if (containsKnownPathogenic) {
-                                continue;
-                            }
-                            foundReferenceClinicalAssersions
-                                    .sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                            rca = foundReferenceClinicalAssersions.get(0);
+                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
-                        }
+                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
 
-                        List<MaxFrequency> maxFrequencyList = daoBean.getMaxFrequencyDAO()
-                                .findByLocatedVariantId(variant.getLocatedVariant().getId());
+                if ((maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId()))
+                        || (maxFrequency.getMaxAlleleFreq() >= 0.05
+                                && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
-                        if (CollectionUtils.isNotEmpty(maxFrequencyList)) {
-
-                            MaxFrequency maxFrequency = maxFrequencyList.get(0);
-                            logger.info(maxFrequency.toString());
-
-                            if (maxFrequency.getMaxAlleleFreq() < 0.01) {
-                                continue;
-                            }
-
-                            List<DiagnosticGene> diagnosticGeneList = daoBean.getDiagnosticGeneDAO()
-                                    .findByGeneIdAndDXId(variant.getGene().getId(), diagnosticBinningJob.getDx().getId());
-                            if (CollectionUtils.isNotEmpty(diagnosticGeneList)) {
-                                DiagnosticGene diagnosticGene = diagnosticGeneList.get(0);
-
-                                List<SNPMappingAgg> snpMappingAggList = daoBean.getSNPMappingAggDAO()
-                                        .findByLocatedVariantId(locatedVariant37.getId());
-                                SNPMappingAgg snpMappingAgg = null;
-                                if (CollectionUtils.isNotEmpty(snpMappingAggList)) {
-                                    snpMappingAgg = snpMappingAggList.get(0);
-                                    logger.info(snpMappingAgg.toString());
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.1
-                                        && allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-
-                                if (maxFrequency.getMaxAlleleFreq() >= 0.05
-                                        && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
-                                    BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(
-                                            diagnosticBinningJob, variant, diseaseClass, diagnosticGene, maxFrequency, rca,
-                                            maxNCGenesFrequenciesVersion, snpMappingAgg);
-                                    results.add(binResultsFinalDiagnostic);
-                                }
-                            }
-                        }
-
-                    }
+                    binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diseaseClass, diagnosticGene,
+                            maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies);
 
                 }
 
             }
-
         }
-
-        return results;
+        return binResultsFinalDiagnostic;
     }
 
+    // clinvar
     private BinResultsFinalDiagnostic createBinResultsFinalDiagnostic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
             DiseaseClass clinvarDiseaseClass, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency, ReferenceClinicalAssertion rca,
-            Integer maxNCGenesFrequenciesVersion, SNPMappingAgg snpMappingAgg) throws CANVASDAOException {
+            Integer maxNCGenesFrequenciesVersion, SNPMappingAgg snpMappingAgg, NCGenesFrequencies ncgenesFrequencies)
+            throws CANVASDAOException {
         logger.debug(
-                "ENTERING createClinVarBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_61_2, DiseaseClass, DiagnosticGene, MaxFrequency, ReferenceClinicalAssertion, Integer, SNPMappingAgg)");
+                "ENTERING createBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, ReferenceClinicalAssertion, Integer, SNPMappingAgg)");
 
         AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO()
                 .findById(new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
 
         AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO()
                 .findById(new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
-
-        NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
-                .findById(new NCGenesFrequenciesPK(variant.getLocatedVariant().getId(), maxNCGenesFrequenciesVersion.toString()));
 
         UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
                 .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
@@ -1328,12 +897,6 @@ public class BinResultsFinalDiagnosticFactory {
             binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
         }
 
-        if (ncgenesFrequencies != null) {
-            binResultsFinalDiagnostic.setNCGenesAlternateFrequency(
-                    ncgenesFrequencies.getAltAlleleFrequency() != null ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
-            binResultsFinalDiagnostic.setNCGenesHWEP(ncgenesFrequencies.getHweP() != null ? ncgenesFrequencies.getHweP() : 1D);
-        }
-
         if (maxFrequency != null) {
             binResultsFinalDiagnostic.setMaxAlleleFrequency(maxFrequency.getMaxAlleleFreq());
         }
@@ -1347,16 +910,24 @@ public class BinResultsFinalDiagnosticFactory {
             binResultsFinalDiagnostic.setRsId(snpMappingAgg.getRsIds());
         }
 
-        if (unimportantExon != null) {
-            binResultsFinalDiagnostic.setExonTruncationCount(unimportantExon.getCount() != null ? unimportantExon.getCount() : 0);
-        }
+        binResultsFinalDiagnostic
+                .setNCGenesAlternateFrequency((ncgenesFrequencies != null && ncgenesFrequencies.getAltAlleleFrequency() != null)
+                        ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
+
+        binResultsFinalDiagnostic
+                .setNCGenesHWEP((ncgenesFrequencies != null && ncgenesFrequencies.getHweP() != null) ? ncgenesFrequencies.getHweP() : 1D);
+
+        binResultsFinalDiagnostic
+                .setExonTruncationCount((unimportantExon != null && unimportantExon.getCount() != null) ? unimportantExon.getCount() : 0);
 
         return binResultsFinalDiagnostic;
     }
 
+    // hgmd
     private BinResultsFinalDiagnostic createBinResultsFinalDiagnostic(DiagnosticBinningJob diagnosticBinningJob, Variants_80_4 variant,
             DiseaseClass hgmdDiseaseClass, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency, HGMDLocatedVariant hgmdLocatedVariant,
-            Integer maxNCGenesFrequenciesVersion, SNPMappingAgg snpMappingAgg) throws CANVASDAOException {
+            Integer maxNCGenesFrequenciesVersion, SNPMappingAgg snpMappingAgg, NCGenesFrequencies ncgenesFrequencies)
+            throws CANVASDAOException {
         logger.debug(
                 "ENTERING createHGMDBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, HGMDLocatedVariant, Integer, SNPMappingAgg)");
 
@@ -1365,9 +936,6 @@ public class BinResultsFinalDiagnosticFactory {
 
         AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO()
                 .findById(new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
-
-        NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
-                .findById(new NCGenesFrequenciesPK(variant.getLocatedVariant().getId(), maxNCGenesFrequenciesVersion.toString()));
 
         UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
                 .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
@@ -1436,12 +1004,6 @@ public class BinResultsFinalDiagnosticFactory {
             binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
         }
 
-        if (ncgenesFrequencies != null) {
-            binResultsFinalDiagnostic.setNCGenesAlternateFrequency(
-                    ncgenesFrequencies.getAltAlleleFrequency() != null ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
-            binResultsFinalDiagnostic.setNCGenesHWEP(ncgenesFrequencies.getHweP() != null ? ncgenesFrequencies.getHweP() : 1D);
-        }
-
         if (maxFrequency != null) {
             binResultsFinalDiagnostic.setMaxAlleleFrequency(maxFrequency.getMaxAlleleFreq());
         }
@@ -1455,9 +1017,15 @@ public class BinResultsFinalDiagnosticFactory {
             binResultsFinalDiagnostic.setRsId(snpMappingAgg.getRsIds());
         }
 
-        if (unimportantExon != null) {
-            binResultsFinalDiagnostic.setExonTruncationCount(unimportantExon.getCount() != null ? unimportantExon.getCount() : 0);
-        }
+        binResultsFinalDiagnostic
+                .setNCGenesAlternateFrequency((ncgenesFrequencies != null && ncgenesFrequencies.getAltAlleleFrequency() != null)
+                        ? ncgenesFrequencies.getAltAlleleFrequency() : 0D);
+
+        binResultsFinalDiagnostic
+                .setNCGenesHWEP((ncgenesFrequencies != null && ncgenesFrequencies.getHweP() != null) ? ncgenesFrequencies.getHweP() : 1D);
+
+        binResultsFinalDiagnostic
+                .setExonTruncationCount((unimportantExon != null && unimportantExon.getCount() != null) ? unimportantExon.getCount() : 0);
 
         return binResultsFinalDiagnostic;
     }
