@@ -55,8 +55,16 @@
   </bean>
 
   <bean id="asyncExecutor" class="org.activiti.engine.impl.asyncexecutor.DefaultAsyncJobExecutor">
+    <property name="corePoolSize" value="8" />
+    <property name="maxPoolSize" value="16" />
+    <property name="keepAliveTime" value="3000" />
+    <property name="queueSize" value="200" />
+    <property name="maxTimerJobsPerAcquisition" value="4" />
+    <property name="maxAsyncJobsDuePerAcquisition" value="4" />
     <property name="defaultAsyncJobAcquireWaitTimeInMillis" value="1000" />
     <property name="defaultTimerJobAcquireWaitTimeInMillis" value="1000" />
+    <property name="timerLockTimeInMillis" value="60000" />
+    <property name="asyncJobLockTimeInMillis" value="60000" />
   </bean>
 
   <bean id="configuration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration" ext:field-injection="true">
