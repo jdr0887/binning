@@ -3,12 +3,13 @@ package org.renci.canvas.binning.core.diagnostic;
 import java.util.Date;
 import java.util.Map;
 
-import org.activiti.engine.delegate.DelegateExecution;
-import org.activiti.engine.delegate.JavaDelegate;
+import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.delegate.JavaDelegate;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.renci.canvas.dao.CANVASDAOBeanService;
+import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.DiagnosticBinningJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class InitializeDelegate implements JavaDelegate {
     }
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
+    public void execute(DelegateExecution execution) {
         logger.debug("ENTERING execute(DelegateExecution)");
 
         Map<String, Object> variables = execution.getVariables();
@@ -38,19 +39,23 @@ public class InitializeDelegate implements JavaDelegate {
             binningJobId = (Integer) o;
         }
 
-        DiagnosticBinningJob binningJob = daoBean.getDiagnosticBinningJobDAO().findById(binningJobId);
-        // Integer listVersion = binningJob.getListVersion();
-        // if (listVersion == null) {
-        // logger.warn("listVersion was null");
-        // binningJob.setListVersion(daoBean.getDXExonsDAO().findMaxListVersion());
-        // }
+        try {
+            DiagnosticBinningJob binningJob = daoBean.getDiagnosticBinningJobDAO().findById(binningJobId);
+            // Integer listVersion = binningJob.getListVersion();
+            // if (listVersion == null) {
+            // logger.warn("listVersion was null");
+            // binningJob.setListVersion(daoBean.getDXExonsDAO().findMaxListVersion());
+            // }
 
-        binningJob.setStart(new Date());
-        binningJob.setStop(null);
-        binningJob.setFailureMessage("");
+            binningJob.setStart(new Date());
+            binningJob.setStop(null);
+            binningJob.setFailureMessage("");
 
-        daoBean.getDiagnosticBinningJobDAO().save(binningJob);
-        logger.info(binningJob.toString());
+            daoBean.getDiagnosticBinningJobDAO().save(binningJob);
+            logger.info(binningJob.toString());
+        } catch (CANVASDAOException e) {
+            logger.error(e.getMessage(), e);
+        }
 
     }
 

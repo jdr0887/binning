@@ -11,23 +11,23 @@
 
   <service ref="binningExecutorService" interface="org.renci.canvas.binning.core.BinningExecutorService" />
 
-  <cm:property-placeholder persistent-id="org.renci.activiti.ds" update-strategy="reload">
+  <cm:property-placeholder persistent-id="org.renci.flowable.ds" update-strategy="reload">
     <cm:default-properties>
       <cm:property name="driverClassName" value="org.postgresql.Driver" />
-      <cm:property name="databaseName" value="activiti" />
+      <cm:property name="databaseName" value="flowable" />
       <cm:property name="serverName" value="localhost" />
       <cm:property name="port" value="5432" />
       <cm:property name="url" value="jdbc:postgresql://${serverName}:${port}/${databaseName}" />
-      <cm:property name="username" value="activiti" />
-      <cm:property name="password" value="activiti" />
+      <cm:property name="username" value="flowable" />
+      <cm:property name="password" value="flowable" />
       <cm:property name="validationQuery" value="SELECT 1" />
       <cm:property name="defaultReadOnly" value="false" />
       <cm:property name="defaultAutoCommit" value="true" />
       <cm:property name="maxActive" value="8" />
       <cm:property name="whenExhaustedAction" value="2" />
       <cm:property name="maxWait" value="-1" />
-      <cm:property name="maxIdle" value="6" />
-      <cm:property name="minIdle" value="4" />
+      <cm:property name="maxIdle" value="12" />
+      <cm:property name="minIdle" value="6" />
       <cm:property name="testOnBorrow" value="true" />
       <cm:property name="testOnReturn" value="true" />
       <cm:property name="timeBetweenEvictionRunsMillis" value="-1" />
@@ -41,7 +41,7 @@
 
   <reference id="transactionManager" interface="javax.transaction.TransactionManager" />
 
-  <bean id="activitiDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+  <bean id="flowableDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
     <property name="driverClassName" value="${driverClassName}" />
     <property name="url" value="${url}" />
     <property name="username" value="${username}" />
@@ -54,22 +54,22 @@
     <property name="logAbandoned" value="true" />
   </bean>
 
-  <bean id="asyncExecutor" class="org.activiti.engine.impl.asyncexecutor.DefaultAsyncJobExecutor">
-    <property name="corePoolSize" value="8" />
-    <property name="maxPoolSize" value="16" />
+  <bean id="asyncExecutor" class="org.flowable.engine.impl.asyncexecutor.DefaultAsyncJobExecutor">
+    <property name="corePoolSize" value="4" />
+    <property name="maxPoolSize" value="8" />
     <property name="keepAliveTime" value="3000" />
     <property name="queueSize" value="200" />
-    <property name="maxTimerJobsPerAcquisition" value="4" />
-    <property name="maxAsyncJobsDuePerAcquisition" value="4" />
+    <property name="maxTimerJobsPerAcquisition" value="2" />
+    <property name="maxAsyncJobsDuePerAcquisition" value="2" />
     <property name="defaultAsyncJobAcquireWaitTimeInMillis" value="1000" />
     <property name="defaultTimerJobAcquireWaitTimeInMillis" value="1000" />
     <property name="timerLockTimeInMillis" value="60000" />
     <property name="asyncJobLockTimeInMillis" value="60000" />
   </bean>
 
-  <bean id="configuration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration" ext:field-injection="true">
+  <bean id="configuration" class="org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration" ext:field-injection="true">
     <property name="databaseType" value="postgres" />
-    <property name="dataSource" ref="activitiDS" />
+    <property name="dataSource" ref="flowableDS" />
     <property name="databaseSchemaUpdate" value="true" />
     <property name="jobExecutorActivate" value="true" />
     <property name="asyncExecutor" ref="asyncExecutor" />
@@ -80,9 +80,9 @@
     <property name="enableProcessDefinitionInfoCache" value="true" />
   </bean>
 
-  <bean id="resolver" class="org.activiti.osgi.blueprint.BlueprintELResolver" />
+  <bean id="resolver" class="org.flowable.osgi.blueprint.BlueprintELResolver" />
 
-  <bean id="processEngineFactory" class="org.activiti.osgi.blueprint.ProcessEngineFactoryWithELResolver" init-method="init"
+  <bean id="processEngineFactory" class="org.flowable.osgi.blueprint.ProcessEngineFactoryWithELResolver" init-method="init"
     destroy-method="destroy">
     <property name="processEngineConfiguration" ref="configuration" />
     <property name="bundle" ref="blueprintBundle" />
@@ -90,15 +90,15 @@
   </bean>
 
   <bean id="processEngine" factory-ref="processEngineFactory" factory-method="getObject" />
-  <service ref="processEngine" interface="org.activiti.engine.ProcessEngine" />
+  <service ref="processEngine" interface="org.flowable.engine.ProcessEngine" />
 
   <bean id="runtimeService" factory-ref="processEngine" factory-method="getRuntimeService" />
-  <service ref="runtimeService" interface="org.activiti.engine.RuntimeService" />
+  <service ref="runtimeService" interface="org.flowable.engine.RuntimeService" />
 
   <bean id="repositoryService" factory-ref="processEngine" factory-method="getRepositoryService" />
-  <service ref="repositoryService" interface="org.activiti.engine.RepositoryService" />
+  <service ref="repositoryService" interface="org.flowable.engine.RepositoryService" />
 
   <bean id="historyService" factory-ref="processEngine" factory-method="getHistoryService" />
-  <service ref="historyService" interface="org.activiti.engine.HistoryService" />
+  <service ref="historyService" interface="org.flowable.engine.HistoryService" />
 
 </blueprint>

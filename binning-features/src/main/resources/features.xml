@@ -16,7 +16,14 @@
     <bundle>mvn:org.apache.commons/commons-collections4/${commons.collections4.version}</bundle>    
     <bundle>mvn:org.apache.commons/commons-compress/1.4</bundle>
     <bundle>mvn:org.apache.commons/commons-email/1.3.1</bundle>
-    <bundle>mvn:org.apache.commons/commons-jexl/2.1.1</bundle>    
+    <bundle>mvn:org.apache.commons/commons-jexl/2.1.1</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-core/${jackson.version}</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson.version}</bundle>
+    <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson.version}</bundle>
+    <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson.version}</bundle>
+    <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson.version}</bundle>
+    <bundle>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson.version}</bundle>
+    <bundle>mvn:com.fasterxml.uuid/java-uuid-generator/3.1.4</bundle>        
     <bundle>mvn:org.renci.osgi.bundles/xz-1.0-bundle/0.0.1</bundle>    
     <bundle>mvn:javax.validation/validation-api/1.1.0.Final</bundle>
     <bundle>mvn:org.postgresql/postgresql/${postgresql.version}</bundle>
@@ -30,6 +37,7 @@
     <bundle>mvn:com.sleepycat.je/com.springsource.com.sleepycat.je/3.3.87</bundle>
     <bundle>mvn:net.sourceforge.jopt-simple/com.springsource.joptsimple/3.0.0</bundle>
     <bundle>mvn:org.jaxen/com.springsource.org.jaxen/1.1.1</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.junit/4.11_2</bundle>
     <bundle>mvn:org.renci.commons/commons-exec/${renci.commons.version}</bundle>
     <bundle>mvn:org.renci.osgi.bundles/biojava-4.2.4-bundle/0.0.1</bundle>
     <bundle>mvn:org.renci.osgi.bundles/snappy-1.0.3-rc3-bundle/0.0.1</bundle>
@@ -43,13 +51,25 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_6</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/1.14.1_1</bundle>
     <bundle>mvn:org.apache.xbean/xbean-asm5-shaded/4.3</bundle>
-    <bundle>mvn:org.mybatis/mybatis/3.3.1</bundle>
-    <bundle>mvn:org.activiti/activiti-process-validation/${activiti.version}</bundle>
-    <bundle>mvn:org.activiti/activiti-image-generator/${activiti.version}</bundle>
-    <bundle>mvn:org.activiti/activiti-bpmn-converter/${activiti.version}</bundle>
-    <bundle>mvn:org.activiti/activiti-osgi/${activiti.version}</bundle>
-    <bundle>mvn:org.activiti/activiti-bpmn-model/${activiti.version}</bundle>
-    <bundle>mvn:org.activiti/activiti-engine/${activiti.version}</bundle>
+    <bundle>mvn:org.mybatis/mybatis/3.4.1</bundle>
+    <bundle>mvn:de.odysseus.juel/juel-api/2.2.7</bundle>
+    <bundle>mvn:de.odysseus.juel/juel-impl/2.2.7</bundle>
+    <bundle>mvn:org.flowable/flowable-content-api/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-idm-api/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-idm-engine/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-idm-engine/${flowable.version}</bundle>            
+    <bundle>mvn:org.flowable/flowable-form-api/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-form-model/${flowable.version}</bundle>    
+    <bundle>mvn:org.flowable/flowable-dmn-api/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-dmn-model/${flowable.version}</bundle>                    
+    <bundle>mvn:org.flowable/flowable-engine-common-api/${flowable.version}</bundle>        
+    <bundle>mvn:org.flowable/flowable-engine-common/${flowable.version}</bundle>    
+    <bundle>mvn:org.flowable/flowable-process-validation/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-image-generator/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-bpmn-converter/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-osgi/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-bpmn-model/${flowable.version}</bundle>
+    <bundle>mvn:org.flowable/flowable-engine/${flowable.version}</bundle>
     <bundle>mvn:org.renci.gerese4j/gerese4j-core/${gerese4j.version}</bundle>
     <bundle>mvn:org.renci.canvas.binning/binning-core/${project.version}</bundle>    
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jcache_1.0_spec/1.0-alpha-1</bundle>

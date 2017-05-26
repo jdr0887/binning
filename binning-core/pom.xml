@@ -47,8 +47,8 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.activiti</groupId>
-      <artifactId>activiti-engine</artifactId>
+      <groupId>org.flowable</groupId>
+      <artifactId>flowable-engine</artifactId>
     </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
