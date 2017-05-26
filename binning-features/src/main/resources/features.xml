@@ -57,7 +57,6 @@
     <bundle>mvn:org.flowable/flowable-content-api/${flowable.version}</bundle>
     <bundle>mvn:org.flowable/flowable-idm-api/${flowable.version}</bundle>
     <bundle>mvn:org.flowable/flowable-idm-engine/${flowable.version}</bundle>
-    <bundle>mvn:org.flowable/flowable-idm-engine/${flowable.version}</bundle>            
     <bundle>mvn:org.flowable/flowable-form-api/${flowable.version}</bundle>
     <bundle>mvn:org.flowable/flowable-form-model/${flowable.version}</bundle>    
     <bundle>mvn:org.flowable/flowable-dmn-api/${flowable.version}</bundle>
