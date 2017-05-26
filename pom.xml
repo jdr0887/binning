@@ -40,7 +40,22 @@
 	<groupId>org.flowable</groupId>
 	<artifactId>flowable-engine</artifactId>
 	<version>${flowable.version}</version>
-      </dependency>      
+      </dependency>
+      <dependency>
+	<groupId>org.flowable</groupId>
+	<artifactId>flowable-engine-common</artifactId>
+	<version>${flowable.version}</version>
+      </dependency>
+      <dependency>
+	<groupId>org.flowable</groupId>
+	<artifactId>flowable-idm-api</artifactId>
+	<version>${flowable.version}</version>
+      </dependency>            
+      <dependency>
+	<groupId>org.flowable</groupId>
+	<artifactId>flowable-idm-engine</artifactId>
+	<version>${flowable.version}</version>
+      </dependency>            
       <dependency>      
 	<groupId>org.biojava</groupId>
 	<artifactId>biojava-core</artifactId>
