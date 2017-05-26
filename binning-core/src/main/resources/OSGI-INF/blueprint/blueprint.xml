@@ -71,13 +71,14 @@
     <property name="databaseType" value="postgres" />
     <property name="dataSource" ref="flowableDS" />
     <property name="databaseSchemaUpdate" value="true" />
-    <property name="jobExecutorActivate" value="true" />
+    <property name="asyncExecutorActivate" value="true" />
+<!--     <property name="jobExecutorActivate" value="true" /> -->
     <property name="asyncExecutor" ref="asyncExecutor" />
     <property name="asyncExecutorEnabled" value="true" />
-    <property name="asyncExecutorActivate" value="true" />
     <property name="defaultFailedJobWaitTime" value="1" />
     <property name="asyncFailedJobWaitTime" value="1" />
     <property name="enableProcessDefinitionInfoCache" value="true" />
+    <property name="history" value="audit" />
   </bean>
 
   <bean id="resolver" class="org.flowable.osgi.blueprint.BlueprintELResolver" />
