@@ -14,6 +14,7 @@ import org.renci.canvas.dao.clinbin.model.Report;
 import org.renci.canvas.dao.clinbin.model.ReportPK;
 import org.renci.canvas.dao.refseq.Variants_80_4_DAO;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
+import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,9 @@ public abstract class AbstractGenerateReportCallable implements Callable<Void> {
             } else {
                 report = new Report(reportPK);
             }
+
+            List<LocatedVariant> locatedVariants = daoBean.getLocatedVariantDAO().findByAssemblyId(binningJob.getAssembly().getId());
+            report.setTotalVariants(locatedVariants.size());
 
             Long analyzedVariantsCount = daoBean.getBinResultsFinalDiagnosticDAO().findAnalyzedVariantsCount(binningJob.getParticipant());
             report.setNumberOfAnalyzedVariants(analyzedVariantsCount.intValue());
