@@ -156,7 +156,7 @@ public class LoadVCFCallableTest {
                             locatedVariant.setRef(variantContext.getReference().getDisplayString());
                             locatedVariant.setPosition(variantContext.getStart());
                             locatedVariant.setVariantType(new VariantType("snp"));
-                            locatedVariant.setEndPosition(variantContext.getStart() + locatedVariant.getRef().length());
+                            locatedVariant.setEndPosition(variantContext.getStart() + 1);
                             locatedVariantList.add(locatedVariant);
                         }
                     }
@@ -168,11 +168,11 @@ public class LoadVCFCallableTest {
                     for (Allele altAllele : variantContext.getAlternateAlleles()) {
                         LocatedVariant locatedVariant = new LocatedVariant();
                         if (variantContext.isSimpleInsertion()) {
-                            locatedVariant.setPosition(variantContext.getStart());
+                            locatedVariant.setPosition(variantContext.getStart() - 1);
                             locatedVariant.setVariantType(new VariantType("ins"));
                             String ref = variantContext.getReference().getDisplayString();
                             locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
-                            locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
+                            locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
                             locatedVariant.setRef("");
                             locatedVariantList.add(locatedVariant);
                         }
@@ -185,7 +185,7 @@ public class LoadVCFCallableTest {
                     for (Allele altAllele : variantContext.getAlternateAlleles()) {
                         LocatedVariant locatedVariant = new LocatedVariant();
                         if (variantContext.isSimpleDeletion()) {
-                            locatedVariant.setPosition(variantContext.getStart() + 1);
+                            locatedVariant.setPosition(variantContext.getStart());
                             locatedVariant.setRef(
                                     variantContext.getReference().getDisplayString().replaceFirst(altAllele.getDisplayString(), ""));
                             locatedVariant.setSeq(locatedVariant.getRef());
@@ -213,16 +213,18 @@ public class LoadVCFCallableTest {
                             if (CollectionUtils.isNotEmpty(types)) {
                                 LocatedVariant locatedVariant = new LocatedVariant();
                                 String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
+                                
+                                if (variantContext.getContig().equals("NC_000001.11") && variantContext.getStart() == 1223182) {
+                                    System.out.println("");
+                                }
+
                                 switch (type) {
                                     case "del":
 
-                                        if (variantContext.getContig().equals("NC_000023.11") && variantContext.getStart() == 51496443) {
-                                            System.out.println("");
-                                        }
-                                        
+
                                         locatedVariant.setVariantType(new VariantType("del"));
-                                        locatedVariant.setPosition(variantContext.getStart() + 1);
-                                        
+                                        locatedVariant.setPosition(variantContext.getStart());
+
                                         if (referenceChars.length > 1 && alternateChars.length > 1) {
 
                                             StringBuilder frontChars2Remove = new StringBuilder();
@@ -238,7 +240,7 @@ public class LoadVCFCallableTest {
                                                 ref = ref.replaceFirst(frontChars2Remove.toString(), "");
                                             }
 
-                                            locatedVariant.setPosition(variantContext.getStart() + 1
+                                            locatedVariant.setPosition(variantContext.getStart()
                                                     + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
                                         }
                                         locatedVariant.setEndPosition(locatedVariant.getPosition() + ref.length());
@@ -247,7 +249,7 @@ public class LoadVCFCallableTest {
                                         break;
                                     case "ins":
                                         locatedVariant.setVariantType(new VariantType("ins"));
-                                        locatedVariant.setPosition(variantContext.getStart());
+                                        locatedVariant.setPosition(variantContext.getStart() - 1);
 
                                         if (referenceChars.length > 1 && alternateChars.length > 1) {
 
@@ -279,7 +281,7 @@ public class LoadVCFCallableTest {
                                                 alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
                                             }
 
-                                            locatedVariant.setPosition(variantContext.getStart()
+                                            locatedVariant.setPosition(variantContext.getStart() - 1
                                                     + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
                                         }
 
