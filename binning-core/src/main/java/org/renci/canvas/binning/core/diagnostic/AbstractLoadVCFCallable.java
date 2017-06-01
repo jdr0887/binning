@@ -315,7 +315,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             case "ins":
                                                 locatedVariant.setVariantType(
                                                         allVariantTypes.stream().filter(a -> a.getId().equals("ins")).findAny().get());
-                                                locatedVariant.setPosition(variantContext.getStart());
+                                                locatedVariant.setPosition(variantContext.getStart() - 1);
 
                                                 if (referenceChars.length > 1 && alternateChars.length > 1) {
 
@@ -347,7 +347,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                                         alt = StringUtils.removeEnd(alt, backChars2Remove.toString());
                                                     }
 
-                                                    locatedVariant.setPosition(variantContext.getStart()
+                                                    locatedVariant.setPosition(variantContext.getStart() - 1
                                                             + (frontChars2Remove.length() > 0 ? frontChars2Remove.length() : 0));
                                                 }
 
