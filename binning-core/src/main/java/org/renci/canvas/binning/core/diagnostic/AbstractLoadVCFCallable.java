@@ -241,7 +241,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                             } else {
                                                 locatedVariant.setId(daoBean.getLocatedVariantDAO().save(locatedVariant));
                                             }
-                                            logger.info(locatedVariant.toString());
+                                            logger.debug(locatedVariant.toString());
                                             createAssmeblyLocatedVariantQC(sampleName, variantContext, locatedVariant, assembly);
                                             locatedVariantSet.add(locatedVariant);
                                         } catch (CANVASDAOException | BinningException e) {
@@ -594,7 +594,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             }
             alv.setHomozygous(genotype.isHom());
             daoBean.getAssemblyLocatedVariantDAO().save(alv);
-            logger.info(alv.toString());
+            logger.debug(alv.toString());
 
             // this is retarded...following database constraints
             if (dp != null || qualityByDepth != null || readPosRankSum != null || dels != null || homopolymerRun != null || fs != null
@@ -628,7 +628,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                     alvQC.setAltDepth(altDepth);
                 }
                 daoBean.getAssemblyLocatedVariantQCDAO().save(alvQC);
-                logger.info(alvQC.toString());
+                logger.debug(alvQC.toString());
             }
         } catch (NumberFormatException | CANVASDAOException e) {
             throw new BinningException(e);
