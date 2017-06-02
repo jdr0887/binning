@@ -135,6 +135,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
             boolean containsKnownPathogenic = foundReferenceClinicalAssersions.parallelStream()
                     .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+            
             if (containsKnownPathogenic) {
 
                 SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
