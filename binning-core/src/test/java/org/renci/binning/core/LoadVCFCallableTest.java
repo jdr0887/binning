@@ -151,31 +151,52 @@ public class LoadVCFCallableTest {
 
                     for (Allele altAllele : variantContext.getAlternateAlleles()) {
                         LocatedVariant locatedVariant = new LocatedVariant();
+
                         if (variantContext.isSNP()) {
+                            
                             locatedVariant.setSeq(altAllele.getDisplayString());
                             locatedVariant.setRef(variantContext.getReference().getDisplayString());
                             locatedVariant.setPosition(variantContext.getStart());
                             locatedVariant.setVariantType(new VariantType("snp"));
                             locatedVariant.setEndPosition(variantContext.getStart() + 1);
                             locatedVariantList.add(locatedVariant);
-                        }
-                    }
+                            
+                        } else if (variantContext.isIndel() || variantContext.isSimpleInsertion()) {
 
-                }
+                            if (variantContext.isComplexIndel()) {
 
-                for (VariantContext variantContext : variantContextList) {
+                                locatedVariant.setPosition(variantContext.getStart() - 1);
+                                locatedVariant.setVariantType(new VariantType("ins"));
+                                String ref = variantContext.getReference().getDisplayString();
+                                locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
+                                locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                locatedVariant.setRef("");
+                                locatedVariantList.add(locatedVariant);
 
-                    for (Allele altAllele : variantContext.getAlternateAlleles()) {
-                        LocatedVariant locatedVariant = new LocatedVariant();
-                        if (variantContext.isSimpleInsertion()) {
+                            } else {
+
+                                locatedVariant.setPosition(variantContext.getStart() - 1);
+                                locatedVariant.setVariantType(new VariantType("ins"));
+                                String ref = variantContext.getReference().getDisplayString();
+                                locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
+                                locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
+                                locatedVariant.setRef("");
+                                locatedVariantList.add(locatedVariant);
+
+                            }
+
+                        } else if (variantContext.isMNP()) {
+
                             locatedVariant.setPosition(variantContext.getStart() - 1);
-                            locatedVariant.setVariantType(new VariantType("ins"));
+                            locatedVariant.setVariantType(new VariantType("sub"));
                             String ref = variantContext.getReference().getDisplayString();
                             locatedVariant.setSeq(altAllele.getDisplayString().replaceFirst(ref, ""));
                             locatedVariant.setEndPosition(locatedVariant.getPosition() + 1);
                             locatedVariant.setRef("");
                             locatedVariantList.add(locatedVariant);
+
                         }
+                        
                     }
 
                 }
@@ -213,14 +234,13 @@ public class LoadVCFCallableTest {
                             if (CollectionUtils.isNotEmpty(types)) {
                                 LocatedVariant locatedVariant = new LocatedVariant();
                                 String type = types.get(variantContext.getAlleleIndex(altAllele) - 1);
-                                
+
                                 if (variantContext.getContig().equals("NC_000001.11") && variantContext.getStart() == 1223182) {
                                     System.out.println("");
                                 }
 
                                 switch (type) {
                                     case "del":
-
 
                                         locatedVariant.setVariantType(new VariantType("del"));
                                         locatedVariant.setPosition(variantContext.getStart());
