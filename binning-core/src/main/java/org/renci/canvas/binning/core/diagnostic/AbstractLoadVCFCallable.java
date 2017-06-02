@@ -212,9 +212,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                     for (VariantContext variantContext : variantContextList) {
 
-                        for (Allele altAllele : variantContext.getAlternateAlleles()) {
+                        es.submit(() -> {
 
-                            es.submit(() -> {
+                            for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
                                 try {
 
@@ -391,8 +391,8 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                                     logger.error(e.getMessage(), e);
                                 }
 
-                            });
-                        }
+                            }
+                        });
 
                     }
                     es.shutdown();
