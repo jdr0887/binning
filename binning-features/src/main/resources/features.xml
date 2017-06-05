@@ -88,6 +88,7 @@
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-datasource/${renci.canvas.dao.version}</bundle>        
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-api/${renci.canvas.dao.version}</bundle>
     <bundle>mvn:org.renci.canvas.canvas-dao/canvas-dao-jpa/${renci.canvas.dao.version}</bundle>
+    <bundle>mvn:org.renci.canvas.canvas-dao/canvas-commons/${renci.canvas.dao.version}</bundle>       
   </feature>
   
 </features>
