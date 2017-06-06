@@ -213,9 +213,25 @@ public class AnnotateVariants38Test {
 
         }
 
+        if (CollectionUtils.isEmpty(variants)) {
+            // not found in or across any transcript, must be intergenic
+            Variants_80_4 variant = variantsFactory.createIntergenicVariant(locatedVariant);
+            variants.add(variant);
+        }
+
         return variants;
     }
-    
+
+    @Test
+    public void testLocatedVariant575353004() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(575353004L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+    }
 
     @Test
     public void testLocatedVariant561693182() throws Exception {
