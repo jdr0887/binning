@@ -1,7 +1,9 @@
 package org.renci.canvas.binning.core.grch38.diagnostic;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -82,13 +84,16 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                         logger.info(locatedVariant.toString());
 
                         try {
+
+                            Set<Variants_80_4> variants = new HashSet<>();
+
                             final List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
                                     .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRef.getId(),
                                             refseqVersion, locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition());
 
                             if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
 
-                                logger.info("transcriptMapsList.size(): {}", transcriptMapsList.size());
+                                logger.debug("transcriptMapsList.size(): {}", transcriptMapsList.size());
 
                                 List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream()
                                         .map(a -> a.getTranscript().getId())
@@ -96,7 +101,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                                 .filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
                                         .collect(Collectors.toList());
 
-                                logger.info("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
+                                logger.debug("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
                                 distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
                                 // handling non boundary crossing variants (intron/exon/utr*)
@@ -142,7 +147,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                     Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
 
                                     if (foundVariant == null) {
-                                        daoBean.getVariants_80_4_DAO().save(variant);
+                                        variants.add(variant);
                                     }
 
                                 }
@@ -198,7 +203,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                         }
                                         Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                         if (foundVariant == null) {
-                                            daoBean.getVariants_80_4_DAO().save(variant);
+                                            variants.add(variant);
                                         }
 
                                     }
@@ -250,7 +255,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                             }
                                             Variants_80_4 foundVariant = daoBean.getVariants_80_4_DAO().findById(variant.getId());
                                             if (foundVariant == null) {
-                                                daoBean.getVariants_80_4_DAO().save(variant);
+                                                variants.add(variant);
                                             }
                                         }
                                     }
@@ -258,6 +263,18 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                 }
 
                             }
+
+                            if (CollectionUtils.isEmpty(variants)) {
+                                // not found in or across any transcript, must be intergenic
+                                Variants_80_4 variant = variantsFactory.createIntergenicVariant(locatedVariant);
+                                variants.add(variant);
+                            }
+
+                            for (Variants_80_4 variant : variants) {
+                                logger.info(variant.toString());
+                                daoBean.getVariants_80_4_DAO().save(variant);
+                            }
+
                         } catch (CANVASDAOException | BinningException e) {
                             logger.error(e.getMessage(), e);
                         }
