@@ -247,6 +247,30 @@ public class VariantsFactory extends AbstractVariantsFactory {
         return variant;
     }
 
+    public Variants_80_4 createIntergenicVariant(LocatedVariant locatedVariant) throws BinningException {
+        logger.debug("ENTERING createIntergenicVariant(LocatedVariant)");
+
+        LocationType intergenicLocationType = allLocationTypes.parallelStream().filter(a -> a.getId().equals("intergenic")).findFirst()
+                .get();
+        Variants_80_4PK variantKey = new Variants_80_4PK(locatedVariant.getId(), locatedVariant.getGenomeRefSeq().getId(),
+                locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), null, intergenicLocationType.getId(), null, 0);
+
+        Variants_80_4 variant = new Variants_80_4(variantKey);
+
+        variant.setVariantType(locatedVariant.getVariantType());
+        variant.setGenomeRefSeq(locatedVariant.getGenomeRefSeq());
+        variant.setLocatedVariant(locatedVariant);
+        variant.setReferenceAllele(locatedVariant.getRef());
+        variant.setAlternateAllele(locatedVariant.getSeq() != null ? locatedVariant.getSeq() : "");
+        variant.setLocationType(intergenicLocationType);
+        variant.setVariantEffect(allVariantEffects.parallelStream().filter(a -> a.getId().equals("intergenic")).findFirst().get());
+        variant.setHgvsGenomic(toHGVS(locatedVariant.getGenomeRefSeq().getId(), "g", locatedVariant.getVariantType().getId(),
+                locatedVariant.getPosition(), locatedVariant.getRef(), locatedVariant.getSeq()));
+
+        logger.info(variant.toString());
+        return variant;
+    }
+
     public Variants_80_4 createBorderCrossingVariant(LocatedVariant locatedVariant, TranscriptMaps tMap, List<TranscriptMaps> mapsList,
             List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
@@ -439,7 +463,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             featureList.sort((a, b) -> b.getRegionGroup().getId().compareTo(a.getRegionGroup().getId()));
             if (CollectionUtils.isNotEmpty(featureList)) {
                 Feature feature = featureList.get(0);
-                logger.info(feature.toString());
+                logger.debug(feature.toString());
                 variant.setFeatureId(feature.getId());
             }
 
