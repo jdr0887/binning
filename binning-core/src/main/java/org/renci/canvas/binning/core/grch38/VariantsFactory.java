@@ -252,18 +252,21 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
         LocationType intergenicLocationType = allLocationTypes.parallelStream().filter(a -> a.getId().equals("intergenic")).findFirst()
                 .get();
+        VariantEffect variantEffect = allVariantEffects.parallelStream().filter(a -> a.getId().equals("intergenic")).findFirst().get();
+
         Variants_80_4PK variantKey = new Variants_80_4PK(locatedVariant.getId(), locatedVariant.getGenomeRefSeq().getId(),
-                locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), null, intergenicLocationType.getId(), null, 0);
+                locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), "", intergenicLocationType.getId(),
+                variantEffect.getId(), 0);
 
         Variants_80_4 variant = new Variants_80_4(variantKey);
 
         variant.setVariantType(locatedVariant.getVariantType());
         variant.setGenomeRefSeq(locatedVariant.getGenomeRefSeq());
         variant.setLocatedVariant(locatedVariant);
+        variant.setVariantEffect(variantEffect);
         variant.setReferenceAllele(locatedVariant.getRef());
         variant.setAlternateAllele(locatedVariant.getSeq() != null ? locatedVariant.getSeq() : "");
         variant.setLocationType(intergenicLocationType);
-        variant.setVariantEffect(allVariantEffects.parallelStream().filter(a -> a.getId().equals("intergenic")).findFirst().get());
         variant.setHgvsGenomic(toHGVS(locatedVariant.getGenomeRefSeq().getId(), "g", locatedVariant.getVariantType().getId(),
                 locatedVariant.getPosition(), locatedVariant.getRef(), locatedVariant.getSeq()));
 
