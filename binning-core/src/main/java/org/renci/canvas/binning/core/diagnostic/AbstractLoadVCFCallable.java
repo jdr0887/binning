@@ -421,25 +421,32 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                 if (dp == null || (dp != null && dp >= 0)) {
                     alvQC.setDepth(dp);
                 }
+
                 if (qualityByDepth == null || (qualityByDepth != null && qualityByDepth >= 0)) {
                     alvQC.setQualityByDepth(qualityByDepth);
                 }
                 alvQC.setReadPosRankSum(readPosRankSum);
+
                 if (dels == null || (dels != null && dels >= 0 && dels <= 1)) {
                     alvQC.setFracReadsWithDels(dels);
                 }
+
                 if (homopolymerRun == null || (homopolymerRun != null && homopolymerRun >= 0)) {
                     alvQC.setHomopolymerRun(homopolymerRun);
                 }
+
                 if (fs == null || (fs != null && fs >= 0)) {
                     alvQC.setStrandScore(fs);
                 }
+
                 if (refDepth == null || (refDepth != null && refDepth >= 0)) {
                     alvQC.setRefDepth(refDepth);
                 }
+
                 if (altDepth == null || (altDepth != null && altDepth >= 0)) {
                     alvQC.setAltDepth(altDepth);
                 }
+
                 daoBean.getAssemblyLocatedVariantQCDAO().save(alvQC);
                 logger.debug(alvQC.toString());
             }
