@@ -36,7 +36,8 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractUpdateDiagnosticBinsCallable.class);
 
-    private final List<Integer> knownPathogenicClinVarAssertionRankings = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+    private final List<Integer> knownPathogenicClinVarAssertionRankings = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16);
 
     private final List<String> clinVarAssertionStatusExcludes = Arrays.asList("no assertion criteria provided", "no assertion provided",
             "not classified by submitter");
@@ -135,7 +136,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
             boolean containsKnownPathogenic = foundReferenceClinicalAssersions.parallelStream()
                     .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
-            
+
             if (containsKnownPathogenic) {
 
                 SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
