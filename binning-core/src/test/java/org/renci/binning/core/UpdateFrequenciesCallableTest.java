@@ -205,7 +205,7 @@ public class UpdateFrequenciesCallableTest {
                         .findById(new SNPPopulationMaxFrequencyPK(locatedVariant.getId(), 2));
 
                 if (snpPopulationMaxFrequency != null) {
-                    MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 2);
+                    MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), "2");
                     MaxFrequency maxFrequency = daoBean.getMaxFrequencyDAO().findById(key);
                     if (maxFrequency == null) {
                         maxFrequency = new MaxFrequency(key, daoBean.getMaxFrequencySourceDAO().findById("snp"));
@@ -219,7 +219,7 @@ public class UpdateFrequenciesCallableTest {
                         .findById(new IndelMaxFrequencyPK(locatedVariant.getId(), 1));
 
                 if (indelMaxFrequency != null) {
-                    MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 1);
+                    MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), "1");
                     MaxFrequency maxFrequency = daoBean.getMaxFrequencyDAO().findById(key);
                     if (maxFrequency == null) {
                         maxFrequency = new MaxFrequency(key, daoBean.getMaxFrequencySourceDAO().findById("indel"));
@@ -230,7 +230,7 @@ public class UpdateFrequenciesCallableTest {
                 }
 
                 if (snpPopulationMaxFrequency == null && indelMaxFrequency == null) {
-                    MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 0);
+                    MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), "0");
                     MaxFrequency maxFrequency = daoBean.getMaxFrequencyDAO().findById(key);
                     if (maxFrequency == null) {
                         maxFrequency = new MaxFrequency(key, daoBean.getMaxFrequencySourceDAO().findById("none"));
