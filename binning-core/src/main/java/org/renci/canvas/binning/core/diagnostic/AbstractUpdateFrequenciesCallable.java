@@ -74,7 +74,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
 
                             if (snpPopulationMaxFrequency != null) {
                                 MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(),
-                                        diagnosticResultVersion.getGen1000SnpVersion());
+                                        diagnosticResultVersion.getGen1000SnpVersion().toString());
                                 MaxFrequency maxFrequency = daoBean.getMaxFrequencyDAO().findById(key);
                                 if (maxFrequency == null) {
                                     maxFrequency = new MaxFrequency(key, snpMaxFrequencySource);
@@ -90,7 +90,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
 
                             if (indelMaxFrequency != null) {
                                 MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(),
-                                        diagnosticResultVersion.getGen1000IndelVersion());
+                                        diagnosticResultVersion.getGen1000IndelVersion().toString());
                                 MaxFrequency maxFrequency = daoBean.getMaxFrequencyDAO().findById(key);
                                 if (maxFrequency == null) {
                                     maxFrequency = new MaxFrequency(key, indelMaxFrequencySource);
@@ -102,7 +102,7 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
                             }
 
                             if (snpPopulationMaxFrequency == null && indelMaxFrequency == null) {
-                                MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), 0);
+                                MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), "0");
                                 MaxFrequency maxFrequency = daoBean.getMaxFrequencyDAO().findById(key);
                                 if (maxFrequency != null) {
                                     maxFrequency = new MaxFrequency(key, noneMaxFrequencySource);
