@@ -17,10 +17,10 @@ import org.renci.canvas.dao.clinbin.model.DiagnosticResultVersion;
 import org.renci.canvas.dao.clinbin.model.MaxFrequency;
 import org.renci.canvas.dao.clinbin.model.MaxFrequencyPK;
 import org.renci.canvas.dao.clinbin.model.MaxFrequencySource;
-import org.renci.canvas.dao.genome1k.model.IndelMaxFrequency;
-import org.renci.canvas.dao.genome1k.model.IndelMaxFrequencyPK;
-import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequency;
-import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequencyPK;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesIndelMaxFrequency;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesIndelMaxFrequencyPK;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesSNPPopulationMaxFrequency;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesSNPPopulationMaxFrequencyPK;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,9 +68,9 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
                     es.submit(() -> {
 
                         try {
-                            SNPPopulationMaxFrequency snpPopulationMaxFrequency = daoBean.getSNPPopulationMaxFrequencyDAO()
-                                    .findById(new SNPPopulationMaxFrequencyPK(locatedVariant.getId(),
-                                            diagnosticResultVersion.getGen1000SnpVersion()));
+                            OneKGenomesSNPPopulationMaxFrequency snpPopulationMaxFrequency = daoBean
+                                    .getOneKGenomesSNPPopulationMaxFrequencyDAO().findById(new OneKGenomesSNPPopulationMaxFrequencyPK(
+                                            locatedVariant.getId(), diagnosticResultVersion.getGen1000SnpVersion()));
 
                             if (snpPopulationMaxFrequency != null) {
                                 MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(),
@@ -85,8 +85,9 @@ public abstract class AbstractUpdateFrequenciesCallable implements Callable<Void
                                 return;
                             }
 
-                            IndelMaxFrequency indelMaxFrequency = daoBean.getIndelMaxFrequencyDAO().findById(
-                                    new IndelMaxFrequencyPK(locatedVariant.getId(), diagnosticResultVersion.getGen1000IndelVersion()));
+                            OneKGenomesIndelMaxFrequency indelMaxFrequency = daoBean.getOneKGenomesIndelMaxFrequencyDAO()
+                                    .findById(new OneKGenomesIndelMaxFrequencyPK(locatedVariant.getId(),
+                                            diagnosticResultVersion.getGen1000IndelVersion()));
 
                             if (indelMaxFrequency != null) {
                                 MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(),
