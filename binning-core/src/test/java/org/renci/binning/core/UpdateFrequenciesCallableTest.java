@@ -18,10 +18,6 @@ import org.renci.canvas.binning.core.BinningException;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.MaxFrequency;
 import org.renci.canvas.dao.clinbin.model.MaxFrequencyPK;
-import org.renci.canvas.dao.genome1k.model.IndelMaxFrequency;
-import org.renci.canvas.dao.genome1k.model.IndelMaxFrequencyPK;
-import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequency;
-import org.renci.canvas.dao.genome1k.model.SNPPopulationMaxFrequencyPK;
 import org.renci.canvas.dao.jpa.CANVASDAOBeanServiceImpl;
 import org.renci.canvas.dao.jpa.annotation.AnnotationGeneExternalIdDAOImpl;
 import org.renci.canvas.dao.jpa.clinbin.DiagnosticBinningJobDAOImpl;
@@ -34,9 +30,9 @@ import org.renci.canvas.dao.jpa.clinbin.NCGenesFrequenciesDAOImpl;
 import org.renci.canvas.dao.jpa.clinbin.UnimportantExonDAOImpl;
 import org.renci.canvas.dao.jpa.clinvar.ReferenceClinicalAssertionDAOImpl;
 import org.renci.canvas.dao.jpa.dbsnp.SNPMappingAggDAOImpl;
-import org.renci.canvas.dao.jpa.genome1k.IndelMaxFrequencyDAOImpl;
-import org.renci.canvas.dao.jpa.genome1k.SNPPopulationMaxFrequencyDAOImpl;
 import org.renci.canvas.dao.jpa.hgnc.HGNCGeneDAOImpl;
+import org.renci.canvas.dao.jpa.onekgen.OneKGenomesIndelMaxFrequencyDAOImpl;
+import org.renci.canvas.dao.jpa.onekgen.OneKGenomesSNPPopulationMaxFrequencyDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.FeatureDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.LocationTypeDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.RefSeqCodingSequenceDAOImpl;
@@ -50,6 +46,10 @@ import org.renci.canvas.dao.jpa.var.AssemblyLocatedVariantDAOImpl;
 import org.renci.canvas.dao.jpa.var.AssemblyLocatedVariantQCDAOImpl;
 import org.renci.canvas.dao.jpa.var.CanonicalAlleleDAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesIndelMaxFrequency;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesIndelMaxFrequencyPK;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesSNPPopulationMaxFrequency;
+import org.renci.canvas.dao.onekgen.model.OneKGenomesSNPPopulationMaxFrequencyPK;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,13 +157,13 @@ public class UpdateFrequenciesCallableTest {
         snpMappingAggDAO.setEntityManager(em);
         daoBean.setSNPMappingAggDAO(snpMappingAggDAO);
 
-        SNPPopulationMaxFrequencyDAOImpl snpPopulationMaxFrequencyDAO = new SNPPopulationMaxFrequencyDAOImpl();
+        OneKGenomesSNPPopulationMaxFrequencyDAOImpl snpPopulationMaxFrequencyDAO = new OneKGenomesSNPPopulationMaxFrequencyDAOImpl();
         snpPopulationMaxFrequencyDAO.setEntityManager(em);
-        daoBean.setSNPPopulationMaxFrequencyDAO(snpPopulationMaxFrequencyDAO);
+        daoBean.setOneKGenomesSNPPopulationMaxFrequencyDAO(snpPopulationMaxFrequencyDAO);
 
-        IndelMaxFrequencyDAOImpl indelMaxFrequencyDAO = new IndelMaxFrequencyDAOImpl();
+        OneKGenomesIndelMaxFrequencyDAOImpl indelMaxFrequencyDAO = new OneKGenomesIndelMaxFrequencyDAOImpl();
         indelMaxFrequencyDAO.setEntityManager(em);
-        daoBean.setIndelMaxFrequencyDAO(indelMaxFrequencyDAO);
+        daoBean.setOneKGenomesIndelMaxFrequencyDAO(indelMaxFrequencyDAO);
 
         MaxFrequencySourceDAOImpl maxFrequencySourceDAO = new MaxFrequencySourceDAOImpl();
         maxFrequencySourceDAO.setEntityManager(em);
@@ -201,8 +201,8 @@ public class UpdateFrequenciesCallableTest {
             for (LocatedVariant locatedVariant : locatedVariantList) {
                 logger.debug(locatedVariant.toString());
 
-                SNPPopulationMaxFrequency snpPopulationMaxFrequency = daoBean.getSNPPopulationMaxFrequencyDAO()
-                        .findById(new SNPPopulationMaxFrequencyPK(locatedVariant.getId(), 2));
+                OneKGenomesSNPPopulationMaxFrequency snpPopulationMaxFrequency = daoBean.getOneKGenomesSNPPopulationMaxFrequencyDAO()
+                        .findById(new OneKGenomesSNPPopulationMaxFrequencyPK(locatedVariant.getId(), 2));
 
                 if (snpPopulationMaxFrequency != null) {
                     MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), "2");
@@ -215,8 +215,8 @@ public class UpdateFrequenciesCallableTest {
                     continue;
                 }
 
-                IndelMaxFrequency indelMaxFrequency = daoBean.getIndelMaxFrequencyDAO()
-                        .findById(new IndelMaxFrequencyPK(locatedVariant.getId(), 1));
+                OneKGenomesIndelMaxFrequency indelMaxFrequency = daoBean.getOneKGenomesIndelMaxFrequencyDAO()
+                        .findById(new OneKGenomesIndelMaxFrequencyPK(locatedVariant.getId(), 1));
 
                 if (indelMaxFrequency != null) {
                     MaxFrequencyPK key = new MaxFrequencyPK(locatedVariant.getId(), "1");
