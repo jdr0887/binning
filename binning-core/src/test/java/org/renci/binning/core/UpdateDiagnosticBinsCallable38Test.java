@@ -220,11 +220,12 @@ public class UpdateDiagnosticBinsCallable38Test {
     @Test
     public void scratch() throws CANVASDAOException {
 
-        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5000);
+        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5001);
 
         // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(552701360L);
         // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(560126601L);
-        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(570154717L);
+        // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(570154717L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(551351726L);
 
         List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
 
@@ -642,9 +643,9 @@ public class UpdateDiagnosticBinsCallable38Test {
 
             }
 
-            if (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())) {
-                return null;
-            }
+            // if (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())) {
+            // return null;
+            // }
 
             SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
