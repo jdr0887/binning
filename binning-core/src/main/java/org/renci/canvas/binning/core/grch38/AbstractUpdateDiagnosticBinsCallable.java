@@ -49,9 +49,6 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
     private final List<String> uncertainSignificanceAllowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR");
 
-    private final List<String> uncertainSignificanceFilteredVariantEffects = Arrays.asList("nonsense", "splice-site",
-            "boundary-crossing indel", "stoploss", "nonsense indel", "frameshifting indel", "missense", "non-frameshifting indel");
-
     private final List<String> uncertainSignificanceAllowableVariantEffects = Arrays.asList("synonymous", "synonymous indel", "intron",
             "splice-site-UTR-3", "splice-site-UTR-5", "splice-site-UTR", "potential RNA-editing site", "noncoding boundary-crossing indel");
 
@@ -462,10 +459,6 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                 foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
                 rca = foundReferenceClinicalAssersions.get(0);
 
-            }
-
-            if (uncertainSignificanceFilteredVariantEffects.contains(variant.getVariantEffect().getId())) {
-                return null;
             }
 
             SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
