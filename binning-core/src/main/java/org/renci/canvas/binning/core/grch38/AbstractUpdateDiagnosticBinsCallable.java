@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.clinbin.model.BinResultsFinalDiagnostic;
@@ -20,6 +21,7 @@ import org.renci.canvas.dao.clinbin.model.NCGenesFrequenciesPK;
 import org.renci.canvas.dao.clinbin.model.UnimportantExon;
 import org.renci.canvas.dao.clinbin.model.UnimportantExonPK;
 import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertion;
+import org.renci.canvas.dao.clinvar.model.SubmissionClinicalAssertion;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAggPK;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
@@ -84,7 +86,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
         if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
 
-            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.parallelStream()
+            Optional<HGMDLocatedVariant> optionalHGMDLocatedVariant = hgmdLocatedVariantList.stream()
                     .filter((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM")).findAny();
 
             if (optionalHGMDLocatedVariant.isPresent()) {
@@ -131,38 +133,52 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
         if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
-            boolean containsKnownPathogenic = foundReferenceClinicalAssersions.parallelStream()
+            boolean containsValidAssertionRanking = foundReferenceClinicalAssersions.stream()
                     .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
 
-            if (containsKnownPathogenic) {
-
-                SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
-
-                NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
-                        .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
-
-                foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                ReferenceClinicalAssertion rca = foundReferenceClinicalAssersions.get(0);
-                logger.info(rca.toString());
-
-                AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO().findById(
-                        new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
-
-                AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO().findById(
-                        new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
-
-                UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
-                        .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
-
-                binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
-
+            if (!containsValidAssertionRanking) {
+                return null;
             }
+
+            foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
+            ReferenceClinicalAssertion rca = foundReferenceClinicalAssersions.get(0);
+            logger.debug(rca.toString());
+
+            if (CollectionUtils.isNotEmpty(rca.getSubmissionClinicalAssertions())) {
+                for (SubmissionClinicalAssertion sca : rca.getSubmissionClinicalAssertions()) {
+                    logger.debug(sca.toString());
+                    // rca' w/ explanation are conflicting
+                    // when sca has pathogenic assertion & review status contains 'no assertion', skip it
+                    if (StringUtils.isNotEmpty(rca.getExplanation()) && StringUtils.containsIgnoreCase(rca.getExplanation(), "pathogenic")
+                            && StringUtils.containsIgnoreCase(sca.getAssertion(), "pathogenic")
+                            && StringUtils.containsIgnoreCase(sca.getReviewStatus(), "no assertion")) {
+                        return null;
+                    }
+                }
+            }
+
+            SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
+
+            NCGenesFrequencies ncgenesFrequencies = daoBean.getNCGenesFrequenciesDAO()
+                    .findById(new NCGenesFrequenciesPK(locatedVariant37.getId(), maxNCGenesFrequenciesVersion.toString()));
+
+            AssemblyLocatedVariant assemblyLocatedVariant = daoBean.getAssemblyLocatedVariantDAO().findById(
+                    new AssemblyLocatedVariantPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
+
+            AssemblyLocatedVariantQC assemblyLocatedVariantQC = daoBean.getAssemblyLocatedVariantQCDAO().findById(
+                    new AssemblyLocatedVariantQCPK(diagnosticBinningJob.getAssembly().getId(), variant.getLocatedVariant().getId()));
+
+            UnimportantExon unimportantExon = daoBean.getUnimportantExonDAO()
+                    .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
+
+            binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
+                    diseaseClass, diagnosticGene, maxFrequency, rca, maxNCGenesFrequenciesVersion, snpMappingAgg, ncgenesFrequencies,
+                    assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
 
         }
 
         return binResultsFinalDiagnostic;
+
     }
 
     public BinResultsFinalDiagnostic findHGMDLikelyPathogenic(Variants_80_4 variant, LocatedVariant locatedVariant37,
@@ -180,12 +196,12 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
         HGMDLocatedVariant hgmdLocatedVariant = null;
         if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
                     .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
             if (containsKnownPathogenic) {
                 return null;
             }
-            Optional<HGMDLocatedVariant> optionalHGMDLocVar = hgmdLocatedVariantList.parallelStream()
+            Optional<HGMDLocatedVariant> optionalHGMDLocVar = hgmdLocatedVariantList.stream()
                     .filter((s) -> !s.getId().getVersion().equals(2) || !s.getTag().equals("DM")).findFirst();
             if (optionalHGMDLocVar.isPresent()) {
                 hgmdLocatedVariant = optionalHGMDLocVar.get();
@@ -287,7 +303,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
         HGMDLocatedVariant hgmdLocatedVariant = null;
         if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
                     .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
             if (containsKnownPathogenic) {
                 return null;
@@ -385,7 +401,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
         HGMDLocatedVariant hgmdLocatedVariant = null;
         if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-            boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+            boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
                     .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
             if (containsKnownPathogenic) {
                 return null;
@@ -518,7 +534,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
             HGMDLocatedVariant hgmdLocatedVariant = null;
             if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
                         .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
                 if (containsKnownPathogenic) {
                     return null;
@@ -656,7 +672,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
             HGMDLocatedVariant hgmdLocatedVariant = null;
             if (CollectionUtils.isNotEmpty(hgmdLocatedVariantList)) {
-                boolean containsKnownPathogenic = hgmdLocatedVariantList.parallelStream()
+                boolean containsKnownPathogenic = hgmdLocatedVariantList.stream()
                         .anyMatch((s) -> s.getId().getVersion().equals(2) && s.getTag().equals("DM"));
                 if (containsKnownPathogenic) {
                     return null;
