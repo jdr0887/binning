@@ -130,7 +130,7 @@ public class AnnotateVariants38Test {
 
                 Variants_80_4 variant = null;
 
-                Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.parallelStream()
+                Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.stream()
                         .filter(a -> a.getContigRange().contains(locatedVariant.getPosition())).findAny();
                 if (optionalTranscriptMapsExons.isPresent()) {
                     TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
@@ -232,12 +232,23 @@ public class AnnotateVariants38Test {
         assertTrue(variants.size() == 1);
 
     }
-
+    
     
     @Test
     public void testLocatedVariant575353004() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(575353004L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+    }
+
+    @Test
+    public void testLocatedVariant535444544() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(535444544L);
         logger.info(locatedVariant.toString());
 
         List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
