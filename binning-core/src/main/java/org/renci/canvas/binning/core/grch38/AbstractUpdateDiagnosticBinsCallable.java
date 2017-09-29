@@ -144,17 +144,26 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
             ReferenceClinicalAssertion rca = foundReferenceClinicalAssersions.get(0);
             logger.debug(rca.toString());
 
+            if (StringUtils.isNotEmpty(rca.getExplanation()) && !StringUtils.containsIgnoreCase(rca.getExplanation(), "pathogenic")) {
+                return null;
+            }
+
             if (CollectionUtils.isNotEmpty(rca.getSubmissionClinicalAssertions())) {
-                for (SubmissionClinicalAssertion sca : rca.getSubmissionClinicalAssertions()) {
-                    logger.debug(sca.toString());
-                    // rca' w/ explanation are conflicting
-                    // when sca has pathogenic assertion & review status contains 'no assertion', skip it
-                    if (StringUtils.isNotEmpty(rca.getExplanation()) && StringUtils.containsIgnoreCase(rca.getExplanation(), "pathogenic")
-                            && StringUtils.containsIgnoreCase(sca.getAssertion(), "pathogenic")
-                            && StringUtils.containsIgnoreCase(sca.getReviewStatus(), "no assertion")) {
-                        return null;
-                    }
+
+                Optional<SubmissionClinicalAssertion> optionalSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions().stream()
+                        .filter(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")).findAny();
+                if (!optionalSubmissionClinicalAssertion.isPresent()) {
+                    return null;
                 }
+
+                optionalSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions().stream()
+                        .filter(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")
+                                && StringUtils.containsIgnoreCase(a.getReviewStatus(), "no assertion"))
+                        .findAny();
+                if (!optionalSubmissionClinicalAssertion.isPresent()) {
+                    return null;
+                }
+
             }
 
             SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
