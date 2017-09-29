@@ -221,8 +221,9 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             for (Allele altAllele : variantContext.getAlternateAlleles()) {
 
                                 try {
-                                    LocatedVariant locatedVariant = LocatedVariantFactory.create(genomeRef, genomeRefSeq, variantContext,
-                                            altAllele, allVariantTypes);
+                                    LocatedVariant locatedVariant = LocatedVariantFactory.create(genomeRef, genomeRefSeq,
+                                            variantContext.getStart(), variantContext.getReference().getDisplayString(),
+                                            altAllele.getDisplayString(), allVariantTypes);
 
                                     List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
                                             .findByExample(locatedVariant);
