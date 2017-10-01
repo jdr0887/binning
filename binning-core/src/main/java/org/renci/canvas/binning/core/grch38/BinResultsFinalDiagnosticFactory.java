@@ -203,6 +203,7 @@ public class BinResultsFinalDiagnosticFactory {
                 binResultsFinalDiagnostic.setGenotypeQual(assemblyLocatedVariantQC.getQualityByDepth());
                 binResultsFinalDiagnostic.setStrandScore(assemblyLocatedVariantQC.getStrandScore());
                 binResultsFinalDiagnostic.setReadPosRankSum(assemblyLocatedVariantQC.getReadPosRankSum());
+                binResultsFinalDiagnostic.setQd(assemblyLocatedVariantQC.getQualityByDepth());
             }
 
             if (maxFrequency != null) {
