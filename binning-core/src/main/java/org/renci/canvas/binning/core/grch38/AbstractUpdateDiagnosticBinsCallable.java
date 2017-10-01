@@ -44,7 +44,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
     private final List<String> clinVarAssertionStatusExcludes = Arrays.asList("no assertion criteria provided", "no assertion provided",
             "not classified by submitter");
 
-    private final List<String> clinvarLikelyPathogenicAllowableVariantEffects = Arrays.asList("nonsense", "splice-site",
+    private final List<String> likelyPathogenicAllowableVariantEffects = Arrays.asList("nonsense", "splice-site",
             "boundary-crossing indel", "stoploss", "nonsense indel", "frameshifting indel");
 
     private final List<String> possiblyPathogenicAllowableVariantEffects = Arrays.asList("missense", "non-frameshifting indel");
@@ -195,9 +195,6 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
         logger.debug("ENTERING findHGMDLikelyPathogenic(Variants_80_4, LocatedVariant)");
         BinResultsFinalDiagnostic binResultsFinalDiagnostic = null;
 
-        List<String> allowableVariantEffects = Arrays.asList("nonsense", "splice-site", "boundary-crossing indel", "stoploss",
-                "nonsense indel", "frameshifting indel");
-
         DiseaseClass diseaseClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(2)).findAny().get();
 
         List<HGMDLocatedVariant> hgmdLocatedVariantList = daoBean.getHGMDLocatedVariantDAO()
@@ -222,7 +219,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
             return null;
         }
 
-        if (allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
+        if (likelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
             SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
@@ -275,7 +272,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
             return null;
         }
 
-        if (clinvarLikelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
+        if (likelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
             SNPMappingAgg snpMappingAgg = daoBean.getSNPMappingAggDAO().findById(new SNPMappingAggPK(locatedVariant37.getId()));
 
