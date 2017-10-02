@@ -412,8 +412,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                         || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
             binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null,
-                    null);
+                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
         }
 
@@ -424,8 +423,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
             binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null,
-                    null);
+                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
         }
         return binResultsFinalDiagnostic;
@@ -453,8 +451,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                 logger.debug(hgmdLocatedVariant.toString());
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null,
-                        null, null);
+                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
             }
 
@@ -503,8 +500,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                         .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
 
@@ -560,8 +557,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                     .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
             binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                    diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                    assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                    diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                    assemblyLocatedVariantQC, unimportantExon);
 
         }
 
@@ -610,8 +607,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                     .findById(new UnimportantExonPK(variant.getId().getTranscript(), variant.getNonCanonicalExon()));
 
             binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                    diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                    assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                    diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                    assemblyLocatedVariantQC, unimportantExon);
 
         }
         return binResultsFinalDiagnostic;
@@ -668,8 +665,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                             || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
 
@@ -680,8 +677,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
 
@@ -743,8 +740,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
 
@@ -752,8 +749,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
         } catch (Exception e) {
@@ -813,8 +810,8 @@ public class UpdateDiagnosticBinsCallable38Test {
             if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
 
@@ -822,8 +819,8 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies,
-                        assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+                        diseaseClass, diagnosticGene, maxFrequency, rca, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant,
+                        assemblyLocatedVariantQC, unimportantExon);
 
             }
         } catch (Exception e) {
@@ -868,8 +865,7 @@ public class UpdateDiagnosticBinsCallable38Test {
         if (allowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
             binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null,
-                    null);
+                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
         }
         return binResultsFinalDiagnostic;
@@ -907,8 +903,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                 && possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
 
             binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null,
-                    null);
+                    diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
         }
         return binResultsFinalDiagnostic;
@@ -950,8 +945,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null,
-                        null, null);
+                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
             }
 
@@ -959,8 +953,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && !allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null,
-                        null, null);
+                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
             }
 
@@ -1005,8 +998,7 @@ public class UpdateDiagnosticBinsCallable38Test {
             if (maxFrequency.getMaxAlleleFreq() >= 0.1 && allowableLocationTypes.contains(variant.getLocationType().getId())) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null,
-                        null, null);
+                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
             }
 
@@ -1014,8 +1006,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                     && (maxFrequency.getMaxAlleleFreq() >= 0.05 && !allowableLocationTypes.contains(variant.getLocationType().getId()))) {
 
                 binResultsFinalDiagnostic = BinResultsFinalDiagnosticFactory.createBinResultsFinalDiagnostic(diagnosticBinningJob, variant,
-                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null,
-                        null, null);
+                        diseaseClass, diagnosticGene, maxFrequency, hgmdLocatedVariant, null, null, null, null, null);
 
             }
 
