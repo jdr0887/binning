@@ -25,11 +25,12 @@ public class BinResultsFinalDiagnosticFactory {
     private static final Logger logger = LoggerFactory.getLogger(BinResultsFinalDiagnosticFactory.class);
 
     public static BinResultsFinalDiagnostic createBinResultsFinalDiagnostic(DiagnosticBinningJob diagnosticBinningJob,
-                                                                            Variants_80_4 variant, DiagnosticGene diagnosticGene,
-                                                                            MaxFrequency maxFrequency, SNPMappingAgg snpMappingAgg,
-                                                                            NCGenesFrequencies ncgenesFrequencies, AssemblyLocatedVariant assemblyLocatedVariant,
-                                                                            AssemblyLocatedVariantQC assemblyLocatedVariantQC, UnimportantExon unimportantExon) {
+            Variants_80_4 variant, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency, SNPMappingAgg snpMappingAgg,
+            NCGenesFrequencies ncgenesFrequencies, AssemblyLocatedVariant assemblyLocatedVariant,
+            AssemblyLocatedVariantQC assemblyLocatedVariantQC, UnimportantExon unimportantExon) {
+
         BinResultsFinalDiagnostic binResultsFinalDiagnostic = new BinResultsFinalDiagnostic();
+
         try {
 
             DiagnosticResultVersion diagnosticResultVersion = diagnosticBinningJob.getDiagnosticResultVersion();
@@ -122,14 +123,15 @@ public class BinResultsFinalDiagnosticFactory {
 
     // ClinVar
     public static BinResultsFinalDiagnostic createBinResultsFinalDiagnostic(DiagnosticBinningJob diagnosticBinningJob,
-                                                                            Variants_80_4 variant, DiseaseClass clinvarDiseaseClass, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency,
-                                                                            ReferenceClinicalAssertion rca, SNPMappingAgg snpMappingAgg,
-                                                                            NCGenesFrequencies ncgenesFrequencies, AssemblyLocatedVariant assemblyLocatedVariant,
-                                                                            AssemblyLocatedVariantQC assemblyLocatedVariantQC, UnimportantExon unimportantExon) throws CANVASDAOException {
+            Variants_80_4 variant, DiseaseClass clinvarDiseaseClass, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency,
+            ReferenceClinicalAssertion rca, SNPMappingAgg snpMappingAgg, NCGenesFrequencies ncgenesFrequencies,
+            AssemblyLocatedVariant assemblyLocatedVariant, AssemblyLocatedVariantQC assemblyLocatedVariantQC,
+            UnimportantExon unimportantExon) throws CANVASDAOException {
         logger.debug(
                 "ENTERING createBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, ReferenceClinicalAssertion, Integer, SNPMappingAgg)");
 
-        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diagnosticGene, maxFrequency, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diagnosticGene,
+                maxFrequency, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
 
         if (rca != null) {
             binResultsFinalDiagnostic.setClinvarAccession(rca.getAccession());
@@ -141,17 +143,17 @@ public class BinResultsFinalDiagnosticFactory {
         return binResultsFinalDiagnostic;
     }
 
-
     // hgmd
     public static BinResultsFinalDiagnostic createBinResultsFinalDiagnostic(DiagnosticBinningJob diagnosticBinningJob,
-                                                                            Variants_80_4 variant, DiseaseClass hgmdDiseaseClass, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency,
-                                                                            HGMDLocatedVariant hgmdLocatedVariant, SNPMappingAgg snpMappingAgg,
-                                                                            NCGenesFrequencies ncgenesFrequencies, AssemblyLocatedVariant assemblyLocatedVariant,
-                                                                            AssemblyLocatedVariantQC assemblyLocatedVariantQC, UnimportantExon unimportantExon) throws CANVASDAOException {
+            Variants_80_4 variant, DiseaseClass hgmdDiseaseClass, DiagnosticGene diagnosticGene, MaxFrequency maxFrequency,
+            HGMDLocatedVariant hgmdLocatedVariant, SNPMappingAgg snpMappingAgg, NCGenesFrequencies ncgenesFrequencies,
+            AssemblyLocatedVariant assemblyLocatedVariant, AssemblyLocatedVariantQC assemblyLocatedVariantQC,
+            UnimportantExon unimportantExon) throws CANVASDAOException {
         logger.debug(
                 "ENTERING createBinResultsFinalDiagnostic(DiagnosticBinningJob, Variants_80_4, DiseaseClass, DiagnosticGene, MaxFrequency, HGMDLocatedVariant, Integer, SNPMappingAgg)");
 
-        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diagnosticGene, maxFrequency, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
+        BinResultsFinalDiagnostic binResultsFinalDiagnostic = createBinResultsFinalDiagnostic(diagnosticBinningJob, variant, diagnosticGene,
+                maxFrequency, snpMappingAgg, ncgenesFrequencies, assemblyLocatedVariant, assemblyLocatedVariantQC, unimportantExon);
 
         if (hgmdLocatedVariant != null) {
             binResultsFinalDiagnostic.setHgmdAccessionNumber(hgmdLocatedVariant.getId().getAccession());
