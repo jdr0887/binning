@@ -232,8 +232,7 @@ public class AnnotateVariants38Test {
         assertTrue(variants.size() == 1);
 
     }
-    
-    
+
     @Test
     public void testLocatedVariant575353004() throws Exception {
 
