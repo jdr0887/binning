@@ -114,20 +114,18 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                     || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
                 return getDiseaseClass(4);
             }
-        } else if (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
-                && uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-            return getDiseaseClass(4);
+        } else if (maxFrequency.getMaxAlleleFreq() < 0.05) {
+            if (uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
+                return getDiseaseClass(4);
+            } else {
+                return getDiseaseClass(5);
+            }
+        } else if (maxFrequency.getMaxAlleleFreq() < 0.1) {
+            if (uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
+                return getDiseaseClass(5);
+            }
         }
 
-        if (maxFrequency.getMaxAlleleFreq() >= 0.1
-                && uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-            return getDiseaseClass(5);
-        }
-
-        if (maxFrequency.getMaxAlleleFreq() >= 0.05
-                && !uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-            return getDiseaseClass(5);
-        }
         return getDiseaseClass(6);
     }
 
