@@ -95,36 +95,40 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
     }
 
+    private final DiseaseClass getDiseaseClass(int code) {
+        return allDiseaseClasses.stream().filter(a -> a.getId().equals(code)).findAny().orElse(null);
+    }
+
     private DiseaseClass calculateProvisionalClass(Variants_80_4 variant, MaxFrequency maxFrequency) throws CANVASDAOException {
 
         if (maxFrequency.getMaxAlleleFreq() < 0.01) {
             // class B
             if (likelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
-                return allDiseaseClasses.stream().filter(a -> a.getId().equals(2)).findAny().orElse(null);
+                return getDiseaseClass(2);
             }
             // class C
             if (possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
-                return allDiseaseClasses.stream().filter(a -> a.getId().equals(3)).findAny().orElse(null);
+                return getDiseaseClass(3);
             }
             if (uncertainSignificanceAllowableVariantEffects.contains(variant.getVariantEffect().getId())
                     || uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-                return allDiseaseClasses.stream().filter(a -> a.getId().equals(4)).findAny().orElse(null);
+                return getDiseaseClass(4);
             }
         } else if (maxFrequency.getMaxAlleleFreq() >= 0.01 && maxFrequency.getMaxAlleleFreq() < 0.05
                 && uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-            return allDiseaseClasses.stream().filter(a -> a.getId().equals(4)).findAny().orElse(null);
+            return getDiseaseClass(4);
         }
 
         if (maxFrequency.getMaxAlleleFreq() >= 0.1
                 && uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-            return allDiseaseClasses.stream().filter(a -> a.getId().equals(5)).findAny().orElse(null);
+            return getDiseaseClass(5);
         }
 
         if (maxFrequency.getMaxAlleleFreq() >= 0.05
                 && !uncertainSignificanceAllowableLocationTypes.contains(variant.getLocationType().getId())) {
-            return allDiseaseClasses.stream().filter(a -> a.getId().equals(5)).findAny().orElse(null);
+            return getDiseaseClass(5);
         }
-        return allDiseaseClasses.stream().filter(a -> a.getId().equals(6)).findAny().orElse(null);
+        return getDiseaseClass(6);
     }
 
     public BinResultsFinalDiagnostic binVariantClinVar(Variants_80_4 variant, LocatedVariant locatedVariant37, MaxFrequency maxFrequency,
@@ -161,7 +165,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
                                     .findAny();
                             if (optionalSubmissionClinicalAssertion.isPresent()) {
                                 // We found a match!
-                                variantClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(1)).findAny().orElse(null);
+                                variantClass = getDiseaseClass(1);
                             }
                         }
                     }
@@ -199,7 +203,7 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
             if (optionalHGMDLocatedVariant.isPresent()) {
                 // found a match!
                 hgmdLocatedVariant = optionalHGMDLocatedVariant.get();
-                variantClass = allDiseaseClasses.stream().filter(a -> a.getId().equals(1)).findAny().orElse(null);
+                variantClass = getDiseaseClass(1);
             }
 
         }
