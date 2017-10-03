@@ -43,10 +43,10 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
     private final List<String> clinVarAssertionStatusExcludes = Arrays.asList("no assertion criteria provided", "no assertion provided",
             "not classified by submitter");
 
-    private final List<String> likelyPathogenicAllowableVariantEffects = Arrays.asList("nonsense", "splice-site", "boundary-crossing indel",
+    private final List<String> likelyTruncatingVariantEffects = Arrays.asList("nonsense", "splice-site", "boundary-crossing indel",
             "stoploss", "nonsense indel", "frameshifting indel");
 
-    private final List<String> possiblyPathogenicAllowableVariantEffects = Arrays.asList("missense", "non-frameshifting indel");
+    private final List<String> misspellingVariantEffects = Arrays.asList("missense", "non-frameshifting indel");
 
     private final List<String> uncertainSignificanceAllowableLocationTypes = Arrays.asList("UTR-5", "UTR-3", "UTR", "exon",
             "intron/exon boundary");
@@ -103,11 +103,11 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
 
         if (maxFrequency.getMaxAlleleFreq() < 0.01) {
             // class B
-            if (likelyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
+            if (likelyTruncatingVariantEffects.contains(variant.getVariantEffect().getId())) {
                 return getDiseaseClass(2);
             }
             // class C
-            if (possiblyPathogenicAllowableVariantEffects.contains(variant.getVariantEffect().getId())) {
+            if (misspellingVariantEffects.contains(variant.getVariantEffect().getId())) {
                 return getDiseaseClass(3);
             }
             if (uncertainSignificanceAllowableVariantEffects.contains(variant.getVariantEffect().getId())
