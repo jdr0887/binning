@@ -20,7 +20,6 @@ import org.renci.canvas.dao.clinbin.model.NCGenesFrequenciesPK;
 import org.renci.canvas.dao.clinbin.model.UnimportantExon;
 import org.renci.canvas.dao.clinbin.model.UnimportantExonPK;
 import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertion;
-import org.renci.canvas.dao.clinvar.model.SubmissionClinicalAssertion;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAggPK;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
@@ -145,30 +144,32 @@ public abstract class AbstractUpdateDiagnosticBinsCallable implements Callable<V
         if (CollectionUtils.isNotEmpty(foundReferenceClinicalAssersions)) {
 
             boolean containsValidAssertionRanking = foundReferenceClinicalAssersions.stream()
-                    .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
+                    .anyMatch(s -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
 
             if (containsValidAssertionRanking) {
-                foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                rca = foundReferenceClinicalAssersions.get(0);
+
+                rca = foundReferenceClinicalAssersions.stream()
+                        .sorted((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank())).findFirst().get();
                 logger.debug(rca.toString());
+
                 if (StringUtils.isEmpty(rca.getExplanation()) || StringUtils.containsIgnoreCase(rca.getExplanation(), "pathogenic")) {
+
                     if (CollectionUtils.isNotEmpty(rca.getSubmissionClinicalAssertions())) {
 
-                        Optional<SubmissionClinicalAssertion> optionalSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions()
-                                .stream().filter(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")).findAny();
-                        if (optionalSubmissionClinicalAssertion.isPresent()) {
-                            optionalSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions().stream()
-                                    .filter(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")
-                                            && StringUtils.containsIgnoreCase(a.getReviewStatus(), "no assertion"))
-                                    .findAny();
-                            if (optionalSubmissionClinicalAssertion.isPresent()) {
-                                // We found a match!
-                                variantClass = getDiseaseClass(1);
-                            }
+                        boolean hasSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions().stream()
+                                .anyMatch(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")
+                                        && !StringUtils.containsIgnoreCase(a.getReviewStatus(), "no assertion"));
+                        if (hasSubmissionClinicalAssertion) {
+                            // We found a match!
+                            variantClass = getDiseaseClass(1);
                         }
+
                     }
+
                 }
+
             }
+
         }
 
         BinResultsFinalDiagnostic binResultsFinalDiagnostic = makeProvisionalBinResults(variant, locatedVariant37, maxFrequency,
