@@ -126,10 +126,11 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                         TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                                         logger.debug(transcriptMapsExons.toString());
 
-                                        if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition())
-                                                && "-".equals(tMap.getStrand()))
-                                                || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
-                                                        && "+".equals(tMap.getStrand()))) {
+                                        if (!"snp".equals(locatedVariant.getVariantType().getId())
+                                                && ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition())
+                                                        && "-".equals(tMap.getStrand()))
+                                                        || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
+                                                                && "+".equals(tMap.getStrand())))) {
                                             variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
                                                     transcriptMapsExonsList, transcriptMapsExons);
                                         } else {
