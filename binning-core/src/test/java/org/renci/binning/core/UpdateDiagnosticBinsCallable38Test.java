@@ -27,7 +27,6 @@ import org.renci.canvas.dao.clinbin.model.NCGenesFrequenciesPK;
 import org.renci.canvas.dao.clinbin.model.UnimportantExon;
 import org.renci.canvas.dao.clinbin.model.UnimportantExonPK;
 import org.renci.canvas.dao.clinvar.model.ReferenceClinicalAssertion;
-import org.renci.canvas.dao.clinvar.model.SubmissionClinicalAssertion;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAgg;
 import org.renci.canvas.dao.dbsnp.model.SNPMappingAggPK;
 import org.renci.canvas.dao.hgmd.model.HGMDLocatedVariant;
@@ -227,12 +226,13 @@ public class UpdateDiagnosticBinsCallable38Test {
     @Test
     public void scratch() throws CANVASDAOException {
 
-        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5001);
+        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5032);
 
         // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(552701360L);
         // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(560126601L);
         // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(570154717L);
-        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(551351726L);
+        // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(551351726L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(541791595L);
 
         List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
 
@@ -1026,9 +1026,11 @@ public class UpdateDiagnosticBinsCallable38Test {
     @Test
     public void testProvisionalAssignment() throws CANVASDAOException {
 
-        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5042);
+        DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(5032);
 
-        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(579281197L);
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(541791595L);
+
+        // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(579281197L);
 
         List<Variants_80_4> foundVariants = daoBean.getVariants_80_4_DAO().findByLocatedVariantId(locatedVariant.getId());
 
@@ -1081,8 +1083,7 @@ public class UpdateDiagnosticBinsCallable38Test {
                             BinResultsFinalDiagnostic foundBinResultsFinalDiagnostic = daoBean.getBinResultsFinalDiagnosticDAO()
                                     .findById(binResultsFinalDiagnostic.getId());
                             if (foundBinResultsFinalDiagnostic == null) {
-                                
-                                
+
                             } else {
                                 // just update with just clinvar values
                                 foundBinResultsFinalDiagnostic.setClinvarAccession(binResultsFinalDiagnostic.getClinvarAccession());
@@ -1171,24 +1172,18 @@ public class UpdateDiagnosticBinsCallable38Test {
                     .anyMatch((s) -> knownPathogenicClinVarAssertionRankings.contains(s.getAssertion().getRank()));
 
             if (containsValidAssertionRanking) {
-                foundReferenceClinicalAssersions.sort((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank()));
-                rca = foundReferenceClinicalAssersions.get(0);
+                rca = foundReferenceClinicalAssersions.stream()
+                        .sorted((a, b) -> a.getAssertion().getRank().compareTo(b.getAssertion().getRank())).findFirst().get();
                 logger.debug(rca.toString());
                 if (StringUtils.isEmpty(rca.getExplanation()) || StringUtils.containsIgnoreCase(rca.getExplanation(), "pathogenic")) {
                     if (CollectionUtils.isNotEmpty(rca.getSubmissionClinicalAssertions())) {
-
-                        Optional<SubmissionClinicalAssertion> optionalSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions()
-                                .stream().filter(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")).findAny();
-                        if (optionalSubmissionClinicalAssertion.isPresent()) {
-                            optionalSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions().stream()
-                                    .filter(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")
-                                            && StringUtils.containsIgnoreCase(a.getReviewStatus(), "no assertion"))
-                                    .findAny();
-                            if (optionalSubmissionClinicalAssertion.isPresent()) {
-                                // We found a match!
-                                variantClass = daoBean.getDiseaseClassDAO().findAll().stream().filter(a -> a.getId().equals(1)).findAny()
-                                        .orElse(null);
-                            }
+                        boolean hasSubmissionClinicalAssertion = rca.getSubmissionClinicalAssertions().stream()
+                                .anyMatch(a -> StringUtils.containsIgnoreCase(a.getAssertion(), "pathogenic")
+                                        && !StringUtils.containsIgnoreCase(a.getReviewStatus(), "no assertion"));
+                        if (hasSubmissionClinicalAssertion) {
+                            // We found a match!
+                            variantClass = daoBean.getDiseaseClassDAO().findAll().stream().filter(a -> a.getId().equals(1)).findAny()
+                                    .orElse(null);
                         }
                     }
                 }
