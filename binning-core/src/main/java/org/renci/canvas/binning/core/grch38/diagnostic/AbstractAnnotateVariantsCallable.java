@@ -59,24 +59,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
 
-                logger.info("deleting Variants_80_4 instances");
-                ExecutorService es = Executors.newFixedThreadPool(4);
-                for (LocatedVariant locatedVariant : locatedVariantList) {
-                    es.submit(() -> {
-                        try {
-                            daoBean.getVariants_80_4_DAO().deleteByLocatedVariantId(locatedVariant.getId());
-                        } catch (CANVASDAOException e) {
-                            logger.error(e.getMessage(), e);
-                        }
-                    });
-                }
-                es.shutdown();
-                if (!es.awaitTermination(1L, TimeUnit.DAYS)) {
-                    es.shutdownNow();
-                }
-
-                logger.info("annotating");
-                es = Executors.newFixedThreadPool(6);
+                ExecutorService es = Executors.newFixedThreadPool(6);
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
                     es.submit(() -> {
@@ -84,6 +67,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                         logger.info(locatedVariant.toString());
 
                         try {
+
+                            daoBean.getVariants_80_4_DAO().deleteByLocatedVariantId(locatedVariant.getId());
 
                             Set<Variants_80_4> variants = new HashSet<>();
 
