@@ -59,7 +59,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
             if (CollectionUtils.isNotEmpty(locatedVariantList)) {
                 logger.info(String.format("locatedVariantList.size(): %d", locatedVariantList.size()));
 
-                ExecutorService es = Executors.newFixedThreadPool(6);
+                ExecutorService es = Executors.newFixedThreadPool(4);
                 for (LocatedVariant locatedVariant : locatedVariantList) {
 
                     es.submit(() -> {
@@ -177,11 +177,13 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                                         Variants_80_4 variant = null;
 
                                         if (optionalTranscriptMapsExons.isPresent()) {
+                                            
                                             // we have a border crossing variant starting in an exon
                                             TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                                             logger.debug(transcriptMapsExons.toString());
                                             variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
                                                     transcriptMapsExonsList, transcriptMapsExons);
+                                            
                                         } else {
                                             // we have a border crossing variant starting in an intron
                                             variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
