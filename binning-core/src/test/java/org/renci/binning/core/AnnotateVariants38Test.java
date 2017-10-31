@@ -274,7 +274,7 @@ public class AnnotateVariants38Test {
         logger.info(locatedVariant.toString());
 
         List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
-        assertTrue(variants.size() == 6);
+        assertTrue(variants.size() == 2);
 
     }
 
@@ -296,7 +296,7 @@ public class AnnotateVariants38Test {
         logger.info(locatedVariant.toString());
 
         List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
-        assertTrue(variants.size() == 2);
+        assertTrue(variants.size() == 1);
 
     }
 
