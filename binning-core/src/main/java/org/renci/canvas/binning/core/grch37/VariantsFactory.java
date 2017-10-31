@@ -32,6 +32,8 @@ import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.refseq.model.VariantEffect;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
 import org.renci.canvas.dao.refseq.model.Variants_61_2PK;
+import org.renci.canvas.dao.refseq.model.Variants_80_4;
+import org.renci.canvas.dao.refseq.model.Variants_80_4PK;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,8 +122,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
             RefSeqCodingSequence refSeqCDS = refSeqCodingSequenceList.stream().findFirst().orElse(null);
             if (refSeqCDS != null) {
                 List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId());
-                if (CollectionUtils.isNotEmpty(rgrList)) {
-                    proteinRange = rgrList.get(0).getId().getRegionRange();
+                RegionGroupRegion rgr = rgrList.stream().findFirst().orElse(null);
+                if (rgr != null) {
+                    proteinRange = rgr.getId().getRegionRange();
                 }
             }
 
@@ -236,6 +239,32 @@ public class VariantsFactory extends AbstractVariantsFactory {
         return variant;
     }
 
+    public Variants_61_2 createIntergenicVariant(LocatedVariant locatedVariant) throws BinningException {
+        logger.debug("ENTERING createIntergenicVariant(LocatedVariant)");
+
+        LocationType intergenicLocationType = allLocationTypes.stream().filter(a -> a.getId().equals("intergenic")).findFirst().get();
+        VariantEffect variantEffect = allVariantEffects.stream().filter(a -> a.getId().equals("intergenic")).findFirst().get();
+
+        Variants_61_2PK variantKey = new Variants_61_2PK(locatedVariant.getId(), locatedVariant.getGenomeRefSeq().getId(),
+                locatedVariant.getPosition(), locatedVariant.getVariantType().getId(), "", intergenicLocationType.getId(),
+                variantEffect.getId(), 0);
+
+        Variants_61_2 variant = new Variants_61_2(variantKey);
+
+        variant.setVariantType(locatedVariant.getVariantType());
+        variant.setGenomeRefSeq(locatedVariant.getGenomeRefSeq());
+        variant.setLocatedVariant(locatedVariant);
+        variant.setVariantEffect(variantEffect);
+        variant.setReferenceAllele(locatedVariant.getRef());
+        variant.setAlternateAllele(locatedVariant.getSeq() != null ? locatedVariant.getSeq() : "");
+        variant.setLocationType(intergenicLocationType);
+        variant.setHgvsGenomic(toHGVS(locatedVariant.getGenomeRefSeq().getId(), "g", locatedVariant.getVariantType().getId(),
+                locatedVariant.getPosition(), locatedVariant.getRef(), locatedVariant.getSeq()));
+
+        logger.info(variant.toString());
+        return variant;
+    }
+
     public Variants_61_2 createBorderCrossingVariant(LocatedVariant locatedVariant, TranscriptMaps tMap, List<TranscriptMaps> mapsList,
             List<TranscriptMapsExons> transcriptMapsExonsList, TranscriptMapsExons transcriptMapsExons) throws BinningException {
         logger.debug(
@@ -265,7 +294,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
             RefSeqGene refSeqGene = refSeqGeneList.get(0);
             variant.setRefSeqGene(refSeqGene.getName());
 
-            
             List<AnnotationGeneExternalId> annotationGeneExternalIdsList = daoBean.getAnnotationGeneExternalIdDAO()
                     .findByExternalId(refSeqGene.getId());
             AnnotationGeneExternalId annotationGeneExternalIds = annotationGeneExternalIdsList.stream()
@@ -277,8 +305,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             List<HGNCGene> hgncGeneList = daoBean.getHGNCGeneDAO()
                     .findByAnnotationGeneExternalIdsGeneIdsAndNamespace(variant.getGene().getId(), "HGNC");
-
             variant.setHgncGene(hgncGeneList.stream().map(a -> a.getSymbol()).findFirst().orElse("None"));
+
             variant.setHgvsGenomic(toHGVS(tMap.getGenomeRefSeq().getId(), "g", variant.getVariantType().getId(),
                     locatedVariant.getPosition(), locatedVariant.getRef(), locatedVariant.getSeq()));
 
@@ -302,8 +330,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
             RefSeqCodingSequence refSeqCDS = refSeqCodingSequenceList.stream().findFirst().orElse(null);
             if (refSeqCDS != null) {
                 List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId());
-                if (CollectionUtils.isNotEmpty(rgrList)) {
-                    proteinRange = rgrList.get(0).getId().getRegionRange();
+                RegionGroupRegion rgr = rgrList.stream().findFirst().orElse(null);
+                if (rgr != null) {
+                    proteinRange = rgr.getId().getRegionRange();
                 }
             }
 
@@ -414,7 +443,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             featureList.sort((a, b) -> b.getRegionGroup().getId().compareTo(a.getRegionGroup().getId()));
             if (CollectionUtils.isNotEmpty(featureList)) {
                 Feature feature = featureList.get(0);
-                logger.info(feature.toString());
+                logger.debug(feature.toString());
                 variant.setFeatureId(feature.getId());
             }
 
@@ -443,8 +472,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
             RefSeqCodingSequence refSeqCDS = refSeqCodingSequenceList.stream().findFirst().orElse(null);
             if (refSeqCDS != null) {
                 List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId());
-                if (CollectionUtils.isNotEmpty(rgrList)) {
-                    proteinRange = rgrList.get(0).getId().getRegionRange();
+                RegionGroupRegion rgr = rgrList.stream().findFirst().orElse(null);
+                if (rgr != null) {
+                    proteinRange = rgr.getId().getRegionRange();
                 }
             }
 
