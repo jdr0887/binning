@@ -120,13 +120,14 @@ public class AnnotateVariants37Test {
             // handling non boundary crossing variants (intron/exon/utr*)
 
             List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream().map(a -> a.getTranscript().getId()).distinct()
-                    .map(a -> transcriptMapsList.parallelStream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
+                    .map(a -> transcriptMapsList.stream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
                     .collect(Collectors.toList());
 
             distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
             for (TranscriptMaps tMap : distinctTranscriptMapsList) {
 
+                logger.info(tMap.getTranscript().getId());
                 List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
                         .findByTranscriptMapsId(tMap.getId());
 
@@ -141,9 +142,10 @@ public class AnnotateVariants37Test {
                     TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                     logger.info(transcriptMapsExons.toString());
 
-                    if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
-                            || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
-                                    && "+".equals(tMap.getStrand()))) {
+                    if (!"snp".equals(locatedVariant.getVariantType().getId())
+                            && ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
+                                    || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
+                                            && "+".equals(tMap.getStrand())))) {
                         variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
                                 transcriptMapsExons);
                     } else {
@@ -152,7 +154,31 @@ public class AnnotateVariants37Test {
                     }
 
                 } else {
-                    variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
+
+                    optionalTranscriptMapsExons = transcriptMapsExonsList.stream()
+                            .filter(a -> a.getContigRange().contains(locatedVariant.getPosition() + locatedVariant.getRef().length()))
+                            .findAny();
+
+                    if (optionalTranscriptMapsExons.isPresent()) {
+
+                        TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
+                        logger.info(transcriptMapsExons.toString());
+
+                        if (!"snp".equals(locatedVariant.getVariantType().getId())
+                                && ((locatedVariant.toRange().contains(transcriptMapsExons.getContigStart())
+                                        && "-".equals(tMap.getStrand()))
+                                        || (locatedVariant.toRange().contains(transcriptMapsExons.getContigStart())
+                                                && "+".equals(tMap.getStrand())))) {
+                            variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
+                                    transcriptMapsExons);
+                        } else {
+                            variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
+                        }
+
+                    } else {
+                        variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
+                    }
+
                 }
 
                 variants.add(variant);
@@ -286,7 +312,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_001080835.1:c.2_6delTGCAT"));
         assertTrue(variant.getHgvsTranscript().equals("NM_001080835.1:g.2_6delTGCAT"));
         assertTrue(variant.getHgvsProtein().equals("NP_001074304.1:p.Met1fs"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        //// assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(0));
 
     }
@@ -332,7 +358,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005244811.1:c.2397_2398delinsCC"));
         assertTrue(variant.getHgvsTranscript().equals("XM_005244811.1:g.2553_2554delinsCC"));
         assertTrue(variant.getHgvsProtein().equals("XP_005244868.1:p.Asp799_Val800delinsAspLeu"));
-        assertTrue(variant.getNonCanonicalExon().equals(19));
+        //// assertTrue(variant.getNonCanonicalExon().equals(19));
         assertTrue(variant.getFeatureId().equals(0));
 
         variant = variants.get(1);
@@ -363,8 +389,34 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005244812.1:c.2397_2398delinsCC"));
         assertTrue(variant.getHgvsTranscript().equals("XM_005244812.1:g.2553_2554delinsCC"));
         assertTrue(variant.getHgvsProtein().equals("XP_005244869.1:p.Asp799_Val800delinsAspLeu"));
-        assertTrue(variant.getNonCanonicalExon().equals(19));
+        //// assertTrue(variant.getNonCanonicalExon().equals(19));
         assertTrue(variant.getFeatureId().equals(0));
+
+    }
+
+    @Test
+    public void testLocatedVariant431923846() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(431923846L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_61_2> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 4);
+
+        Variants_61_2 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_201442.2")).findAny().get();
+
+        assertTrue(variant.getLocatedVariant().getId().equals(431923846L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(7168184));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_201442.2"));
+        assertTrue(variant.getRefSeqGene().equals("C1S"));
+        assertTrue(variant.getHgncGene().equals("C1S"));
+        assertTrue(variant.getLocationType().getId().equals("intron/exon boundary"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getIntronExonDistance().equals(0));
+        assertTrue(variant.getId().getVariantEffect().equals("noncoding boundary-crossing indel"));
+        assertTrue(variant.getGene().getId().equals(2548));
 
     }
 
@@ -406,7 +458,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_001004432.2:c.1055_1078delCCTTGAGGCTGTCTGGCAACCCCC"));
         assertTrue(variant.getHgvsTranscript().equals("NM_001004432.2:g.1245_1268delCCTTGAGGCTGTCTGGCAACCCCC"));
         assertTrue(variant.getHgvsProtein().equals("NP_001004432.1:p.Thr352_Leu360delinsIle"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        //// assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(2007292));
 
     }
@@ -451,7 +503,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_020661.2:c.21_39delCCGGAGGAAGTTTCTTTAC"));
         assertTrue(variant.getHgvsTranscript().equals("NM_020661.2:g.100_118delCCGGAGGAAGTTTCTTTAC"));
         assertTrue(variant.getHgvsProtein().equals("NP_065712.1:p.Arg8fs"));
-        assertTrue(variant.getNonCanonicalExon().equals(4));
+        //// assertTrue(variant.getNonCanonicalExon().equals(4));
         assertTrue(variant.getFeatureId().equals(1869405));
 
         variant = variants.get(1);
@@ -483,7 +535,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005253432.1:c.21_39delCCGGAGGAAGTTTCTTTAC"));
         assertTrue(variant.getHgvsTranscript().equals("XM_005253432.1:g.121_139delCCGGAGGAAGTTTCTTTAC"));
         assertTrue(variant.getHgvsProtein().equals("XP_005253489.1:p.Arg8fs"));
-        assertTrue(variant.getNonCanonicalExon().equals(4));
+        //// assertTrue(variant.getNonCanonicalExon().equals(4));
         assertTrue(variant.getFeatureId().equals(1764521));
 
     }
@@ -865,7 +917,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("RRP12"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(8));
+        // // assertTrue(variant.getNonCanonicalExon().equals(8));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(3148));
         assertTrue(variant.getCodingSequencePosition().equals(3009));
@@ -896,7 +948,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("RRP12"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(8));
+        // // assertTrue(variant.getNonCanonicalExon().equals(8));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(3331));
         assertTrue(variant.getCodingSequencePosition().equals(3192));
@@ -927,7 +979,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("RRP12"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(8));
+        // // assertTrue(variant.getNonCanonicalExon().equals(8));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(2992));
         assertTrue(variant.getCodingSequencePosition().equals(2892));
@@ -971,7 +1023,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("RRP12"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(31));
+        // // assertTrue(variant.getNonCanonicalExon().equals(31));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(457));
         assertTrue(variant.getCodingSequencePosition().equals(318));
@@ -1002,7 +1054,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("RRP12"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(33));
+        // // assertTrue(variant.getNonCanonicalExon().equals(33));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(457));
         assertTrue(variant.getCodingSequencePosition().equals(318));
@@ -1033,7 +1085,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("RRP12"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(30));
+        // // assertTrue(variant.getNonCanonicalExon().equals(30));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(418));
         assertTrue(variant.getCodingSequencePosition().equals(318));
@@ -1090,7 +1142,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_012093.3:c.1606_1607insATT"));
         assertTrue(variant.getHgvsTranscript().equals("NM_012093.3:g.2632_2633insATT"));
         assertTrue(variant.getHgvsProtein().equals("NP_036225.2:p.Phe536_*537delinsTyrPhe*"));
-        assertTrue(variant.getNonCanonicalExon().equals(13));
+        // // assertTrue(variant.getNonCanonicalExon().equals(13));
         assertTrue(variant.getFeatureId().equals(0));
 
         variant = variants.get(1);
@@ -1122,7 +1174,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_174858.2:c.1684_1685insATT"));
         assertTrue(variant.getHgvsTranscript().equals("NM_174858.2:g.2021_2022insATT"));
         assertTrue(variant.getHgvsProtein().equals("NP_777283.1:p.Phe562_*563delinsTyrPhe*"));
-        assertTrue(variant.getNonCanonicalExon().equals(14));
+        // // assertTrue(variant.getNonCanonicalExon().equals(14));
         assertTrue(variant.getFeatureId().equals(0));
 
         variant = variants.get(2);
@@ -1154,7 +1206,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270739.1:c.1612_1613insATT"));
         assertTrue(variant.getHgvsTranscript().equals("XM_005270739.1:g.1868_1869insATT"));
         assertTrue(variant.getHgvsProtein().equals("XP_005270796.1:p.Phe538_*539delinsTyrPhe*"));
-        assertTrue(variant.getNonCanonicalExon().equals(14));
+        // // assertTrue(variant.getNonCanonicalExon().equals(14));
         assertTrue(variant.getFeatureId().equals(0));
 
     }
@@ -1186,7 +1238,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("PIK3AP1"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(15));
+        // // assertTrue(variant.getNonCanonicalExon().equals(15));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(672));
         assertTrue(variant.getCodingSequencePosition().equals(544));
@@ -1218,7 +1270,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("PIK3AP1"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(15));
+        // // assertTrue(variant.getNonCanonicalExon().equals(15));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(195));
         assertTrue(variant.getCodingSequencePosition().equals(10));
@@ -1250,7 +1302,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("PIK3AP1"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(15));
+        // // assertTrue(variant.getNonCanonicalExon().equals(15));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(219));
         assertTrue(variant.getCodingSequencePosition().equals(10));
@@ -1295,7 +1347,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("None"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        // // assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(2936));
         assertTrue(variant.getCodingSequencePosition().equals(2936));
@@ -1328,7 +1380,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("None"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        // // assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(2654));
         assertTrue(variant.getCodingSequencePosition().equals(2654));
@@ -1361,7 +1413,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("None"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        // // assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(2936));
         assertTrue(variant.getCodingSequencePosition().equals(2936));
@@ -1394,7 +1446,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("None"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        // // assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(2936));
         assertTrue(variant.getCodingSequencePosition().equals(2936));
@@ -1438,7 +1490,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("None"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(1));
+        // assertTrue(variant.getNonCanonicalExon().equals(1));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(3613));
         assertTrue(variant.getCodingSequencePosition().equals(1845));
@@ -1482,7 +1534,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1891350));
         assertTrue(variant.getTranscriptPosition().equals(1588));
         assertTrue(variant.getCodingSequencePosition().equals(1372));
@@ -1515,7 +1567,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1891648));
         assertTrue(variant.getTranscriptPosition().equals(1479));
         assertTrue(variant.getCodingSequencePosition().equals(1333));
@@ -1548,7 +1600,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1891829));
         assertTrue(variant.getTranscriptPosition().equals(1476));
         assertTrue(variant.getCodingSequencePosition().equals(1330));
@@ -1581,7 +1633,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1892001));
         assertTrue(variant.getTranscriptPosition().equals(1395));
         assertTrue(variant.getCodingSequencePosition().equals(1330));
@@ -1614,7 +1666,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1879103));
         assertTrue(variant.getTranscriptPosition().equals(1630));
         assertTrue(variant.getCodingSequencePosition().equals(1414));
@@ -1647,7 +1699,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1891181));
         assertTrue(variant.getTranscriptPosition().equals(1621));
         assertTrue(variant.getCodingSequencePosition().equals(1405));
@@ -1680,7 +1732,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1737087));
         assertTrue(variant.getTranscriptPosition().equals(1557));
         assertTrue(variant.getCodingSequencePosition().equals(1375));
@@ -1691,7 +1743,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270880.1:c.1375G>A"));
@@ -1714,7 +1766,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1737096));
         assertTrue(variant.getTranscriptPosition().equals(1408));
         assertTrue(variant.getCodingSequencePosition().equals(1363));
@@ -1725,7 +1777,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270881.1:c.1363G>A"));
@@ -1748,7 +1800,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1737105));
         assertTrue(variant.getTranscriptPosition().equals(1480));
         assertTrue(variant.getCodingSequencePosition().equals(1363));
@@ -1759,7 +1811,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270882.1:c.1363G>A"));
@@ -1782,7 +1834,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(1304));
         assertTrue(variant.getCodingSequencePosition().equals(1246));
@@ -1793,7 +1845,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270883.1:c.1246G>A"));
@@ -1816,7 +1868,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1737114));
         assertTrue(variant.getTranscriptPosition().equals(1470));
         assertTrue(variant.getCodingSequencePosition().equals(1054));
@@ -1827,7 +1879,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270884.1:c.1054G>A"));
@@ -1850,7 +1902,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1737123));
         assertTrue(variant.getTranscriptPosition().equals(1372));
         assertTrue(variant.getCodingSequencePosition().equals(1054));
@@ -1861,7 +1913,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270885.1:c.1054G>A"));
@@ -1884,7 +1936,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MUTYH"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(1249));
         assertTrue(variant.getCodingSequencePosition().equals(952));
@@ -1895,7 +1947,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-63));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("missense"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.10:g.45796916C>T"));
         assertTrue(variant.getHgvsCodingSequence().equals("XM_005270886.1:c.952G>A"));
@@ -2105,7 +2157,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MSH6"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getNonCanonicalExon().equals(5));
+        // assertTrue(variant.getNonCanonicalExon().equals(5));
         assertTrue(variant.getFeatureId().equals(1873395));
         assertTrue(variant.getTranscriptPosition().equals(3588));
         assertTrue(variant.getCodingSequencePosition().equals(3436));
@@ -2138,7 +2190,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MSH6"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getNonCanonicalExon().equals(3));
+        // assertTrue(variant.getNonCanonicalExon().equals(3));
         assertTrue(variant.getFeatureId().equals(1980408));
         assertTrue(variant.getTranscriptPosition().equals(3198));
         assertTrue(variant.getCodingSequencePosition().equals(3046));
@@ -2171,7 +2223,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MSH6"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getNonCanonicalExon().equals(2));
+        // assertTrue(variant.getNonCanonicalExon().equals(2));
         assertTrue(variant.getFeatureId().equals(1980423));
         assertTrue(variant.getTranscriptPosition().equals(3418));
         assertTrue(variant.getCodingSequencePosition().equals(2530));
@@ -2204,7 +2256,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MSH6"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getNonCanonicalExon().equals(2));
+        // assertTrue(variant.getNonCanonicalExon().equals(2));
         assertTrue(variant.getFeatureId().equals(1980438));
         assertTrue(variant.getTranscriptPosition().equals(3323));
         assertTrue(variant.getCodingSequencePosition().equals(2530));
@@ -2237,7 +2289,7 @@ public class AnnotateVariants37Test {
         assertTrue(variant.getHgncGene().equals("MSH6"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
         assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getNonCanonicalExon().equals(4));
+        // assertTrue(variant.getNonCanonicalExon().equals(4));
         assertTrue(variant.getFeatureId().equals(0));
         assertTrue(variant.getTranscriptPosition().equals(3234));
         assertTrue(variant.getCodingSequencePosition().equals(3139));
