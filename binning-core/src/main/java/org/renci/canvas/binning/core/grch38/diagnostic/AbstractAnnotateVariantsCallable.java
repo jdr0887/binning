@@ -113,6 +113,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
                 logger.debug("transcriptMapsList.size(): {}", transcriptMapsList.size());
 
+                // FIXME -- why is distinct needed here? is there a specific bug this should address? if so, can the DISTINCT be done in the db?
                 List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream()
                         .map(a -> a.getTranscript().getId())
                         .distinct().map(a -> transcriptMapsList.parallelStream()
@@ -121,12 +122,14 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
                 logger.debug("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
                 distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
+                assert(transcriptMapsList.size() == distinctTranscriptMapsList.size());
 
                 // handling non boundary crossing variants (intron/exon/utr*)
                 for (TranscriptMaps tMap : distinctTranscriptMapsList) {
 
                     logger.info(tMap.toString());
 
+                    // FIXME - this does not do an ORDER BY - so how do we know which mapnum is which?
                     List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
                             .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion,
                                     tMap.getTranscript().getId());
@@ -136,6 +139,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
                     Variants_80_4 variant = null;
 
+                    // note (possible FIXME...) This only handles the 1st match. What if a deletion spans two exons?
                     Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.parallelStream()
                             .filter(a -> a.getContigRange().contains(locatedVariant.getPosition())).findAny();
 
@@ -144,6 +148,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                         TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                         logger.debug(transcriptMapsExons.toString());
 
+                        // FIXME - not at all sure about this set of conditionals-- it's not even clear from indentation what goes with what...
                         if (!"snp".equals(locatedVariant.getVariantType().getId())
                                 && ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition())
                                 && "-".equals(tMap.getStrand()))
@@ -167,6 +172,8 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                 }
 
             } else {
+
+                // FIXME - will not get here if `pos` is in ANY transcript (so can miss transcripts where pos in one, but end_pos in another)...
 
                 // try searching by adjusting for length of locatedVariant.getSeq()...could be intron/exon
                 // boundary crossing
