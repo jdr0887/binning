@@ -125,7 +125,7 @@ public class AnnotateVariants38Test {
                 List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
                         .findByTranscriptMapsId(tMap.getId());
 
-                List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "80",
+                List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(4, "80",
                         tMap.getTranscript().getId());
 
                 Variants_80_4 variant = null;
