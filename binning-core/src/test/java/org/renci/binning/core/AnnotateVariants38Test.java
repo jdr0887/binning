@@ -4,26 +4,28 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.renci.canvas.binning.core.grch38.VariantsFactory;
-import org.renci.canvas.binning.core.grch38.diagnostic.AbstractAnnotateVariantsCallable;
 import org.renci.canvas.dao.jpa.CANVASDAOBeanServiceImpl;
 import org.renci.canvas.dao.jpa.annotation.AnnotationGeneExternalIdDAOImpl;
 import org.renci.canvas.dao.jpa.hgnc.HGNCGeneDAOImpl;
-import org.renci.canvas.dao.jpa.refseq.*;
+import org.renci.canvas.dao.jpa.refseq.FeatureDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.LocationTypeDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.RefSeqCodingSequenceDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.RefSeqGeneDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.RegionGroupRegionDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.TranscriptMapsDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
+import org.renci.canvas.dao.jpa.refseq.Variants_80_4_DAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
-import org.renci.canvas.dao.refseq.Variants_80_4_DAO;
-import org.renci.canvas.dao.refseq.model.TranscriptMaps;
-import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -106,8 +108,8 @@ public class AnnotateVariants38Test {
 
     private List<Variants_80_4> annotateLocatedVariant(LocatedVariant locatedVariant) throws Exception {
         List<Variants_80_4> variants = new ArrayList<>();
-        variants.addAll(AbstractAnnotateVariantsCallable.annotateVariant(
-                locatedVariant, "80", 4, daoBean));
+        VariantsFactory variantsFactory = VariantsFactory.getInstance(daoBean);
+        variants.addAll(variantsFactory.annotateVariant(locatedVariant, "80", 4, daoBean));
         return variants;
     }
 
