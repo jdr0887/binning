@@ -184,13 +184,11 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                             // FIXME - not at all sure about this set of conditionals-- it's not even clear from indentation what goes with
                             // what...
-                            if ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
-                                    || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
-                                            && "+".equals(tMap.getStrand()))) {
+                            if (transcriptMapsExons.getContigRange().containsRange(locatedVariant.toRange())) {
+                                variant = createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                            } else if (locatedVariant.toRange().isOverlappedBy(transcriptMapsExons.getContigRange())) {
                                 variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
                                         transcriptMapsExons);
-                            } else {
-                                variant = createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList, transcriptMapsExons);
                             }
 
                         } else {
@@ -204,10 +202,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
                                 logger.info(transcriptMapsExons.toString());
 
-                                if ((locatedVariant.toRange().contains(transcriptMapsExons.getContigStart())
-                                        && "-".equals(tMap.getStrand()))
-                                        || (locatedVariant.toRange().contains(transcriptMapsExons.getContigStart())
-                                                && "+".equals(tMap.getStrand()))) {
+                                if (locatedVariant.toRange().isOverlappedBy(transcriptMapsExons.getContigRange()) && (!locatedVariant
+                                        .getEndPosition().equals(transcriptMapsExons.getContigRange().getMinimum())
+                                        && !locatedVariant.getEndPosition().equals(transcriptMapsExons.getContigRange().getMaximum()))) {
                                     variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
                                             transcriptMapsExons);
                                 } else {
