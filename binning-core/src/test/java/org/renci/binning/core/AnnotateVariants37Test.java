@@ -4,14 +4,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,8 +25,6 @@ import org.renci.canvas.dao.jpa.refseq.TranscriptMapsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
-import org.renci.canvas.dao.refseq.model.TranscriptMaps;
-import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.refseq.model.Variants_61_2;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -108,169 +103,8 @@ public class AnnotateVariants37Test {
 
     private List<Variants_61_2> annotateLocatedVariant(LocatedVariant locatedVariant) throws Exception {
         List<Variants_61_2> variants = new ArrayList<>();
-
         VariantsFactory variantsFactory = VariantsFactory.getInstance(daoBean);
-
-        final List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
-                .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61", locatedVariant.getGenomeRefSeq().getId(),
-                        locatedVariant.getPosition());
-        logger.info("transcriptMapsList.size(): {}", transcriptMapsList.size());
-
-        if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
-            // handling non boundary crossing variants (intron/exon/utr*)
-
-            List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream().map(a -> a.getTranscript().getId()).distinct()
-                    .map(a -> transcriptMapsList.stream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                    .collect(Collectors.toList());
-
-            distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
-
-            for (TranscriptMaps tMap : distinctTranscriptMapsList) {
-
-                logger.info(tMap.getTranscript().getId());
-                List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                        .findByTranscriptMapsId(tMap.getId());
-
-                List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61",
-                        tMap.getTranscript().getId());
-
-                Variants_61_2 variant = null;
-
-                Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.parallelStream()
-                        .filter(a -> a.getContigRange().contains(locatedVariant.getPosition())).findAny();
-                if (optionalTranscriptMapsExons.isPresent()) {
-                    TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                    logger.info(transcriptMapsExons.toString());
-
-                    if (!"snp".equals(locatedVariant.getVariantType().getId())
-                            && ((transcriptMapsExons.getContigEnd().equals(locatedVariant.getPosition()) && "-".equals(tMap.getStrand()))
-                                    || (transcriptMapsExons.getContigStart().equals(locatedVariant.getPosition())
-                                            && "+".equals(tMap.getStrand())))) {
-                        variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
-                                transcriptMapsExons);
-                    } else {
-                        variant = variantsFactory.createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList,
-                                transcriptMapsExons);
-                    }
-
-                } else {
-
-                    optionalTranscriptMapsExons = transcriptMapsExonsList.stream()
-                            .filter(a -> a.getContigRange().contains(locatedVariant.getPosition() + locatedVariant.getRef().length()))
-                            .findAny();
-
-                    if (optionalTranscriptMapsExons.isPresent()) {
-
-                        TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                        logger.info(transcriptMapsExons.toString());
-
-                        if (!"snp".equals(locatedVariant.getVariantType().getId())
-                                && ((locatedVariant.toRange().contains(transcriptMapsExons.getContigStart())
-                                        && "-".equals(tMap.getStrand()))
-                                        || (locatedVariant.toRange().contains(transcriptMapsExons.getContigStart())
-                                                && "+".equals(tMap.getStrand())))) {
-                            variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
-                                    transcriptMapsExons);
-                        } else {
-                            variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
-                        }
-
-                    } else {
-                        variant = variantsFactory.createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
-                    }
-
-                }
-
-                variants.add(variant);
-            }
-
-        } else {
-
-            // try searching by adjusting for length of locatedVariant.getSeq()...could be intron/exon boundary crossing
-            final List<TranscriptMaps> boundaryCrossingRightTranscriptMapsList = daoBean.getTranscriptMapsDAO()
-                    .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61",
-                            locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() + locatedVariant.getRef().length() - 1);
-
-            if (CollectionUtils.isNotEmpty(boundaryCrossingRightTranscriptMapsList)) {
-
-                List<TranscriptMaps> distinctBoundaryCrossingTranscriptMapsList = boundaryCrossingRightTranscriptMapsList
-                        .stream().map(a -> a.getTranscript().getId()).distinct().map(a -> boundaryCrossingRightTranscriptMapsList
-                                .parallelStream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                        .collect(Collectors.toList());
-
-                distinctBoundaryCrossingTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
-
-                for (TranscriptMaps tMap : distinctBoundaryCrossingTranscriptMapsList) {
-
-                    List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                            .findByTranscriptMapsId(tMap.getId());
-
-                    List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61",
-                            tMap.getTranscript().getId());
-
-                    Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.parallelStream()
-                            .filter(a -> a.getContigRange().contains(locatedVariant.getPosition() + locatedVariant.getRef().length() - 1))
-                            .findAny();
-
-                    if (optionalTranscriptMapsExons.isPresent()) {
-                        // we have a border crossing variant starting in an exon
-                        TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                        logger.info(transcriptMapsExons.toString());
-                        Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons);
-                        variants.add(variant);
-                    } else {
-                        // we have a border crossing variant starting in an intron
-                        Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, null);
-                        variants.add(variant);
-                    }
-
-                }
-                return variants;
-            }
-
-            final List<TranscriptMaps> boundaryCrossingLeftTranscriptMapsList = daoBean.getTranscriptMapsDAO()
-                    .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(2, "61",
-                            locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition() - locatedVariant.getRef().length());
-
-            if (CollectionUtils.isNotEmpty(boundaryCrossingLeftTranscriptMapsList)) {
-
-                List<TranscriptMaps> distinctBoundaryCrossingTranscriptMapsList = boundaryCrossingLeftTranscriptMapsList
-                        .stream().map(a -> a.getTranscript().getId()).distinct().map(a -> boundaryCrossingLeftTranscriptMapsList
-                                .parallelStream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                        .collect(Collectors.toList());
-
-                distinctBoundaryCrossingTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
-
-                for (TranscriptMaps tMap : distinctBoundaryCrossingTranscriptMapsList) {
-
-                    List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                            .findByTranscriptMapsId(tMap.getId());
-
-                    List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(2, "61",
-                            tMap.getTranscript().getId());
-
-                    Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.parallelStream()
-                            .filter(a -> a.getContigRange().contains(locatedVariant.getPosition() - locatedVariant.getRef().length()))
-                            .findAny();
-                    if (optionalTranscriptMapsExons.isPresent()) {
-                        TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                        logger.info(transcriptMapsExons.toString());
-                        Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, transcriptMapsExons);
-                        variants.add(variant);
-                    } else {
-                        // we have a border crossing variant starting in an intron
-                        Variants_61_2 variant = variantsFactory.createBorderCrossingVariant(locatedVariant, tMap, mapsList,
-                                transcriptMapsExonsList, null);
-                        variants.add(variant);
-                    }
-                }
-            }
-
-        }
-
+        variants.addAll(variantsFactory.annotateVariant(locatedVariant, "61", 2, daoBean));
         return variants;
     }
 
