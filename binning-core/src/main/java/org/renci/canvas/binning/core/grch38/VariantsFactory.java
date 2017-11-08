@@ -1,12 +1,6 @@
 package org.renci.canvas.binning.core.grch38;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -83,245 +77,78 @@ public class VariantsFactory extends AbstractVariantsFactory {
         return "80";
     }
 
-    public Set<Variants_80_4> annotateVariant(LocatedVariant locatedVariant, String refseqVersion, Integer genomeRefId,
-            CANVASDAOBeanService daoBean) {
+    public Set<Variants_80_4> annotateVariant(LocatedVariant locatedVariant, String refseqVersion, Integer genomeRefId, CANVASDAOBeanService daoBean) {
 
         logger.info(locatedVariant.toString());
         Set<Variants_80_4> variants = new HashSet<>();
 
         try {
 
-            if ("snp".equals(locatedVariant.getVariantType().getId())) {
-                // either intergenic, intron, or exonic
+            final List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
+                    .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRefId,
+                            refseqVersion, locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition());
 
-                List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
-                        .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRefId, refseqVersion,
-                                locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition());
+            // FIXME - this still only finds transcripts where the variant at least starts or ends-- not variants that span the whole transcript...
+            // FIXME - would be better to have a proper overlap query
+            transcriptMapsList.addAll(daoBean.getTranscriptMapsDAO()
+                    .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRefId,
+                            refseqVersion, locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getEndPosition()-1));
 
-                if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
+            // now we need to use distinct() to eliminate duplicates (e.g., variant starts and ends within transcript)
+            List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream()
+                    .map(a -> a.getTranscript().getId())
+                    .distinct().map(a -> transcriptMapsList.parallelStream()
+                            .filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
+                    .collect(Collectors.toList());
 
-                    logger.debug("transcriptMapsList.size(): {}", transcriptMapsList.size());
-                    List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream().map(a -> a.getTranscript().getId())
-                            .distinct()
-                            .map(a -> transcriptMapsList.stream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                            .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(distinctTranscriptMapsList)) {
 
-                    logger.debug("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
-                    distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
+                distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
-                    for (TranscriptMaps tMap : distinctTranscriptMapsList) {
+                for (TranscriptMaps tMap : distinctTranscriptMapsList) {
 
-                        logger.info(tMap.toString());
+                    logger.info(tMap.toString());
 
-                        List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
-                                .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion, tMap.getTranscript().getId());
+                    // I think this is only used to provide mapnum and nummaps
+                    List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
+                            .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion,
+                                    tMap.getTranscript().getId());
+                    mapsList.sort((a, b) -> b.getId().compareTo(a.getId()));
 
-                        List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                                .findByTranscriptMapsId(tMap.getId());
+                    List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
+                            .findByTranscriptMapsId(tMap.getId());
 
-                        Variants_80_4 variant = null;
-
-                        Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.stream()
-                                .filter(a -> a.getContigRange().contains(locatedVariant.getPosition())).findAny();
-
-                        if (optionalTranscriptMapsExons.isPresent()) {
-                            // found in an exon
-                            TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                            logger.debug(transcriptMapsExons.toString());
-                            variant = createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList, transcriptMapsExons);
+                    long varEnd = locatedVariant.getEndPosition()-1;
+                    boolean foundExonOverlap = false;
+                    for (TranscriptMapsExons exon : transcriptMapsExonsList) {
+                        // FIXME - might be able to `break` depending on strandedness..
+                        long exonMin = Math.min(exon.getContigStart(), exon.getContigEnd());
+                        long exonMax = Math.max(exon.getContigStart(), exon.getContigEnd());
+                        if (varEnd < exonMin) continue;
+                        if (locatedVariant.getPosition() > exonMax) continue;
+                        // we have overlap...
+                        foundExonOverlap = true;
+                        if (locatedVariant.getPosition() >= exonMin
+                                && varEnd <= exonMax) {
+                            // completely contained
+                            // FIXME - have to shallow copy transcriptsMapsExonsList because something in there reorders it...
+                            variants.add(createExonicVariant(locatedVariant, mapsList,
+                                    new ArrayList<TranscriptMapsExons>(transcriptMapsExonsList), exon));
                         } else {
-                            // if not found in an exon, but is within a transcript map contig range, must be intron
-                            variant = createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
+                            variants.add(createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList, exon));
                         }
-                        variants.add(variant);
-
                     }
 
-                } else {
-                    // not found in any transcript contig range, must be intergenic
-                    Variants_80_4 variant = createIntergenicVariant(locatedVariant);
-                    variants.add(variant);
+                    if (!foundExonOverlap) {
+                        variants.add(createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList));
+                    }
                 }
+            }
 
-            } else {
-                // handling indels
-
-                final List<TranscriptMaps> transcriptMapsList = daoBean.getTranscriptMapsDAO()
-                        .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRefId, refseqVersion,
-                                locatedVariant.getGenomeRefSeq().getId(), locatedVariant.getPosition());
-
-                if (CollectionUtils.isNotEmpty(transcriptMapsList)) {
-
-                    logger.debug("transcriptMapsList.size(): {}", transcriptMapsList.size());
-                    List<TranscriptMaps> distinctTranscriptMapsList = transcriptMapsList.stream().map(a -> a.getTranscript().getId())
-                            .distinct()
-                            .map(a -> transcriptMapsList.stream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                            .collect(Collectors.toList());
-
-                    logger.debug("distinctTranscriptMapsList.size(): {}", distinctTranscriptMapsList.size());
-                    distinctTranscriptMapsList.sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
-
-                    for (TranscriptMaps tMap : distinctTranscriptMapsList) {
-
-                        logger.info(tMap.toString());
-
-                        List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
-                                .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion, tMap.getTranscript().getId());
-
-                        List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                                .findByTranscriptMapsId(tMap.getId());
-
-                        Variants_80_4 variant = null;
-
-                        // note (possible FIXME...) This only handles the 1st match. What if a deletion spans two exons?
-                        Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.stream()
-                                .filter(a -> a.getContigRange().contains(locatedVariant.getPosition())).findAny();
-
-                        if (optionalTranscriptMapsExons.isPresent()) {
-
-                            TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                            logger.debug(transcriptMapsExons.toString());
-
-                            // FIXME - not at all sure about this set of conditionals-- it's not even clear from indentation what goes with
-                            // what...
-                            if (transcriptMapsExons.getContigRange().containsRange(locatedVariant.toRange())) {
-                                variant = createExonicVariant(locatedVariant, mapsList, transcriptMapsExonsList, transcriptMapsExons);
-                            } else if (locatedVariant.toRange().isOverlappedBy(transcriptMapsExons.getContigRange())) {
-                                variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
-                                        transcriptMapsExons);
-                            }
-
-                        } else {
-
-                            optionalTranscriptMapsExons = transcriptMapsExonsList.stream().filter(
-                                    a -> a.getContigRange().contains(locatedVariant.getPosition() + locatedVariant.getRef().length()))
-                                    .findAny();
-
-                            if (optionalTranscriptMapsExons.isPresent()) {
-
-                                TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                                logger.info(transcriptMapsExons.toString());
-
-                                if (locatedVariant.toRange().isOverlappedBy(transcriptMapsExons.getContigRange()) && (!locatedVariant
-                                        .getEndPosition().equals(transcriptMapsExons.getContigRange().getMinimum())
-                                        && !locatedVariant.getEndPosition().equals(transcriptMapsExons.getContigRange().getMaximum()))) {
-                                    variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
-                                            transcriptMapsExons);
-                                } else {
-                                    variant = createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
-                                }
-
-                            } else {
-                                variant = createIntronicVariant(locatedVariant, mapsList, tMap, transcriptMapsExonsList);
-                            }
-                        }
-                        variants.add(variant);
-
-                    }
-
-                } else {
-
-                    // FIXME - will not get here if `pos` is in ANY transcript (so can miss transcripts where pos in one, but end_pos in
-                    // another)...
-
-                    // try searching by adjusting for length of locatedVariant.getSeq()...could be intron/exon
-                    // boundary crossing
-
-                    final List<TranscriptMaps> boundaryCrossingRightTranscriptMapsList = daoBean.getTranscriptMapsDAO()
-                            .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRefId, refseqVersion,
-                                    locatedVariant.getGenomeRefSeq().getId(),
-                                    locatedVariant.getPosition() + locatedVariant.getRef().length() - 1);
-
-                    if (CollectionUtils.isNotEmpty(boundaryCrossingRightTranscriptMapsList)) {
-
-                        List<TranscriptMaps> distinctBoundaryCrossingTranscriptMapsList = boundaryCrossingRightTranscriptMapsList
-                                .stream().map(a -> a.getTranscript().getId()).distinct().map(a -> boundaryCrossingRightTranscriptMapsList
-                                        .stream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                                .collect(Collectors.toList());
-
-                        distinctBoundaryCrossingTranscriptMapsList
-                                .sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
-
-                        for (TranscriptMaps tMap : distinctBoundaryCrossingTranscriptMapsList) {
-                            logger.info(tMap.toString());
-
-                            List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                                    .findByTranscriptMapsId(tMap.getId());
-
-                            List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO().findByGenomeRefIdAndRefSeqVersionAndTranscriptId(
-                                    genomeRefId, refseqVersion, tMap.getTranscript().getId());
-
-                            Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.stream().filter(
-                                    a -> a.getContigRange().contains(locatedVariant.getPosition() + locatedVariant.getRef().length() - 1))
-                                    .findAny();
-
-                            Variants_80_4 variant = null;
-
-                            if (optionalTranscriptMapsExons.isPresent()) {
-
-                                // we have a border crossing variant starting in an exon
-                                TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                                logger.debug(transcriptMapsExons.toString());
-                                variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
-                                        transcriptMapsExons);
-
-                            } else {
-                                // we have a border crossing variant starting in an intron
-                                variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList, null);
-                            }
-                            variants.add(variant);
-
-                        }
-
-                    }
-
-                    if (CollectionUtils.isEmpty(boundaryCrossingRightTranscriptMapsList)) {
-
-                        final List<TranscriptMaps> boundaryCrossingLeftTranscriptMapsList = daoBean.getTranscriptMapsDAO()
-                                .findByGenomeRefIdAndRefSeqVersionAndGenomeRefSeqAccessionAndInExonRange(genomeRefId, refseqVersion,
-                                        locatedVariant.getGenomeRefSeq().getId(),
-                                        locatedVariant.getPosition() - locatedVariant.getRef().length());
-
-                        if (CollectionUtils.isNotEmpty(boundaryCrossingLeftTranscriptMapsList)) {
-
-                            List<TranscriptMaps> distinctBoundaryCrossingTranscriptMapsList = boundaryCrossingLeftTranscriptMapsList
-                                    .stream().map(a -> a.getTranscript().getId()).distinct().map(a -> boundaryCrossingLeftTranscriptMapsList
-                                            .stream().filter(b -> b.getTranscript().getId().equals(a)).findAny().get())
-                                    .collect(Collectors.toList());
-
-                            distinctBoundaryCrossingTranscriptMapsList
-                                    .sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
-
-                            for (TranscriptMaps tMap : distinctBoundaryCrossingTranscriptMapsList) {
-
-                                List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
-                                        .findByTranscriptMapsId(tMap.getId());
-
-                                List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
-                                        .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion,
-                                                tMap.getTranscript().getId());
-
-                                Optional<TranscriptMapsExons> optionalTranscriptMapsExons = transcriptMapsExonsList.stream().filter(
-                                        a -> a.getContigRange().contains(locatedVariant.getPosition() - locatedVariant.getRef().length()))
-                                        .findAny();
-                                Variants_80_4 variant = null;
-                                if (optionalTranscriptMapsExons.isPresent()) {
-                                    TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                                    logger.debug(transcriptMapsExons.toString());
-                                    variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList,
-                                            transcriptMapsExons);
-                                } else {
-                                    // we have a border crossing variant starting in an intron
-                                    variant = createBorderCrossingVariant(locatedVariant, tMap, mapsList, transcriptMapsExonsList, null);
-                                }
-                                variants.add(variant);
-                            }
-                        }
-
-                    }
-
-                }
-
+            if (CollectionUtils.isEmpty(variants)) {
+                // not found in or across any transcript, must be intergenic
+                Variants_80_4 variant = createIntergenicVariant(locatedVariant);
+                variants.add(variant);
             }
 
             for (Variants_80_4 variant : variants) {
