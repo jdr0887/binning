@@ -26,6 +26,7 @@ import org.renci.canvas.dao.jpa.refseq.TranscriptMapsExonsDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.VariantEffectDAOImpl;
 import org.renci.canvas.dao.jpa.refseq.Variants_80_4_DAOImpl;
 import org.renci.canvas.dao.jpa.var.LocatedVariantDAOImpl;
+import org.renci.canvas.dao.refseq.model.Variants_61_2;
 import org.renci.canvas.dao.refseq.model.Variants_80_4;
 import org.renci.canvas.dao.var.model.LocatedVariant;
 import org.slf4j.Logger;
@@ -133,6 +134,42 @@ public class AnnotateVariants38Test {
         List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
         assertTrue(variants.size() == 12);
 
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_000249.3")).findFirst().get();
+
+        // Variants_80_4 [key=Variants_80_4PK [locatedVariant=492040380, genomeRefSeq=NC_000003.12, position=37001040, variantType=del,
+        // transcript=NM_000249.3, locationType=exon, variantEffect=non-frameshifting indel, mapNumber=1], refSeqGene=MLH1, hgncGene=MLH1,
+        // transcriptPosition=491, codingSequencePosition=293, aminoAcidStart=98, aminoAcidEnd=102, originalAminoAcid=GFRGE,
+        // finalAminoAcid=G, frameshift=false, inframe=false, intronExonDistance=-14, strand=+, numberOfTranscriptMaps=1,
+        // referenceAllele=GCTTTCGAGGTG, alternateAllele=, hgvsGenomic=NC_000003.12:g.37001040_37001051delGCTTTCGAGGTG,
+        // hgvsCodingSequence=NM_000249.3:c.293_304delGCTTTCGAGGTG, hgvsTranscript=NM_000249.3:g.491_502delGCTTTCGAGGTG,
+        // hgvsProtein=NP_000240.1:p.Gly98_Glu102delinsGly, nonCanonicalExon=3, featureId=2647986]
+
+        assertTrue(variant.getLocatedVariant().getId().equals(492040380L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000003.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(37001040));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_000249.3"));
+        assertTrue(variant.getRefSeqGene().equals("MLH1"));
+        assertTrue(variant.getHgncGene().equals("MLH1"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(491));
+        assertTrue(variant.getCodingSequencePosition().equals(293));
+        assertTrue(variant.getAminoAcidStart().equals(98));
+        assertTrue(variant.getAminoAcidEnd().equals(101));
+        assertTrue(variant.getOriginalAminoAcid().equals("GFRGE"));
+        assertTrue(variant.getFinalAminoAcid().equals("E"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-14));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(17331));
+        assertTrue(variant.getReferenceAllele().equals("GCTTTCGAGGTG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000003.12:g.37001040_37001051delGCTTTCGAGGTG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_000249.3:c.293_304delGCTTTCGAGGTG"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_000249.3:g.491_502delGCTTTCGAGGTG"));
+        assertTrue(variant.getHgvsProtein().equals("NP_000240.1:p.Gly98_Gly101del"));
+        
     }
 
     @Test
