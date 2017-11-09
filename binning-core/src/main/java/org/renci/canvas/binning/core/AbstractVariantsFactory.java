@@ -352,7 +352,7 @@ public abstract class AbstractVariantsFactory {
                         originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
             }
 
-            return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
+            return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
                     originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
 
         }
