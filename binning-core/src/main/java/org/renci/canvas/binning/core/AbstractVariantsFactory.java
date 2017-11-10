@@ -207,7 +207,16 @@ public abstract class AbstractVariantsFactory {
                         // first interval is an exon
                         return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
                     }
-                    return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+
+                    Integer leftDistance = transcriptPosition - transcriptMapsExonsTranscriptRange.getMinimum() + 1;
+                    Integer rightDistance = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+
+                    Integer shortestDistance = Math.min(Math.abs(leftDistance), Math.abs(rightDistance));
+
+                    if (Math.abs(leftDistance) == shortestDistance) {
+                        return leftDistance;
+                    }
+                    return rightDistance;
                 }
 
             }
@@ -236,11 +245,12 @@ public abstract class AbstractVariantsFactory {
 
             Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
             Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
-            if ("sub".equals(locatedVariant.getVariantType().getId())) {
-                left = transcriptPosition - proteinExonIntersection.getMinimum();
-            }
 
-            if ("del".equals(locatedVariant.getVariantType().getId())) {
+            // if ("sub".equals(locatedVariant.getVariantType().getId())) {
+            // left = transcriptPosition - proteinExonIntersection.getMinimum();
+            // }
+
+            if ("del".equals(locatedVariant.getVariantType().getId()) || "sub".equals(locatedVariant.getVariantType().getId())) {
                 left = Math.abs(locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum() - 2);
             }
 
@@ -291,6 +301,7 @@ public abstract class AbstractVariantsFactory {
                 break;
             case "-":
                 ret = transcriptMapsExons.getTranscriptEnd() + (transcriptMapsExons.getContigEnd() - locatedVariant.getPosition());
+                // ret = transcriptMapsExons.getTranscriptStart() + (transcriptMapsExons.getContigStart() - locatedVariant.getPosition());
                 // ret = transcriptMapsExons.getTranscriptStart() - (locatedVariant.getPosition() - transcriptMapsExons.getContigStart());
                 break;
         }
