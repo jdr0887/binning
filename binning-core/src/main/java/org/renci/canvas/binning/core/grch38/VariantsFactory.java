@@ -789,13 +789,13 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         transcriptMapsExonsList.sort((a, b) -> Integer.compare(b.getId().getExonNum(), a.getId().getExonNum()));
                     }
 
-                    variant.setNonCanonicalExon(transcriptMapsExonsList.indexOf(transcriptMapsExons) + 1);
-                    // variant.setNonCanonicalExon(getNonCanonicalExon(transcriptMapsExonsList, transcriptMapsExons, proteinRange));
+                    // variant.setNonCanonicalExon(transcriptMapsExonsList.indexOf(transcriptMapsExons) + 1);
+                    variant.setNonCanonicalExon(getNonCanonicalExon(transcriptMapsExonsList, transcriptMapsExons, proteinRange));
 
-                    if (!"ins".equals(variant.getVariantType().getId())) {
-                        variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
-                                proteinRange, variant.getTranscriptPosition()));
-                    }
+                    // if (!"ins".equals(variant.getVariantType().getId())) {
+                    variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
+                            proteinRange, variant.getTranscriptPosition()));
+                    // }
 
                     variant.setCodingSequencePosition(
                             getCodingSequencePosition(locatedVariant, transcriptMapsExons, variant.getTranscriptPosition(), proteinRange));
