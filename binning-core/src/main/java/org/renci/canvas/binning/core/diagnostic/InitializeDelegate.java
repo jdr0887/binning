@@ -3,6 +3,7 @@ package org.renci.canvas.binning.core.diagnostic;
 import java.util.Date;
 import java.util.Map;
 
+import org.flowable.engine.common.api.FlowableException;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
 import org.osgi.framework.BundleContext;
@@ -55,6 +56,7 @@ public class InitializeDelegate implements JavaDelegate {
             logger.info(binningJob.toString());
         } catch (CANVASDAOException e) {
             logger.error(e.getMessage(), e);
+            throw new FlowableException(e.getMessage());
         }
 
     }
