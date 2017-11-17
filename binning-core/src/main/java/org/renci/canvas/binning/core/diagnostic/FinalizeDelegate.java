@@ -3,6 +3,7 @@ package org.renci.canvas.binning.core.diagnostic;
 import java.util.Date;
 import java.util.Map;
 
+import org.flowable.engine.common.api.FlowableException;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.delegate.JavaDelegate;
 import org.osgi.framework.BundleContext;
@@ -40,14 +41,28 @@ public class FinalizeDelegate implements JavaDelegate {
         }
 
         try {
-            DiagnosticBinningJob binningJob = daoBean.getDiagnosticBinningJobDAO().findById(binningJobId);
-            binningJob.setStatus(daoBean.getDiagnosticStatusTypeDAO().findById("Complete"));
-            binningJob.setStop(new Date());
-            daoBean.getDiagnosticBinningJobDAO().save(binningJob);
-            logger.info(binningJob.toString());
+            DiagnosticBinningJob diagnosticBinningJob = daoBean.getDiagnosticBinningJobDAO().findById(binningJobId);
+
+            Long nullClinVarCount = daoBean.getBinResultsFinalDiagnosticDAO().findNullClinVarDiseaseClassCount(diagnosticBinningJob);
+            Long nullHGMDCount = daoBean.getBinResultsFinalDiagnosticDAO().findNullHGMDDiseaseClassCount(diagnosticBinningJob);
+
+            if (nullClinVarCount > 0 || nullHGMDCount > 0) {
+                logger.error("nullClinVarCount: {}", nullClinVarCount);
+                logger.error("nullHGMDCount: {}", nullHGMDCount);
+                diagnosticBinningJob.setStatus(daoBean.getDiagnosticStatusTypeDAO().findById("Failed"));
+                diagnosticBinningJob.setFailureMessage("There were entries with null DiseaseClass");
+            } else {
+                diagnosticBinningJob.setStatus(daoBean.getDiagnosticStatusTypeDAO().findById("Complete"));
+                diagnosticBinningJob.setStop(new Date());
+            }
+
+            daoBean.getDiagnosticBinningJobDAO().save(diagnosticBinningJob);
+            logger.info(diagnosticBinningJob.toString());
         } catch (CANVASDAOException e) {
             logger.error(e.getMessage(), e);
+            throw new FlowableException(e.getMessage());
         }
+
     }
 
 }
