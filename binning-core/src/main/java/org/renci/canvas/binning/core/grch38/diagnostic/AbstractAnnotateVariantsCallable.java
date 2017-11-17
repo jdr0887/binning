@@ -60,6 +60,7 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
 
                     es.submit(() -> {
 
+                        logger.info(locatedVariant.toString());
                         Variants_80_4_DAO dao = daoBean.getVariants_80_4_DAO();
                         try {
                             dao.deleteByLocatedVariantId(locatedVariant.getId());
