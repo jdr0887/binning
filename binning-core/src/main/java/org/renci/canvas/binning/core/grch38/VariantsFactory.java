@@ -84,9 +84,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
     }
 
     public Set<Variants_80_4> annotateVariant(LocatedVariant locatedVariant, String refseqVersion, Integer genomeRefId,
-            CANVASDAOBeanService daoBean) {
-
-        logger.info(locatedVariant.toString());
+            CANVASDAOBeanService daoBean) throws BinningException {
         Set<Variants_80_4> variants = new HashSet<>();
 
         try {
@@ -111,7 +109,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     for (TranscriptMaps tMap : distinctTranscriptMapsList) {
 
-                        logger.info(tMap.toString());
+                        logger.debug(tMap.toString());
 
                         List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
                                 .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion, tMap.getTranscript().getId());
@@ -163,7 +161,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     for (TranscriptMaps tMap : distinctTranscriptMapsList) {
 
-                        logger.info(tMap.toString());
+                        logger.debug(tMap.toString());
 
                         List<TranscriptMaps> mapsList = daoBean.getTranscriptMapsDAO()
                                 .findByGenomeRefIdAndRefSeqVersionAndTranscriptId(genomeRefId, refseqVersion, tMap.getTranscript().getId());
@@ -200,7 +198,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             if (optionalTranscriptMapsExons.isPresent()) {
 
                                 TranscriptMapsExons transcriptMapsExons = optionalTranscriptMapsExons.get();
-                                logger.info(transcriptMapsExons.toString());
+                                logger.debug(transcriptMapsExons.toString());
 
                                 if (locatedVariant.toRange().isOverlappedBy(transcriptMapsExons.getContigRange()) && (!locatedVariant
                                         .getEndPosition().equals(transcriptMapsExons.getContigRange().getMinimum())
@@ -243,7 +241,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 .sort((a, b) -> b.getTranscript().getId().compareTo(a.getTranscript().getId()));
 
                         for (TranscriptMaps tMap : distinctBoundaryCrossingTranscriptMapsList) {
-                            logger.info(tMap.toString());
+                            logger.debug(tMap.toString());
 
                             List<TranscriptMapsExons> transcriptMapsExonsList = daoBean.getTranscriptMapsExonsDAO()
                                     .findByTranscriptMapsId(tMap.getId());
@@ -325,11 +323,12 @@ public class VariantsFactory extends AbstractVariantsFactory {
             }
 
             for (Variants_80_4 variant : variants) {
-                logger.info(variant.toString());
+                logger.debug(variant.toString());
             }
 
-        } catch (CANVASDAOException | BinningException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
+            throw new BinningException(e);
         }
         return variants;
 
