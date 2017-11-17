@@ -489,7 +489,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
             throw new BinningException(e);
         }
 
-        logger.info(variant.toString());
         return variant;
     }
 
@@ -515,7 +514,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
         variant.setHgvsGenomic(toHGVS(locatedVariant.getGenomeRefSeq().getId(), "g", locatedVariant.getVariantType().getId(),
                 locatedVariant.getPosition(), locatedVariant.getRef(), locatedVariant.getSeq()));
 
-        logger.info(variant.toString());
         return variant;
     }
 
@@ -593,51 +591,29 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             variant.setLocationType(allLocationTypes.stream().filter(a -> a.getId().equals("intron/exon boundary")).findFirst().get());
             variant.getId().setLocationType(variant.getLocationType().getId());
-            variant.setVariantEffect(
-                    allVariantEffects.stream().filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
-            variant.getId().setVariantEffect(variant.getVariantEffect().getId());
 
             if ("(LARGEDELETION)".equals(locatedVariant.getSeq())) {
                 return variant;
             }
 
-            Range<Integer> exonOrProteinRange = transcriptMapsExonsTranscriptRange;
+            Integer p = Math.max(1, (locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())
+                    + transcriptMapsExonsTranscriptRange.getMinimum());
 
-            if (proteinRange != null && proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
-                exonOrProteinRange = proteinRange;
+            if (proteinRange != null && proteinRange.contains(p)) {
+                variant.setVariantEffect(
+                        allVariantEffects.stream().filter(a -> a.getId().equals("boundary-crossing indel")).findFirst().get());
+                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+            } else {
+                variant.setVariantEffect(
+                        allVariantEffects.stream().filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
+                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
             }
 
-            switch (tMap.getStrand()) {
-                case "+":
-                    variant.setTranscriptPosition(
-                            Math.max(1, (locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())
-                                    + transcriptMapsExonsTranscriptRange.getMinimum()));
-                    if (exonOrProteinRange.contains(variant.getTranscriptPosition())) {
-                        // really a utr5
-                        variant.setTranscriptPosition(null);
-                        variant.setVariantEffect(allVariantEffects.stream()
-                                .filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
-                        variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                    }
-                    break;
-                case "-":
-                    variant.setTranscriptPosition(Math.max(1, transcriptMapsExonsTranscriptRange.getMinimum()
-                            - (locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())));
-                    if (exonOrProteinRange.contains(variant.getTranscriptPosition())) {
-                        // really a utr3
-                        variant.setTranscriptPosition(null);
-                        variant.setVariantEffect(allVariantEffects.stream()
-                                .filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
-                        variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                    }
-                    break;
-            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
         }
 
-        logger.info(variant.toString());
         return variant;
     }
 
@@ -812,7 +788,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         variant.setInframe(variant.getCodingSequencePosition() % 3 == 0);
                     }
 
-                    if (variant.getReferenceAllele().length() == variant.getAlternateAllele().length()) {
+                    if (StringUtils.isNotEmpty(locatedVariant.getRef()) && StringUtils.isNotEmpty(locatedVariant.getSeq())
+                            && locatedVariant.getRef().length() == locatedVariant.getSeq().length()
+                            && !"del".equals(variant.getVariantType().getId())) {
 
                         Integer aaStart = getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
                                 variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
@@ -927,6 +905,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             --aaStart;
                         }
 
+                        if (aaStart > originalProteinSequence.getLength()) {
+                            aaStart = originalProteinSequence.getLength();
+                        }
+
                         variant.setAminoAcidStart(aaStart);
 
                         AminoAcidCompound originalAACompound = originalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
@@ -970,11 +952,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 }
                             }
 
-                            if ("del".equals(variant.getLocatedVariant().getVariantType().getId())) {
-                                variant.setAminoAcidEnd(originalProteinSequence.getLength() + 2);
-                            } else {
-                                variant.setAminoAcidEnd(originalProteinSequence.getLength() + variant.getAlternateAllele().length());
-                            }
+                            variant.setAminoAcidEnd(
+                                    originalProteinSequence.getLength() + Math.max(1, locatedVariant.getSeq().length() / 3));
 
                             if (refSeqCDS != null) {
                                 if (Arrays.asList("snp", "del").contains(variant.getVariantType().getId())) {
@@ -1147,7 +1126,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
             throw new BinningException(e);
         }
 
-        logger.info(variant.toString());
         return variant;
     }
 
