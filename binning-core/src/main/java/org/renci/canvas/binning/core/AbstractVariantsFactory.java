@@ -459,6 +459,7 @@ public abstract class AbstractVariantsFactory {
 
                 if (frameshift && !inframe) {
                     return Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3) + 1;
+                    // return Double.valueOf(Math.ceil(codingSequencePosition / 3D)).intValue() - (refAllele.length() / 3);
                 }
 
             } else {
