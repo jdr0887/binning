@@ -126,6 +126,17 @@ public class AnnotateVariants38Test {
     }
 
     @Test
+    public void testLocatedVariant522377766() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522377766L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+        assertTrue(variants.size() == 1);
+
+    }
+
+    @Test
     public void testLocatedVariant492040380() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(492040380L);
@@ -238,7 +249,7 @@ public class AnnotateVariants38Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_001042465.2:c.1477_1479delinsCTC"));
         assertTrue(variant.getHgvsTranscript().equals("NM_001042465.2:g.1631_1633delinsCTC"));
         assertTrue(variant.getHgvsProtein().equals("NP_001035930.1:p.Leu493delinsLeu"));
-        
+
     }
 
     @Test
