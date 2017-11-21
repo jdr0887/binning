@@ -595,6 +595,24 @@ public class VariantsFactory extends AbstractVariantsFactory {
             if (transcriptMapsExons != null) {
                 transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
                 transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+
+                if (transcriptMapsExonsContigRange.contains(locatedVariantRange.getMinimum())) {
+                    if ("+".equals(tMap.getStrand())) {
+                        variant.setTranscriptPosition((locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())
+                                + transcriptMapsExonsTranscriptRange.getMinimum());
+                    } else {
+                        variant.setTranscriptPosition(transcriptMapsExonsTranscriptRange.getMaximum()
+                                - (locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMinimum()) + 1);
+                    }
+                } else {
+                    if ("+".equals(tMap.getStrand())) {
+                        variant.setTranscriptPosition(transcriptMapsExonsTranscriptRange.getMinimum());
+                    } else {
+                        variant.setTranscriptPosition(transcriptMapsExonsTranscriptRange.getMaximum()
+                                - (locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMinimum()) + 1);
+                    }
+                }
+
             }
 
             Range<Integer> proteinRange = null;
@@ -611,7 +629,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
             variant.setLocationType(allLocationTypes.stream().filter(a -> a.getId().equals("intron/exon boundary")).findFirst().get());
             variant.getId().setLocationType(variant.getLocationType().getId());
 
-            if ("(LARGEDELETION)".equals(locatedVariant.getSeq())) {
+            if (locatedVariant.getSeq().contains("LARGEDELETION")) {
                 return variant;
             }
 
