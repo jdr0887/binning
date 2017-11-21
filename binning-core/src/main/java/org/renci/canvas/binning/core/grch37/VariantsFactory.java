@@ -599,37 +599,19 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 return variant;
             }
 
-            Range<Integer> exonOrProteinRange = transcriptMapsExonsTranscriptRange;
+            Integer p = Math.max(1, (locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())
+                    + transcriptMapsExonsTranscriptRange.getMinimum());
 
-            if (proteinRange != null && proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
-                exonOrProteinRange = proteinRange;
+            if (proteinRange != null && proteinRange.contains(p)) {
+                variant.setVariantEffect(
+                        allVariantEffects.stream().filter(a -> a.getId().equals("boundary-crossing indel")).findFirst().get());
+                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+            } else {
+                variant.setVariantEffect(
+                        allVariantEffects.stream().filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
+                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
             }
 
-            switch (tMap.getStrand()) {
-                case "+":
-                    variant.setTranscriptPosition(
-                            Math.max(1, (locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())
-                                    + transcriptMapsExonsTranscriptRange.getMinimum()));
-                    if (exonOrProteinRange.contains(variant.getTranscriptPosition())) {
-                        // really a utr5
-                        variant.setTranscriptPosition(null);
-                        variant.setVariantEffect(allVariantEffects.stream()
-                                .filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
-                        variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                    }
-                    break;
-                case "-":
-                    variant.setTranscriptPosition(Math.max(1, transcriptMapsExonsTranscriptRange.getMinimum()
-                            - (locatedVariantRange.getMinimum() - transcriptMapsExonsContigRange.getMinimum())));
-                    if (exonOrProteinRange.contains(variant.getTranscriptPosition())) {
-                        // really a utr3
-                        variant.setTranscriptPosition(null);
-                        variant.setVariantEffect(allVariantEffects.stream()
-                                .filter(a -> a.getId().equals("noncoding boundary-crossing indel")).findFirst().get());
-                        variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                    }
-                    break;
-            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new BinningException(e);
@@ -1084,10 +1066,27 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             // finalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
                             // variant.setFinalAminoAcid(finalAACompound.getBase());
 
-                            variant.setVariantEffect(
-                                    allVariantEffects.stream().filter(a -> a.getId().equals("non-frameshifting indel")).findFirst().get());
-                            variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-
+                            if (variant.getOriginalAminoAcid().equals(variant.getFinalAminoAcid())) {
+                                variant.setVariantEffect(
+                                        allVariantEffects.stream().filter(a -> a.getId().equals("synonymous indel")).findFirst().get());
+                                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+                            } else if (!variant.getOriginalAminoAcid().equals("*") && !variant.getFinalAminoAcid().equals("*")) {
+                                variant.setVariantEffect(
+                                        allVariantEffects.stream().filter(a -> a.getId().equals("missense")).findFirst().get());
+                                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+                            } else if (variant.getFinalAminoAcid().equals("*")) {
+                                variant.setVariantEffect(
+                                        allVariantEffects.stream().filter(a -> a.getId().equals("nonsense indel")).findFirst().get());
+                                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+                            } else if (variant.getOriginalAminoAcid().equals("*")) {
+                                variant.setVariantEffect(
+                                        allVariantEffects.stream().filter(a -> a.getId().equals("stoploss")).findFirst().get());
+                                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+                            } else {
+                                variant.setVariantEffect(allVariantEffects.stream().filter(a -> a.getId().equals("non-frameshifting indel"))
+                                        .findFirst().get());
+                                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+                            }
                         }
 
                         if (finalProteinSequence.getSequenceAsString().contains("*")) {

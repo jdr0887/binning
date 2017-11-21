@@ -8,6 +8,8 @@ import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.CANVASDAOException;
+import org.renci.canvas.dao.refseq.model.RefSeqCodingSequence;
+import org.renci.canvas.dao.refseq.model.RegionGroupRegion;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.var.model.LocatedVariant;
@@ -292,20 +294,15 @@ public abstract class AbstractVariantsFactory {
         return ret;
     }
 
+
     protected Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons) {
-        Integer ret = null;
-        switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
-            case "+":
-                ret = transcriptMapsExons.getTranscriptEnd() + (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd());
-                // ret = (locatedVariant.getPosition() - transcriptMapsExons.getContigStart()) + transcriptMapsExons.getTranscriptStart();
-                break;
-            case "-":
-                ret = transcriptMapsExons.getTranscriptEnd() + (transcriptMapsExons.getContigEnd() - locatedVariant.getPosition());
-                // ret = transcriptMapsExons.getTranscriptStart() + (transcriptMapsExons.getContigStart() - locatedVariant.getPosition());
-                // ret = transcriptMapsExons.getTranscriptStart() - (locatedVariant.getPosition() - transcriptMapsExons.getContigStart());
-                break;
+        Integer diff = null;
+        if ("+".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+            diff = locatedVariant.getPosition() - transcriptMapsExons.getContigEnd();
+        } else {
+            diff = transcriptMapsExons.getContigEnd() - locatedVariant.getPosition();
         }
-        return ret;
+        return transcriptMapsExons.getTranscriptEnd() + diff;
     }
 
     protected Integer getCodingSequencePosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
