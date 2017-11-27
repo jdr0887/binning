@@ -255,4 +255,35 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
 
     }
 
+    @Test
+    public void testLocatedVariant522389045() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522389045L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_033084.4")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(522389045L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000003.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(10046720));
+        assertTrue(variant.getVariantType().getId().equals("sub"));
+        assertTrue(variant.getId().getTranscript().equals("NM_033084.4"));
+        assertTrue(variant.getRefSeqGene().equals("FANCD2"));
+        assertTrue(variant.getHgncGene().equals("FANCD2"));
+        assertTrue(variant.getLocationType().getId().equals("intron/exon boundary"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getIntronExonDistance().equals(0));
+        assertTrue(variant.getId().getVariantEffect().equals("boundary-crossing indel"));
+        assertTrue(variant.getGene().getId().equals(9076));
+        assertTrue(variant.getAlternateAllele().equals("TTTAT"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000003.12:g.10046720_10046728delinsTTTAT"));
+        assertTrue(variant.getHgvsCodingSequence().equals("?"));
+        assertTrue(variant.getHgvsTranscript().equals("?"));
+        assertTrue(variant.getHgvsProtein().equals("?"));
+
+    }
+
 }
