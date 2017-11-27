@@ -294,7 +294,6 @@ public abstract class AbstractVariantsFactory {
         return ret;
     }
 
-
     protected Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons) {
         Integer diff = null;
         if ("+".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
@@ -386,12 +385,12 @@ public abstract class AbstractVariantsFactory {
         if ("sub".equals(variantType)) {
 
             if ("-".equals(strand)) {
-                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
+                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length() - 1),
                         originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
             }
 
-            return Pair.of(originalDNASeq.substring(0, codingSequencePosition),
-                    originalDNASeq.substring(codingSequencePosition + refAllele.length(), originalDNASeq.length()));
+            return Pair.of(originalDNASeq.substring(0, codingSequencePosition - 1),
+                    originalDNASeq.substring(codingSequencePosition + refAllele.length() - 1, originalDNASeq.length()));
         }
 
         if ("snp".equals(variantType)) {
