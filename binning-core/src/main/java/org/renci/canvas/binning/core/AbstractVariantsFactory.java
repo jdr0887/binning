@@ -385,7 +385,7 @@ public abstract class AbstractVariantsFactory {
         if ("sub".equals(variantType)) {
 
             if ("-".equals(strand)) {
-                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length() - 1),
+                return Pair.of(originalDNASeq.substring(0, codingSequencePosition - refAllele.length()),
                         originalDNASeq.substring(codingSequencePosition, originalDNASeq.length()));
             }
 
