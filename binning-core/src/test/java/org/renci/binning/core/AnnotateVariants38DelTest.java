@@ -20,7 +20,7 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
 
     @Test
     public void testLocatedVariant492043345() throws Exception {
-
+        // boundary crossing, negative strand
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(492043345L);
         logger.info(locatedVariant.toString());
 
@@ -52,6 +52,7 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
 
     @Test
     public void testLocatedVariant515077037() throws Exception {
+        // boundary crossing, positive strand
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(515077037L);
         logger.info(locatedVariant.toString());
@@ -84,6 +85,7 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
 
     @Test
     public void testLocatedVariant492040380() throws Exception {
+        // non-frameshifting indel, positive strand
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(492040380L);
         logger.info(locatedVariant.toString());
@@ -106,8 +108,8 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getCodingSequencePosition().equals(293));
         assertTrue(variant.getAminoAcidStart().equals(98));
         assertTrue(variant.getAminoAcidEnd().equals(101));
-        assertTrue(variant.getOriginalAminoAcid().equals("GFRGE"));
-        assertTrue(variant.getFinalAminoAcid().equals("E"));
+        assertTrue(variant.getOriginalAminoAcid().equals("GFRG"));
+        assertTrue(variant.getFinalAminoAcid().equals(""));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-14));
@@ -118,6 +120,46 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_000249.3:c.293_304delGCTTTCGAGGTG"));
         assertTrue(variant.getHgvsTranscript().equals("NM_000249.3:g.491_502delGCTTTCGAGGTG"));
         assertTrue(variant.getHgvsProtein().equals("NP_000240.1:p.Gly98_Gly101del"));
+
+    }
+
+    @Test
+    public void testLocatedVariant515077154() throws Exception {
+        // non-frameshifting indel, negative strand
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(515077154L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001135091.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(515077154L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000011.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(26563179));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001135091.1"));
+        assertTrue(variant.getRefSeqGene().equals("MUC15"));
+        assertTrue(variant.getHgncGene().equals("MUC15"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(1135));
+        assertTrue(variant.getCodingSequencePosition().equals(862));
+        assertTrue(variant.getAminoAcidStart().equals(287));
+        assertTrue(variant.getAminoAcidEnd().equals(288));
+        assertTrue(variant.getOriginalAminoAcid().equals("L"));
+        assertTrue(variant.getFinalAminoAcid().equals(""));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getIntronExonDistance().equals(-64));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(18178));
+        assertTrue(variant.getReferenceAllele().equals("ACA"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.26563179_26563181delACA"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001135091.1:c.860_862delTGT"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001135091.1:g.1133_1135delTGT"));
+        assertTrue(variant.getHgvsProtein().equals("NP_001128563.1:p.Leu287del"));
 
     }
 
