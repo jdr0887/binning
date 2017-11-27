@@ -82,7 +82,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getAminoAcidStart().equals(34));
         assertTrue(variant.getAminoAcidEnd().equals(34));
         assertTrue(variant.getOriginalAminoAcid().equals("E"));
-        assertTrue(variant.getFinalAminoAcid().equals("V"));
+        assertTrue(variant.getFinalAminoAcid().equals("L"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(100));
@@ -93,7 +93,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgvsGenomic().equals("NC_000007.14:g.21543345_21543346delinsTT"));
         assertTrue(variant.getHgvsCodingSequence().equals("NM_001277115.1:c.100_101delinsTT"));
         assertTrue(variant.getHgvsTranscript().equals("NM_001277115.1:g.131_132delinsTT"));
-        assertTrue(variant.getHgvsProtein().equals("NP_001264044.1:p.Glu34Val"));
+        assertTrue(variant.getHgvsProtein().equals("NP_001264044.1:p.Glu34Leu"));
 
     }
 
@@ -122,7 +122,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getAminoAcidStart().equals(350));
         assertTrue(variant.getAminoAcidEnd().equals(350));
         assertTrue(variant.getOriginalAminoAcid().equals("T"));
-        assertTrue(variant.getFinalAminoAcid().equals("S"));
+        assertTrue(variant.getFinalAminoAcid().equals("A"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-57));
@@ -133,7 +133,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgvsGenomic().equals("NC_000002.12:g.210591913_210591915delinsGCT"));
         assertTrue(variant.getHgvsCodingSequence().equals("NM_001122633.2:c.1048_1050delinsGCT"));
         assertTrue(variant.getHgvsTranscript().equals("NM_001122633.2:g.1130_1132delinsGCT"));
-        assertTrue(variant.getHgvsProtein().equals("NP_001116105.1:p.Thr350Ser"));
+        assertTrue(variant.getHgvsProtein().equals("NP_001116105.1:p.Thr350Ala"));
 
     }
 
