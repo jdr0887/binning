@@ -1,5 +1,6 @@
 package org.renci.canvas.binning.core;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.Range;
@@ -8,8 +9,6 @@ import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.CANVASDAOException;
-import org.renci.canvas.dao.refseq.model.RefSeqCodingSequence;
-import org.renci.canvas.dao.refseq.model.RegionGroupRegion;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
 import org.renci.canvas.dao.refseq.model.TranscriptMapsExons;
 import org.renci.canvas.dao.var.model.LocatedVariant;
@@ -141,6 +140,106 @@ public abstract class AbstractVariantsFactory {
         return null;
     }
 
+    protected Integer getIntronExonDistanceNEW(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
+            List<TranscriptMapsExons> transcriptMapsExonsList, Range<Integer> proteinRange, Integer transcriptPosition) {
+
+        Range<Integer> locatedVariantRange = locatedVariant.toRange();
+        Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+        Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+        Range<Integer> proteinExonIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
+
+        Integer leftDistance = transcriptPosition - Math.max(proteinRange.getMinimum(), transcriptMapsExonsTranscriptRange.getMinimum());
+        Integer rightDistance = transcriptPosition - Math.min(proteinRange.getMaximum(), transcriptMapsExonsTranscriptRange.getMaximum());
+
+        transcriptMapsExonsList.sort((a, b) -> Integer.compare(a.getId().getExonNum(), b.getId().getExonNum()));
+        Integer exonIndex = transcriptMapsExonsList.indexOf(transcriptMapsExons);
+
+        Boolean isFirst = exonIndex == 0 && (proteinRange.getMinimum() <= transcriptMapsExonsTranscriptRange.getMinimum()
+                || proteinRange.isAfter(transcriptPosition));
+        Boolean isLast = exonIndex == transcriptMapsExonsList.size() - 1 && proteinRange.isBefore(transcriptPosition);
+
+        if (transcriptMapsExonsList.size() > 1) {
+
+            if (isLast) {
+                leftDistance = transcriptPosition - Math.max(proteinRange.getMaximum(), transcriptMapsExonsTranscriptRange.getMinimum());
+                rightDistance = transcriptPosition - Math.min(proteinRange.getMinimum(), transcriptMapsExonsTranscriptRange.getMinimum());
+            }
+
+            if (isFirst) {
+                leftDistance = transcriptPosition - Math.min(proteinRange.getMinimum(), transcriptMapsExonsTranscriptRange.getMinimum());
+                rightDistance = transcriptPosition - Math.min(proteinRange.getMinimum(), transcriptMapsExonsTranscriptRange.getMaximum());
+            }
+
+        }
+
+        Integer distance = null;
+
+        if (isFirst) {
+            distance = rightDistance;
+        } else if (isLast) {
+            distance = leftDistance;
+        } else {
+
+            if (Math.abs(leftDistance) < Math.abs(rightDistance)) {
+                distance = leftDistance;
+            } else {
+                distance = rightDistance;
+            }
+
+        }
+
+        if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+
+            if (Arrays.asList("del").contains(locatedVariant.getVariantType().getId()) && transcriptMapsExonsList.size() > 1) {
+                distance -= locatedVariant.getEndPosition() - locatedVariant.getPosition() - 2;
+            } else if (!isFirst && !proteinExonIntersection.equals(transcriptMapsExonsTranscriptRange)) {
+                distance--;
+            } else if (proteinRange.containsRange(transcriptMapsExonsTranscriptRange)
+                    && !proteinExonIntersection.equals(transcriptMapsExonsTranscriptRange)) {
+                distance--;
+            }
+
+        }
+
+        if (Arrays.asList("del").contains(locatedVariant.getVariantType().getId())
+                && "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+            // distance -= locatedVariant.getEndPosition() - locatedVariant.getPosition() - 2;
+
+            // if (Arrays.asList("del").contains(locatedVariant.getVariantType().getId()) && transcriptMapsExonsList.size() > 1) {
+            // distance -= locatedVariant.getEndPosition() - locatedVariant.getPosition() - 2;
+            // } else if (transcriptMapsExonsList.size() == 1) {
+            // distance--;
+            // }
+
+            // if (/*
+            // * (proteinExonIntersection.contains(transcriptPosition) &&
+            // * !proteinExonIntersection.equals(transcriptMapsExonsTranscriptRange)) ||
+            // */ Arrays.asList("snp", "sub").contains(locatedVariant.getVariantType().getId()) || isFirst) {
+            // distance--;
+            // } else if (Arrays.asList("del").contains(locatedVariant.getVariantType().getId())) {
+            // distance -= locatedVariant.getEndPosition() - locatedVariant.getPosition() - 2;
+            // }
+        }
+
+        if ("+".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+
+            if (Arrays.asList("snp").contains(locatedVariant.getVariantType().getId())
+                    && proteinExonIntersection.contains(transcriptPosition)) {
+                // distance++;
+            }
+
+            // if (Arrays.asList("sub", "ins").contains(locatedVariant.getVariantType().getId()) || isFirst) {
+            // distance += locatedVariant.getEndPosition() - locatedVariant.getPosition() - 1;
+            // } else if (Arrays.asList("del").contains(locatedVariant.getVariantType().getId())) {
+            // distance--;
+            // } else if (proteinExonIntersection.contains(transcriptPosition)) {
+            // distance++;
+            // }
+        }
+
+        return distance;
+    }
+
     protected Integer getIntronExonDistance(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
             List<TranscriptMapsExons> transcriptMapsExonsList, Range<Integer> proteinRange, Integer transcriptPosition) {
 
@@ -149,11 +248,32 @@ public abstract class AbstractVariantsFactory {
         Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
         Range<Integer> proteinExonIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
 
+        transcriptMapsExonsList.sort((a, b) -> Integer.compare(a.getId().getExonNum(), b.getId().getExonNum()));
         Integer exonIndex = transcriptMapsExonsList.indexOf(transcriptMapsExons);
+
+        Boolean isFirst = Boolean.FALSE;
+        if (exonIndex == 0) {
+            if (proteinRange.getMinimum() <= transcriptMapsExonsTranscriptRange.getMinimum()) {
+                isFirst = Boolean.TRUE;
+            }
+            if (proteinRange.isAfter(transcriptPosition)) {
+                isFirst = Boolean.TRUE;
+            }
+        }
+
+        Boolean isLast = Boolean.FALSE;
+        if (exonIndex == transcriptMapsExonsList.size() - 1) {
+            if (proteinRange.getMinimum() <= transcriptMapsExonsTranscriptRange.getMinimum()) {
+                isLast = Boolean.TRUE;
+            }
+            if (proteinRange.isBefore(transcriptPosition)) {
+                isLast = Boolean.TRUE;
+            }
+        }
 
         if ("+".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
 
-            if (exonIndex == 0) {
+            if (isFirst) {
 
                 if (proteinRange.isAfter(transcriptPosition)) {
                     // we are in UTR5 region
@@ -166,12 +286,16 @@ public abstract class AbstractVariantsFactory {
                         // first interval is an exon
                         return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
                     }
-                    return transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+
+                    Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                    Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+
+                    return Math.abs(left) < Math.abs(right) ? left : right;
                 }
 
             }
 
-            if (exonIndex == transcriptMapsExonsList.size() - 1) {
+            if (isLast) {
 
                 if (proteinRange.isBefore(transcriptPosition)) {
                     // we are in UTR3 region
@@ -196,7 +320,7 @@ public abstract class AbstractVariantsFactory {
 
         if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
 
-            if (exonIndex == 0) {
+            if (isFirst) {
 
                 if (proteinRange.isAfter(transcriptPosition)) {
                     // we are in UTR5 region
@@ -210,15 +334,10 @@ public abstract class AbstractVariantsFactory {
                         return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
                     }
 
-                    Integer leftDistance = transcriptPosition - transcriptMapsExonsTranscriptRange.getMinimum() + 1;
-                    Integer rightDistance = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                    Integer left = transcriptPosition - transcriptMapsExonsTranscriptRange.getMinimum() + 1;
+                    Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
 
-                    Integer shortestDistance = Math.min(Math.abs(leftDistance), Math.abs(rightDistance));
-
-                    if (Math.abs(leftDistance) == shortestDistance) {
-                        return leftDistance;
-                    }
-                    return rightDistance;
+                    return Math.abs(left) < Math.abs(right) ? left : right;
                 }
 
             }
@@ -228,7 +347,7 @@ public abstract class AbstractVariantsFactory {
             // Math.abs(locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum() - 2));
             // }
 
-            if (exonIndex == transcriptMapsExonsList.size() - 1) {
+            if (isLast) {
 
                 if (proteinRange.isBefore(transcriptPosition)) {
                     // we are in UTR3 region
@@ -240,7 +359,10 @@ public abstract class AbstractVariantsFactory {
                         // last interval is an exon
                         return transcriptPosition - proteinExonIntersection.getMinimum() + 1;
                     }
-                    return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                    Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+                    Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+
+                    return Math.abs(left) < Math.abs(right) ? left : right;
                 }
 
             }
@@ -437,7 +559,12 @@ public abstract class AbstractVariantsFactory {
                 }
 
             } else {
-                return Double.valueOf(Math.ceil((codingSequencePosition) / 3D)).intValue();
+                
+                if (!frameshift && !inframe) {
+                    return Double.valueOf(Math.ceil((codingSequencePosition) / 3D)).intValue();
+                }
+
+                return Double.valueOf(Math.ceil((codingSequencePosition - 1) / 3D)).intValue();
             }
         }
 

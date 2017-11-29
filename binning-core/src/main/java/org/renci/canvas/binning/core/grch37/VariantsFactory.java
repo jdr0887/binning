@@ -1070,11 +1070,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 variant.setVariantEffect(
                                         allVariantEffects.stream().filter(a -> a.getId().equals("synonymous indel")).findFirst().get());
                                 variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                            } else if (!variant.getOriginalAminoAcid().equals("*") && !variant.getFinalAminoAcid().equals("*")) {
-                                variant.setVariantEffect(
-                                        allVariantEffects.stream().filter(a -> a.getId().equals("missense")).findFirst().get());
-                                variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                            } else if (variant.getFinalAminoAcid().equals("*")) {
+                            } else if (finalProteinSequence.getSequenceAsString().contains("*")) {
                                 variant.setVariantEffect(
                                         allVariantEffects.stream().filter(a -> a.getId().equals("nonsense indel")).findFirst().get());
                                 variant.getId().setVariantEffect(variant.getVariantEffect().getId());
