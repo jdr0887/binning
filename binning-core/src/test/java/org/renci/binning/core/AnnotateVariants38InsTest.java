@@ -84,7 +84,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getOriginalAminoAcid().equals("E"));
         assertTrue(variant.getFinalAminoAcid().equals("L"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
-        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.TRUE));
         assertTrue(variant.getIntronExonDistance().equals(100));
         assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
         assertTrue(variant.getGene().getId().equals(7165));
@@ -124,7 +124,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getOriginalAminoAcid().equals("T"));
         assertTrue(variant.getFinalAminoAcid().equals("A"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
-        assertTrue(variant.getInframe().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.TRUE));
         assertTrue(variant.getIntronExonDistance().equals(-57));
         assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
         assertTrue(variant.getGene().getId().equals(5786));
