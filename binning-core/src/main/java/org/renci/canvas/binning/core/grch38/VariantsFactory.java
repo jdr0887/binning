@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
@@ -983,8 +982,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 Sequence<NucleotideCompound> originalRNASequence = dna2RnaTranslator.createSequence(originalDNASequence);
                 Sequence<AminoAcidCompound> originalProteinSequence = rna2AminoAcidTranslator.createSequence(originalRNASequence);
 
-                variant.setFrameshift((Math.abs(variant.getReferenceAllele().length() - variant.getAlternateAllele().length())) % 3 != 0);
-                variant.setInframe(variant.getCodingSequencePosition() % 3 == 0 && !variant.getFrameshift());
+                variant.setFrameshift((variant.getAlternateAllele().length() - variant.getReferenceAllele().length()) % 3 != 0);
+                variant.setInframe(
+                        isInframe(originalDNASequence, variant.getCodingSequencePosition(), locatedVariant) && !variant.getFrameshift());
 
                 Integer aaStart = getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
                         variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
@@ -1300,8 +1300,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 Sequence<NucleotideCompound> originalRNASequence = dna2RnaTranslator.createSequence(originalDNASequence);
                 Sequence<AminoAcidCompound> originalProteinSequence = rna2AminoAcidTranslator.createSequence(originalRNASequence);
 
-                variant.setFrameshift((Math.abs(variant.getReferenceAllele().length() - variant.getAlternateAllele().length())) % 3 != 0);
-                variant.setInframe(variant.getCodingSequencePosition() % 3 == 0 && !variant.getFrameshift());
+                variant.setFrameshift(variant.getReferenceAllele().length() % 3 != 0);
+                variant.setInframe(
+                        isInframe(originalDNASequence, variant.getCodingSequencePosition(), locatedVariant) && !variant.getFrameshift());
 
                 Integer aaStart = getAminoAcidStart(variant.getVariantType().getId(), variant.getCodingSequencePosition(),
                         variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
