@@ -1,5 +1,6 @@
 package org.renci.canvas.binning.core;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.tuple.Pair;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
+import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
 import org.renci.canvas.dao.CANVASDAOBeanService;
 import org.renci.canvas.dao.CANVASDAOException;
 import org.renci.canvas.dao.refseq.model.TranscriptMaps;
@@ -559,7 +561,15 @@ public abstract class AbstractVariantsFactory {
                 }
 
             } else {
-                
+
+                if (frameshift && inframe) {
+                    return Double.valueOf(Math.ceil((codingSequencePosition) / 3D)).intValue();
+                }
+
+                if (!frameshift && inframe) {
+                    return Double.valueOf(Math.ceil((codingSequencePosition) / 3D)).intValue();
+                }
+
                 if (!frameshift && !inframe) {
                     return Double.valueOf(Math.ceil((codingSequencePosition) / 3D)).intValue();
                 }
@@ -618,6 +628,41 @@ public abstract class AbstractVariantsFactory {
 
         }
         return null;
+    }
+
+    protected Boolean isInframe(DNASequence originalDNASequence, Integer codingSequencePosition, LocatedVariant locatedVariant) {
+        // I have to believe there is a better way to do this...
+        Boolean ret = Boolean.FALSE;
+        int count = 0;
+        List<String> setOfThree = new ArrayList<>(3);
+        for (NucleotideCompound nc : originalDNASequence.getAsList()) {
+            count++;
+            setOfThree.add(nc.getBase());
+            if (setOfThree.size() == 3) {
+                setOfThree.clear();
+            }
+            if (count == codingSequencePosition) {
+
+                if ("sub".equals(locatedVariant.getVariantType().getId())) {
+                    if (locatedVariant.getRef().length() == locatedVariant.getSeq().length()) {
+                        ret = Boolean.TRUE;
+                        break;
+                    }
+                } else if ("ins".equals(locatedVariant.getVariantType().getId())) {
+                    if ((setOfThree.size() + (locatedVariant.getSeq().length() / 3)) <= 3) {
+                        ret = Boolean.TRUE;
+                        break;
+                    }
+                } else if (setOfThree.size() + (locatedVariant.getEndPosition() - locatedVariant.getPosition()) <= 3) {
+                    ret = Boolean.TRUE;
+                    break;
+                }
+            }
+            if (count > codingSequencePosition) {
+                break;
+            }
+        }
+        return ret;
     }
 
 }
