@@ -2,13 +2,13 @@
   <parent>
     <groupId>org.renci.canvas</groupId>
     <artifactId>binning</artifactId>
-    <version>0.1.16-SNAPSHOT</version>
+    <version>0.1.16</version>
   </parent>
   <name>CANVAS :: Binning :: Features</name>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.renci.canvas.binning</groupId>
   <artifactId>binning-features</artifactId>
-  <version>0.1.16-SNAPSHOT</version>
+  <version>0.1.16</version>
   <packaging>pom</packaging>
   <properties>
     <maven.site.plugin.skip>true</maven.site.plugin.skip>    
