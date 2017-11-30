@@ -107,9 +107,9 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getTranscriptPosition().equals(491));
         assertTrue(variant.getCodingSequencePosition().equals(293));
         assertTrue(variant.getAminoAcidStart().equals(98));
-        assertTrue(variant.getAminoAcidEnd().equals(101));
-        assertTrue(variant.getOriginalAminoAcid().equals("GFRG"));
-        assertTrue(variant.getFinalAminoAcid().equals(""));
+        assertTrue(variant.getAminoAcidEnd().equals(102));
+        assertTrue(variant.getOriginalAminoAcid().equals("GFRGE"));
+        assertTrue(variant.getFinalAminoAcid().equals("E"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
         assertTrue(variant.getIntronExonDistance().equals(-14));
@@ -187,9 +187,9 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getTranscriptPosition().equals(1056));
         assertTrue(variant.getCodingSequencePosition().equals(867));
         assertTrue(variant.getAminoAcidStart().equals(289));
-        assertTrue(variant.getAminoAcidEnd().equals(289));
-        assertTrue(variant.getOriginalAminoAcid().equals("V"));
-        assertTrue(variant.getFinalAminoAcid().equals(""));
+        assertTrue(variant.getAminoAcidEnd().equals(290));
+        assertTrue(variant.getOriginalAminoAcid().equals("VP"));
+        assertTrue(variant.getFinalAminoAcid().equals("P"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.TRUE));
         assertTrue(variant.getIntronExonDistance().equals(42));
@@ -281,6 +281,42 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgvsTranscript().equals("NM_001300787.1:g.1145_1147delTCT"));
         assertTrue(variant.getHgvsProtein().equals("NP_001287716.1:p.Cys191_Leu192delins*"));
 
+    }
+
+    @Test
+    public void testLocatedVariant547749568() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(547749568L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NR_038242.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(547749568L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(95282804));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getLocationType().getId().equals("intron"));
+    }
+
+    @Test
+    public void testLocatedVariant595743242() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(595743242L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("XM_006716262.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(595743242L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000008.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(12185357));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
     }
 
 }
