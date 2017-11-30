@@ -543,7 +543,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 previous = current;
             }
 
-            if (Math.abs(variant.getIntronExonDistance()) <= 2 && proteinRange == null) {
+            if (variant.getIntronExonDistance() != null && Math.abs(variant.getIntronExonDistance()) <= 2 && proteinRange == null) {
                 variant.setVariantEffect(allVariantEffects.stream().filter(a -> a.getId().equals("splice-site-UTR")).findFirst().get());
                 variant.getId().setVariantEffect(variant.getVariantEffect().getId());
             }
@@ -1311,10 +1311,20 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 variant.setAminoAcidStart(aaStart);
 
                 if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-                    variant.setAminoAcidEnd((variant.getCodingSequencePosition() + variant.getReferenceAllele().length() - 1) / 3);
+                    variant.setAminoAcidEnd(aaStart + Math.max(1, (locatedVariant.getRef().length() - 1) / 3));
                 } else {
-                    variant.setAminoAcidEnd((variant.getCodingSequencePosition() + variant.getReferenceAllele().length()) / 3);
+                    variant.setAminoAcidEnd(aaStart + Math.max(1, locatedVariant.getRef().length() / 3));
                 }
+
+                if (variant.getInframe() && locatedVariant.getRef().length() < 3) {
+                    variant.setAminoAcidEnd(aaStart);
+                }
+
+                // if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+                // variant.setAminoAcidEnd((variant.getCodingSequencePosition() + variant.getReferenceAllele().length() - 1) / 3);
+                // } else {
+                // variant.setAminoAcidEnd((variant.getCodingSequencePosition() + variant.getReferenceAllele().length()) / 3);
+                // }
 
                 if (variant.getAminoAcidStart() > originalProteinSequence.getLength()) {
                     variant.setOriginalAminoAcid("*");
@@ -1470,18 +1480,17 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             .getLongName();
 
                     AminoAcidCompound nextOriginalAACompound = originalProteinSequence
-                            .getCompoundAt(variant.getAminoAcidStart() + variant.getOriginalAminoAcid().length());
+                            .getCompoundAt(variant.getAminoAcidStart() + (locatedVariant.getRef().length() / 3));
                     if (nextOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
 
-                        variant.setFinalAminoAcid("");
-                        if ((variant.getAminoAcidStart().equals(variant.getAminoAcidEnd()))) {
+                        if ((variant.getAminoAcidStart().equals(variant.getAminoAcidEnd() - 1))) {
                             variant.setHgvsProtein(String.format("%s:p.%s%ddel", refSeqCDS.getProteinId(), firstOriginalAACompoundValue,
                                     variant.getAminoAcidStart()));
                         } else {
                             variant.setHgvsProtein(String.format("%s:p.%s%d_%s%ddel", refSeqCDS.getProteinId(),
                                     firstOriginalAACompoundValue, variant.getAminoAcidStart(),
-                                    originalProteinSequence.getCompoundAt(variant.getAminoAcidEnd()).getLongName(),
-                                    variant.getAminoAcidEnd()));
+                                    originalProteinSequence.getCompoundAt(variant.getAminoAcidEnd() - 1).getLongName(),
+                                    variant.getAminoAcidEnd() - 1));
                         }
 
                     } else {
