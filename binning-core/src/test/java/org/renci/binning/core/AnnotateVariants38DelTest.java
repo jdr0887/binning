@@ -319,4 +319,22 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getLocationType().getId().equals("exon"));
     }
 
+    @Test
+    public void testLocatedVariant526126533() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(526126533L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_181612.3")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(526126533L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000021.9"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(30541663));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+    }
+
 }
