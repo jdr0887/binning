@@ -437,4 +437,27 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
 
     }
 
+    @Test
+    public void testLocatedVariant565806505() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(565806505L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_178463.3")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(565806505L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000020.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(62570676));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getId().getTranscript().equals("NM_178463.3"));
+        assertTrue(variant.getRefSeqGene().equals("MIR1-1HG"));
+        assertTrue(variant.getHgncGene().equals("MIR1-1HG"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+
+    }
+
 }

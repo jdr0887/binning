@@ -811,8 +811,13 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 DNASequence finalDNASequence = new DNASequence(finalDNASeq);
                 Sequence<NucleotideCompound> finalRNASequence = dna2RnaTranslator.createSequence(finalDNASequence);
                 Sequence<AminoAcidCompound> finalProteinSequence = rna2AminoAcidTranslator.createSequence(finalRNASequence);
-                AminoAcidCompound finalAACompound = finalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
-                variant.setFinalAminoAcid(finalAACompound.getBase());
+
+                if (variant.getAminoAcidStart() > finalProteinSequence.getLength()) {
+                    variant.setFinalAminoAcid("*");
+                } else {
+                    AminoAcidCompound finalAACompound = finalProteinSequence.getCompoundAt(variant.getAminoAcidStart());
+                    variant.setFinalAminoAcid(finalAACompound.getBase());
+                }
 
                 if (variant.getOriginalAminoAcid().equals(variant.getFinalAminoAcid())) {
                     variant.setVariantEffect(allVariantEffects.stream().filter(a -> a.getId().equals("synonymous")).findFirst().get());
@@ -829,16 +834,20 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 }
 
                 if (refSeqCDS != null) {
+                    String finalAACompoundLongName = AminoAcidCompoundSet.getAminoAcidCompoundSet()
+                            .getCompoundForString(Arrays.asList(variant.getFinalAminoAcid().split("(?!^)")).stream().findFirst().get())
+                            .getLongName();
+
                     if (!Arrays.asList("synonymous", "stoploss").contains(variant.getVariantEffect().getId())) {
+
                         variant.setHgvsProtein(String.format("%s:p.%s%d%s", refSeqCDS.getProteinId(), originalAACompound.getLongName(),
-                                variant.getAminoAcidStart(), "*".equals(finalAACompound.getShortName()) ? finalAACompound.getShortName()
-                                        : finalAACompound.getLongName()));
+                                variant.getAminoAcidStart(),
+                                "*".equals(variant.getFinalAminoAcid()) ? variant.getFinalAminoAcid() : finalAACompoundLongName));
                     }
 
                     if ("stoploss".equals(variant.getVariantEffect().getId())) {
                         variant.setHgvsProtein(String.format("%s:p.*%d%s", refSeqCDS.getProteinId(), variant.getAminoAcidStart(),
-                                "*".equals(finalAACompound.getShortName()) ? finalAACompound.getShortName()
-                                        : finalAACompound.getLongName()));
+                                "*".equals(variant.getFinalAminoAcid()) ? variant.getFinalAminoAcid() : finalAACompoundLongName));
                     }
 
                 }
