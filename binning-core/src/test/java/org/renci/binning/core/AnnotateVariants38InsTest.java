@@ -336,4 +336,26 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getId().getTranscript().equals("NM_001318880.1"));
 
     }
+
+    @Test
+    public void testLocatedVariant544646384() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(544646384L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_174905.3")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(544646384L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000019.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(38408879));
+        assertTrue(variant.getVariantType().getId().equals("ins"));
+        assertTrue(variant.getId().getTranscript().equals("NM_174905.3"));
+
+    }
+
+    
+    
 }
