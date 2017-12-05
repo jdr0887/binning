@@ -596,7 +596,7 @@ public abstract class AbstractVariantsFactory {
                 }
 
             } else {
-                return Double.valueOf(Math.ceil((codingSequencePosition - 1) / 3D)).intValue();
+                return Math.max(1, Double.valueOf(Math.ceil((codingSequencePosition - 1) / 3D)).intValue());
             }
 
         }
