@@ -198,7 +198,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getReferenceAllele().equals("G"));
         assertTrue(variant.getAlternateAllele().equals("A"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.26563091G>A"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_001135091.1:c.925+25C>T"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001135091.1:c.1198+25C>T"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -215,7 +215,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
 
         Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001288713.1")).findFirst().get();
         logger.info(variant.toString());
-
+        
         assertTrue(variant.getLocatedVariant().getId().equals(496659078L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000011.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(21229455));
@@ -231,7 +231,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getReferenceAllele().equals("G"));
         assertTrue(variant.getAlternateAllele().equals("T"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.21229455G>T"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_001288713.1:c.1633+1G>T"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001288713.1:c.1806+1G>T"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -264,7 +264,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getReferenceAllele().equals("G"));
         assertTrue(variant.getAlternateAllele().equals("A"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.61490585G>A"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_145017.2:c.1292+1G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_145017.2:c.1424+1G>A"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -297,7 +297,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getReferenceAllele().equals("G"));
         assertTrue(variant.getAlternateAllele().equals("A"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.62337966G>A"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_025080.3:c.-11-1G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_025080.3:c.274-1G>A"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -330,7 +330,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getReferenceAllele().equals("C"));
         assertTrue(variant.getAlternateAllele().equals("G"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.30952569C>G"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_020869.3:c.-87-1G>C"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_020869.3:c.229-1G>C"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -363,7 +363,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getReferenceAllele().equals("T"));
         assertTrue(variant.getAlternateAllele().equals("A"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000011.10:g.62796183T>A"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_001081491.1:c.3147-2A>T"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001081491.1:c.3283-2A>T"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -371,7 +371,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
 
     @Test
     public void testLocatedVariant497776734() throws Exception {
-        // snp splice-site-UTR-3 on - strand
+        // snp splice-site on - strand
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(497776734L);
         logger.info(locatedVariant.toString());
@@ -390,14 +390,14 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgncGene().equals("ENTPD2"));
         assertTrue(variant.getLocationType().getId().equals("intron"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getTranscriptPosition().equals(1216));
+        assertTrue(variant.getTranscriptPosition().equals(1270));
         assertTrue(variant.getIntronExonDistance().equals(-1));
-        assertTrue(variant.getId().getVariantEffect().equals("splice-site-UTR-3"));
+        assertTrue(variant.getId().getVariantEffect().equals("splice-site"));
         assertTrue(variant.getGene().getId().equals(8151));
         assertTrue(variant.getReferenceAllele().equals("C"));
         assertTrue(variant.getAlternateAllele().equals("T"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000009.12:g.137048861C>T"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_001246.3:c.1216-1G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001246.3:c.1270-1G>A"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 
@@ -424,14 +424,14 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgncGene().equals("PAH"));
         assertTrue(variant.getLocationType().getId().equals("intron"));
         assertTrue(variant.getStrand().equals("-"));
-        assertTrue(variant.getTranscriptPosition().equals(1315));
+        assertTrue(variant.getTranscriptPosition().equals(1787));
         assertTrue(variant.getIntronExonDistance().equals(1));
-        assertTrue(variant.getId().getVariantEffect().equals("splice-site-UTR-3"));
+        assertTrue(variant.getId().getVariantEffect().equals("splice-site"));
         assertTrue(variant.getGene().getId().equals(21084));
         assertTrue(variant.getReferenceAllele().equals("C"));
         assertTrue(variant.getAlternateAllele().equals("T"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000012.12:g.102840399C>T"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_000277.1:c.1315+1G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_000277.1:c.1787+1G>A"));
         assertTrue(variant.getHgvsTranscript() == null);
         assertTrue(variant.getHgvsProtein() == null);
 

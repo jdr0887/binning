@@ -434,50 +434,26 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 leftDistance = currentContigRange.getMaximum() - locatedVariant.getPosition();
 
                                 if (Math.abs(leftDistance) < Math.abs(rightDistance)) {
+                                    variant.setTranscriptPosition(currentTranscriptRange.getMinimum());
                                     variant.setIntronExonDistance(leftDistance);
                                 } else {
+                                    variant.setTranscriptPosition(previousTranscriptRange.getMaximum());
                                     variant.setIntronExonDistance(rightDistance);
                                 }
 
                                 if (Math.abs(variant.getIntronExonDistance()) <= 2) {
+
                                     variant.setVariantEffect(
                                             allVariantEffects.stream().filter(a -> a.getId().equals("splice-site")).findFirst().get());
                                     variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                                }
 
-                                variant.setTranscriptPosition(current.getTranscriptStart() - proteinRange.getMinimum() + 1);
-                                if (variant.getIntronExonDistance() > 0) {
-                                    variant.setTranscriptPosition(current.getTranscriptStart() - proteinRange.getMinimum());
-                                }
-
-                                variant.setTranscriptPosition(previousTranscriptRange.getMaximum() - proteinRange.getMinimum() + 1);
-                                if (variant.getIntronExonDistance() < 0) {
-                                    variant.setTranscriptPosition(currentTranscriptRange.getMinimum() - proteinRange.getMinimum() + 1);
-                                }
-
-                                if (Math.abs(variant.getIntronExonDistance()) <= 2) {
-
-                                    boolean isUTR3 = previousTranscriptRange.getMinimum() > proteinRange.getMaximum();
-                                    if (!isUTR3) {
-                                        isUTR3 = (previousTranscriptRange.contains(proteinRange.getMaximum())
-                                                || (currentTranscriptRange.contains(proteinRange.getMaximum())))
-                                                && currentTranscriptRange.getMaximum() > proteinRange.getMaximum();
-                                    }
-
-                                    boolean isUTR5 = currentTranscriptRange.getMaximum() < proteinRange.getMinimum();
-                                    if (!isUTR5) {
-                                        isUTR5 = (previousTranscriptRange.contains(proteinRange.getMinimum())
-                                                || currentTranscriptRange.contains(proteinRange.getMinimum()))
-                                                && proteinRange.getMinimum() > currentTranscriptRange.getMinimum();
-                                    }
-
-                                    if (isUTR3 && !isUTR5) {
+                                    if (variant.getTranscriptPosition() > proteinRange.getMaximum()) {
                                         variant.setVariantEffect(allVariantEffects.stream()
                                                 .filter(a -> a.getId().equals("splice-site-UTR-3")).findFirst().get());
                                         variant.getId().setVariantEffect(variant.getVariantEffect().getId());
                                     }
 
-                                    if (isUTR5 && !isUTR3) {
+                                    if (variant.getTranscriptPosition() < proteinRange.getMinimum()) {
                                         variant.setVariantEffect(allVariantEffects.stream()
                                                 .filter(a -> a.getId().equals("splice-site-UTR-5")).findFirst().get());
                                         variant.getId().setVariantEffect(variant.getVariantEffect().getId());
@@ -491,48 +467,26 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 leftDistance = locatedVariant.getPosition() - previousContigRange.getMaximum();
 
                                 if (Math.abs(leftDistance) < Math.abs(rightDistance)) {
+                                    variant.setTranscriptPosition(previousTranscriptRange.getMaximum());
                                     variant.setIntronExonDistance(leftDistance);
                                 } else {
+                                    variant.setTranscriptPosition(currentTranscriptRange.getMinimum());
                                     variant.setIntronExonDistance(rightDistance);
                                 }
 
                                 if (Math.abs(variant.getIntronExonDistance()) <= 2) {
+
                                     variant.setVariantEffect(
                                             allVariantEffects.stream().filter(a -> a.getId().equals("splice-site")).findFirst().get());
                                     variant.getId().setVariantEffect(variant.getVariantEffect().getId());
-                                }
 
-                                variant.setTranscriptPosition(previousTranscriptRange.getMaximum() - proteinRange.getMinimum() + 1);
-                                if (variant.getIntronExonDistance() > 0) {
-                                    variant.setTranscriptPosition(currentTranscriptRange.getMinimum() - proteinRange.getMinimum());
-                                }
-
-                                if (Math.abs(variant.getIntronExonDistance()) <= 2) {
-
-                                    boolean isUTR3 = currentTranscriptRange.getMaximum() < proteinRange.getMinimum();
-                                    if (!isUTR3) {
-                                        isUTR3 = (previousTranscriptRange.contains(proteinRange.getMaximum())
-                                                || (currentTranscriptRange.contains(proteinRange.getMaximum())))
-                                                && currentTranscriptRange.getMaximum() > proteinRange.getMaximum();
-                                    }
-
-                                    boolean isUTR5 = previousTranscriptRange.getMinimum() > proteinRange.getMaximum();
-                                    if (!isUTR5) {
-                                        isUTR5 = (previousTranscriptRange.contains(proteinRange.getMinimum())
-                                                || currentTranscriptRange.contains(proteinRange.getMinimum()))
-                                                && proteinRange.getMinimum() < currentTranscriptRange.getMaximum();
-                                    }
-
-                                    // previousTranscriptRange.getMinimum() - proteinRange.getMinimum() + locatedVariant.getPosition()
-                                    // - currentCongitRange.getContigEnd() + 1;
-
-                                    if (isUTR3 && !isUTR5) {
+                                    if (variant.getTranscriptPosition() > proteinRange.getMaximum()) {
                                         variant.setVariantEffect(allVariantEffects.stream()
                                                 .filter(a -> a.getId().equals("splice-site-UTR-3")).findFirst().get());
                                         variant.getId().setVariantEffect(variant.getVariantEffect().getId());
                                     }
 
-                                    if (isUTR5 && !isUTR3) {
+                                    if (variant.getTranscriptPosition() < proteinRange.getMinimum()) {
                                         variant.setVariantEffect(allVariantEffects.stream()
                                                 .filter(a -> a.getId().equals("splice-site-UTR-5")).findFirst().get());
                                         variant.getId().setVariantEffect(variant.getVariantEffect().getId());
