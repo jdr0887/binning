@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.Range;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.biojava.nbio.core.sequence.DNASequence;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
@@ -397,14 +396,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             Range<Integer> proteinRange = null;
 
-            List<RefSeqCodingSequence> refSeqCDSList = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), tMap.getTranscript().getId());
-
             RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
                     .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), tMap.getTranscript().getId()).stream().findFirst().orElse(null);
             if (refSeqCDS != null) {
-                List<RegionGroupRegion> rgrList = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId());
-
                 RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
                         .findFirst().orElse(null);
                 if (rgr != null) {
@@ -449,6 +443,11 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                     variant.setVariantEffect(
                                             allVariantEffects.stream().filter(a -> a.getId().equals("splice-site")).findFirst().get());
                                     variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+                                }
+
+                                variant.setTranscriptPosition(current.getTranscriptStart() - proteinRange.getMinimum() + 1);
+                                if (variant.getIntronExonDistance() > 0) {
+                                    variant.setTranscriptPosition(current.getTranscriptStart() - proteinRange.getMinimum());
                                 }
 
                                 variant.setTranscriptPosition(previousTranscriptRange.getMaximum() - proteinRange.getMinimum() + 1);
@@ -1167,24 +1166,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             break;
                         }
 
-                        // int tmpStart = variant.getAminoAcidStart() - 1;
-                        // AminoAcidCompound tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
-                        // AminoAcidCompound tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
-                        // while (tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
-                        // ++tmpStart;
-                        // if (tmpStart == originalProteinSequence.getLength()) {
-                        // break;
-                        // }
-                        // tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
-                        // tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
-                        // if (!tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
-                        // originalAACompound = tmpOriginalAACompound;
-                        // finalAACompound = tmpFinalAACompound;
-                        // break;
-                        // }
-                        // }
-
                         if (tmpStart == originalProteinSequence.getLength()) {
+
                             // meaning that we have traversed to the end of the protein finding no changes
                             variant.setOriginalAminoAcid(originalProteinSequence.getCompoundAt(variant.getAminoAcidStart()).getBase());
                             variant.setFinalAminoAcid(finalProteinSequence.getCompoundAt(variant.getAminoAcidStart()).getBase());
@@ -1198,6 +1181,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                             if (finalAACompound != null && originalAACompound != null) {
 
+                                variant.setOriginalAminoAcid(originalAACompound.getBase());
                                 variant.setFinalAminoAcid(finalAACompound.getBase());
 
                                 variant.setHgvsProtein(String.format("%s:p.%s%d%s", refSeqCDS.getProteinId(),
