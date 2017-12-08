@@ -357,4 +357,5 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
 
     
     
+    
 }

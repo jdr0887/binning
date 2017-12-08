@@ -460,4 +460,31 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
 
     }
 
+    @Test
+    public void testLocatedVariant595484703() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(595484703L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001301244.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(595484703L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000015.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(63043705));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001301244.1"));
+        assertTrue(variant.getRefSeqGene().equals("TPM1"));
+        assertTrue(variant.getHgncGene().equals("TPM1"));
+        assertTrue(variant.getLocationType().getId().equals("intron"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getId().getVariantEffect().equals("splice-site"));
+
+    }
+
+    
+    
+    
 }
