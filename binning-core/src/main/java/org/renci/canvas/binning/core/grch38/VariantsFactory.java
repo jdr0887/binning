@@ -1137,6 +1137,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                                 variant.setOriginalAminoAcid(originalAACompound.getBase());
                                 variant.setFinalAminoAcid(finalAACompound.getBase());
+                                variant.setAminoAcidStart(tmpStart);
+                                variant.setAminoAcidEnd(tmpStart);
 
                                 variant.setHgvsProtein(String.format("%s:p.%s%d%s", refSeqCDS.getProteinId(),
                                         originalAACompound.getLongName(), tmpStart, finalAACompound.getLongName()));
