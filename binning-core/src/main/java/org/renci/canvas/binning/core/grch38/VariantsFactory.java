@@ -313,6 +313,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 }
                                 variants.add(variant);
                             }
+                        } else {
+                            // not found in any transcript contig range, must be intergenic
+                            Variants_80_4 variant = createIntergenicVariant(locatedVariant);
+                            variants.add(variant);
                         }
 
                     }
@@ -382,6 +386,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
         Variants_80_4 variant = createProvisionalVariant(locatedVariant, tMap.getTranscript().getId(), mapsList.indexOf(tMap) + 1);
 
         try {
+
+            if ("del".equals(locatedVariant.getVariantType().getId())) {
+                variant.setAlternateAllele("");
+            }
 
             variant.setNumberOfTranscriptMaps(mapsList.size());
             variant.setStrand(tMap.getStrand());
@@ -525,6 +533,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
         Variants_80_4 variant = createProvisionalVariant(locatedVariant, "", 0);
 
+        if ("del".equals(locatedVariant.getVariantType().getId())) {
+            variant.setAlternateAllele("");
+        }
+
         LocationType intergenicLocationType = allLocationTypes.stream().filter(a -> a.getId().equals("intergenic")).findFirst().get();
         variant.setLocationType(intergenicLocationType);
 
@@ -542,6 +554,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
         Variants_80_4 variant = createProvisionalVariant(locatedVariant, tMap.getTranscript().getId(), mapsList.indexOf(tMap) + 1);
 
         try {
+
+            if ("del".equals(locatedVariant.getVariantType().getId())) {
+                variant.setAlternateAllele("");
+            }
 
             variant.setNumberOfTranscriptMaps(mapsList.size());
             variant.setStrand(tMap.getStrand());
