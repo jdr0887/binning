@@ -649,7 +649,24 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             setVariantGeneInfo(variant, transcriptMapsExons.getTranscriptMaps().getTranscript().getId());
 
-            variant.setTranscriptPosition(getTranscriptPosition(locatedVariant, transcriptMapsExons));
+            Range<Integer> proteinRange = null;
+            RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
+                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId())
+                    .stream().findFirst().orElse(null);
+            if (refSeqCDS != null) {
+                RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
+                        .findFirst().orElse(null);
+                if (rgr != null) {
+                    proteinRange = rgr.getId().getRegionRange();
+                }
+            }
+
+            Range<Integer> locatedVariantRange = locatedVariant.toRange();
+            Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+            Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+
+            Integer transcriptPosition = getTranscriptPosition(locatedVariant, transcriptMapsExons, proteinRange);
+            variant.setTranscriptPosition(transcriptPosition);
 
             Feature feature = daoBean.getFeatureDAO()
                     .findByRefSeqVersionAndTranscriptIdAndTranscriptPosition(getRefSeqVersion(),
@@ -669,22 +686,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
             variant.setHgvsTranscript(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "g",
                     variant.getVariantType().getId(), variant.getTranscriptPosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
                     null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
-
-            Range<Integer> locatedVariantRange = locatedVariant.toRange();
-            Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
-            Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
-
-            Range<Integer> proteinRange = null;
-            RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId())
-                    .stream().findFirst().orElse(null);
-            if (refSeqCDS != null) {
-                RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
-                        .findFirst().orElse(null);
-                if (rgr != null) {
-                    proteinRange = rgr.getId().getRegionRange();
-                }
-            }
 
             String locationType = getLocationType(daoBean, locatedVariantRange, transcriptMapsExonsContigRange,
                     transcriptMapsExonsTranscriptRange, proteinRange, transcriptMapsExons.getTranscriptMaps(),
@@ -861,7 +862,24 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             setVariantGeneInfo(variant, transcriptMapsExons.getTranscriptMaps().getTranscript().getId());
 
-            variant.setTranscriptPosition(getTranscriptPosition(locatedVariant, transcriptMapsExons));
+            Range<Integer> locatedVariantRange = locatedVariant.toRange();
+            Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+            Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+
+            Range<Integer> proteinRange = null;
+            RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
+                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId())
+                    .stream().findFirst().orElse(null);
+            if (refSeqCDS != null) {
+                RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
+                        .findFirst().orElse(null);
+                if (rgr != null) {
+                    proteinRange = rgr.getId().getRegionRange();
+                }
+            }
+
+            Integer transcriptPosition = getTranscriptPosition(locatedVariant, transcriptMapsExons, proteinRange);
+            variant.setTranscriptPosition(transcriptPosition);
 
             Feature feature = daoBean.getFeatureDAO()
                     .findByRefSeqVersionAndTranscriptIdAndTranscriptPosition(getRefSeqVersion(),
@@ -881,22 +899,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
             variant.setHgvsTranscript(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "g",
                     variant.getVariantType().getId(), variant.getTranscriptPosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
                     null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
-
-            Range<Integer> locatedVariantRange = locatedVariant.toRange();
-            Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
-            Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
-
-            Range<Integer> proteinRange = null;
-            RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId())
-                    .stream().findFirst().orElse(null);
-            if (refSeqCDS != null) {
-                RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
-                        .findFirst().orElse(null);
-                if (rgr != null) {
-                    proteinRange = rgr.getId().getRegionRange();
-                }
-            }
 
             String locationType = getLocationType(daoBean, locatedVariantRange, transcriptMapsExonsContigRange,
                     transcriptMapsExonsTranscriptRange, proteinRange, transcriptMapsExons.getTranscriptMaps(),
@@ -1242,7 +1244,24 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
             variant.setAlternateAllele("");
 
-            variant.setTranscriptPosition(getTranscriptPosition(locatedVariant, transcriptMapsExons));
+            Range<Integer> locatedVariantRange = locatedVariant.toRange();
+            Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+            Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+
+            Range<Integer> proteinRange = null;
+            RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
+                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId())
+                    .stream().findFirst().orElse(null);
+            if (refSeqCDS != null) {
+                RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
+                        .findFirst().orElse(null);
+                if (rgr != null) {
+                    proteinRange = rgr.getId().getRegionRange();
+                }
+            }
+
+            Integer transcriptPosition = getTranscriptPosition(locatedVariant, transcriptMapsExons, proteinRange);
+            variant.setTranscriptPosition(transcriptPosition);
 
             Feature feature = daoBean.getFeatureDAO()
                     .findByRefSeqVersionAndTranscriptIdAndTranscriptPosition(getRefSeqVersion(),
@@ -1262,22 +1281,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
             variant.setHgvsTranscript(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "g",
                     variant.getVariantType().getId(), variant.getTranscriptPosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
                     null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
-
-            Range<Integer> locatedVariantRange = locatedVariant.toRange();
-            Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
-            Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
-
-            Range<Integer> proteinRange = null;
-            RefSeqCodingSequence refSeqCDS = daoBean.getRefSeqCodingSequenceDAO()
-                    .findByRefSeqVersionAndTranscriptId(getRefSeqVersion(), transcriptMapsExons.getTranscriptMaps().getTranscript().getId())
-                    .stream().findFirst().orElse(null);
-            if (refSeqCDS != null) {
-                RegionGroupRegion rgr = daoBean.getRegionGroupRegionDAO().findByRefSeqCodingSequenceId(refSeqCDS.getId()).stream()
-                        .findFirst().orElse(null);
-                if (rgr != null) {
-                    proteinRange = rgr.getId().getRegionRange();
-                }
-            }
 
             String locationType = getLocationType(daoBean, locatedVariantRange, transcriptMapsExonsContigRange,
                     transcriptMapsExonsTranscriptRange, proteinRange, transcriptMapsExons.getTranscriptMaps(),
