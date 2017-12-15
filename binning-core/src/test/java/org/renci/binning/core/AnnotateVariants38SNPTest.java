@@ -215,7 +215,7 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
 
         Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001288713.1")).findFirst().get();
         logger.info(variant.toString());
-        
+
         assertTrue(variant.getLocatedVariant().getId().equals(496659078L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000011.10"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(21229455));
@@ -484,7 +484,49 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
 
     }
 
-    
-    
-    
+    @Test
+    public void testLocatedVariant553562444() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(553562444L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_173600.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        // Variants_80_4 [key=Variants_80_4PK [locatedVariant=553562444, genomeRefSeq=NC_000012.12, position=40484948, variantType=snp,
+        // transcript=NM_173600.2, locationType=exon, variantEffect=nonsense, mapNumber=1], refSeqGene=MUC19, hgncGene=MUC19,
+        // transcriptPosition=12050, codingSequencePosition=11998, aminoAcidStart=4000, aminoAcidEnd=4001, originalAminoAcid=E,
+        // finalAminoAcid=*, frameshift=false, inframe=false, intronExonDistance=5896, strand=+, numberOfTranscriptMaps=1,
+        // referenceAllele=C, alternateAllele=T, hgvsGenomic=NC_000012.12:g.40484948C>T, hgvsCodingSequence=NM_173600.2:c.11998C>T,
+        // hgvsTranscript=NM_173600.2:g.12050C>T, hgvsProtein=NP_775871.2:p.Glu4000*, nonCanonicalExon=56, featureId=2061983]
+
+        assertTrue(variant.getLocatedVariant().getId().equals(553562444L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(40484948));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getId().getTranscript().equals("NM_173600.2"));
+        assertTrue(variant.getRefSeqGene().equals("MUC19"));
+        assertTrue(variant.getHgncGene().equals("MUC19"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(12050));
+        assertTrue(variant.getCodingSequencePosition().equals(11998));
+        assertTrue(variant.getAminoAcidStart().equals(4000));
+        assertTrue(variant.getAminoAcidEnd().equals(4001));
+        assertTrue(variant.getOriginalAminoAcid().equals("E"));
+        assertTrue(variant.getFinalAminoAcid().equals("*"));
+        assertTrue(variant.getIntronExonDistance().equals(5896));
+        assertTrue(variant.getId().getVariantEffect().equals("missense"));
+        assertTrue(variant.getGene().getId().equals(21084));
+        assertTrue(variant.getReferenceAllele().equals("C"));
+        assertTrue(variant.getAlternateAllele().equals("T"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000012.12:g.40484948C>T"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_173600.2:c.11998C>T"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_173600.2:g.12052C>T"));
+        assertTrue(variant.getHgvsProtein().equals("NP_775871.2:p.Glu4000*"));
+
+    }
+
 }
