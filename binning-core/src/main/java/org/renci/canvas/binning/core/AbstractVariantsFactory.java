@@ -418,14 +418,33 @@ public abstract class AbstractVariantsFactory {
         return ret;
     }
 
-    protected Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons) {
-        Integer diff = null;
-        if ("+".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-            diff = locatedVariant.getPosition() - transcriptMapsExons.getContigEnd();
-        } else {
-            diff = transcriptMapsExons.getContigEnd() - locatedVariant.getPosition();
+    protected Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
+            Range<Integer> proteinRange) {
+        Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
+        Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+
+        Integer transcriptPosition = locatedVariant.getPosition() - transcriptMapsExonsContigRange.getMinimum()
+                + transcriptMapsExonsTranscriptRange.getMinimum();
+
+        if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+            transcriptPosition = transcriptMapsExonsTranscriptRange.getMinimum()
+                    + (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition());
         }
-        return transcriptMapsExons.getTranscriptEnd() + diff;
+
+        if (proteinRange != null) {
+
+            if (transcriptMapsExonsTranscriptRange.contains(proteinRange.getMaximum()) && transcriptPosition > proteinRange.getMaximum()) {
+                transcriptPosition = locatedVariant.getPosition() - transcriptMapsExonsContigRange.getMinimum() + proteinRange.getMinimum();
+            }
+
+            if (transcriptMapsExonsTranscriptRange.contains(proteinRange.getMinimum()) && transcriptPosition < proteinRange.getMinimum()) {
+                transcriptPosition = proteinRange.getMinimum()
+                        + (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition());
+            }
+
+        }
+
+        return transcriptPosition;
     }
 
     protected Integer getCodingSequencePosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
