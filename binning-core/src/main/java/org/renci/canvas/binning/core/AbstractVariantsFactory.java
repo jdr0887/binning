@@ -2,9 +2,12 @@ package org.renci.canvas.binning.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.biojava.nbio.core.exceptions.CompoundNotFoundException;
 import org.biojava.nbio.core.sequence.DNASequence;
@@ -420,31 +423,78 @@ public abstract class AbstractVariantsFactory {
 
     protected Integer getTranscriptPosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
             Range<Integer> proteinRange) {
-        Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
-        Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
+        Range<Integer> exonContigRange = transcriptMapsExons.getContigRange();
+        Range<Integer> exonTranscriptRange = transcriptMapsExons.getTranscriptRange();
 
-        Integer transcriptPosition = locatedVariant.getPosition() - transcriptMapsExonsContigRange.getMinimum()
-                + transcriptMapsExonsTranscriptRange.getMinimum();
+        Integer transcriptPosition = locatedVariant.getPosition() - exonContigRange.getMinimum() + exonTranscriptRange.getMinimum();
 
         if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-            transcriptPosition = transcriptMapsExonsTranscriptRange.getMinimum()
-                    + (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition());
+            transcriptPosition = exonTranscriptRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
         }
 
         if (proteinRange != null) {
 
-            if (transcriptMapsExonsTranscriptRange.contains(proteinRange.getMaximum()) && transcriptPosition > proteinRange.getMaximum()) {
-                transcriptPosition = locatedVariant.getPosition() - transcriptMapsExonsContigRange.getMinimum() + proteinRange.getMinimum();
+            if (exonTranscriptRange.contains(proteinRange.getMaximum()) && transcriptPosition > proteinRange.getMaximum()) {
+                transcriptPosition = locatedVariant.getPosition() - exonContigRange.getMinimum() + proteinRange.getMinimum();
             }
 
-            if (transcriptMapsExonsTranscriptRange.contains(proteinRange.getMinimum()) && transcriptPosition < proteinRange.getMinimum()) {
-                transcriptPosition = proteinRange.getMinimum()
-                        + (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition());
+            if (exonTranscriptRange.contains(proteinRange.getMinimum()) && transcriptPosition < proteinRange.getMinimum()) {
+                transcriptPosition = proteinRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
             }
 
         }
 
+        if (StringUtils.isNotEmpty(transcriptMapsExons.getGap())) {
+
+            // one based
+            Pair<AtomicInteger, AtomicInteger> currentRefReadPair = Pair.of(new AtomicInteger(exonContigRange.getMinimum() - 1),
+                    new AtomicInteger(exonTranscriptRange.getMinimum() - 1));
+
+            List<Pair<CIGARType, Integer>> blockList = parseGap(transcriptMapsExons.getGap());
+            blockLoop: for (Pair<CIGARType, Integer> block : blockList) {
+                for (int i = 0; i < block.getRight(); i++) {
+                    switch (block.getLeft()) {
+                        case MATCH:
+                            currentRefReadPair.getLeft().incrementAndGet();
+                            currentRefReadPair.getRight().incrementAndGet();
+                            break;
+                        case INSERT:
+                            currentRefReadPair.getRight().incrementAndGet();
+                            break;
+                        case DELETION:
+                            currentRefReadPair.getLeft().incrementAndGet();
+                            break;
+                    }
+
+                    if (locatedVariant.getPosition().intValue() == currentRefReadPair.getLeft().get()) {
+                        break blockLoop;
+                    }
+                }
+
+            }
+
+            transcriptPosition = currentRefReadPair.getRight().get();
+
+        }
+
         return transcriptPosition;
+    }
+
+    private List<Pair<CIGARType, Integer>> parseGap(String gap) {
+        List<Pair<CIGARType, Integer>> ret = new LinkedList<>();
+        String[] gapTokens = gap.split(" ");
+        for (String gapToken : gapTokens) {
+            try {
+                String typeValue = gapToken.substring(0, 1);
+                String length = gapToken.substring(1, gapToken.length());
+                CIGARType type = Arrays.asList(CIGARType.values()).stream().filter(a -> a.getName().equals(typeValue)).findFirst()
+                        .orElse(null);
+                ret.add(Pair.of(type, Integer.valueOf(length)));
+            } catch (NumberFormatException e) {
+                // don't care about NFE
+            }
+        }
+        return ret;
     }
 
     protected Integer getCodingSequencePosition(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
@@ -455,8 +505,7 @@ public abstract class AbstractVariantsFactory {
         switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
             case "+":
                 if (proteinRange.contains(transcriptPosition)) {
-                    ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum() + locatedVariant.getPosition()
-                            - transcriptMapsExons.getContigEnd() + 1;
+                    ret = transcriptPosition - proteinRange.getMinimum() + 1;
                 } else {
                     ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum() + locatedVariant.getPosition()
                             - transcriptMapsExons.getContigEnd() + 1;
