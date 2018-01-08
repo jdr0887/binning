@@ -414,7 +414,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 }
             }
 
-            ListIterator<TranscriptMapsExons> transcriptMapsExonsIter = transcriptMapsExonsList.listIterator();
+            ListIterator<TranscriptMapsExons> transcriptMapsExonsIter = transcriptMapsExonsList.stream()
+                    .sorted((a, b) -> Integer.compare(a.getId().getExonNum(), b.getId().getExonNum())).collect(Collectors.toList())
+                    .listIterator();
 
             TranscriptMapsExons previous = null;
             while (transcriptMapsExonsIter.hasNext()) {
@@ -687,6 +689,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     variant.getVariantType().getId(), variant.getTranscriptPosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
                     null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
 
+            logger.debug(transcriptMapsExons.getTranscriptMaps().getTranscript().toString());
+
             String locationType = getLocationType(daoBean, locatedVariantRange, transcriptMapsExonsContigRange,
                     transcriptMapsExonsTranscriptRange, proteinRange, transcriptMapsExons.getTranscriptMaps(),
                     variant.getTranscriptPosition());
@@ -746,11 +750,13 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 // variant.setNonCanonicalExon(transcriptMapsExonsList.indexOf(transcriptMapsExons) + 1);
                 variant.setNonCanonicalExon(getNonCanonicalExon(transcriptMapsExonsList, transcriptMapsExons, proteinRange));
 
-                variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
-                        proteinRange, variant.getTranscriptPosition()));
+                Integer intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
+                        proteinRange, variant.getTranscriptPosition());
+                variant.setIntronExonDistance(intronExonDistance);
 
-                variant.setCodingSequencePosition(
-                        getCodingSequencePosition(locatedVariant, transcriptMapsExons, variant.getTranscriptPosition(), proteinRange));
+                Integer codingSequencePosition = getCodingSequencePosition(locatedVariant, transcriptMapsExons,
+                        variant.getTranscriptPosition(), proteinRange);
+                variant.setCodingSequencePosition(codingSequencePosition);
 
                 String transcriptDNASequence = transcriptMapsExons.getTranscriptMaps().getTranscript().getSeq();
                 String originalDNASeq = transcriptDNASequence.substring(proteinRange.getMinimum() - 1, proteinRange.getMaximum());
