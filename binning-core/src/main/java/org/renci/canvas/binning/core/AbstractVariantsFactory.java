@@ -513,9 +513,9 @@ public abstract class AbstractVariantsFactory {
                 break;
             case "-":
                 if (proteinRange.contains(transcriptPosition)) {
-                    ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum()
-                            - (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd()) + 1;
-                    // ret = transcriptPosition - proteinRange.getMinimum() + 1;
+                    // ret = transcriptMapsExonsTranscriptRange.getMaximum() - proteinRange.getMinimum()
+                    // - (locatedVariant.getPosition() - transcriptMapsExons.getContigEnd()) + 1;
+                    ret = transcriptPosition - proteinRange.getMinimum() + 1;
                 } else {
                     ret = (transcriptMapsExonsContigRange.getMaximum() - locatedVariant.getPosition() + 1);
                 }
