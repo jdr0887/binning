@@ -495,13 +495,6 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_173600.2")).findFirst().get();
         logger.info(variant.toString());
 
-        // Variants_80_4 [key=Variants_80_4PK [locatedVariant=553562444, genomeRefSeq=NC_000012.12, position=40484948, variantType=snp,
-        // transcript=NM_173600.2, locationType=exon, variantEffect=nonsense, mapNumber=1], refSeqGene=MUC19, hgncGene=MUC19,
-        // transcriptPosition=12050, codingSequencePosition=11998, aminoAcidStart=4000, aminoAcidEnd=4001, originalAminoAcid=E,
-        // finalAminoAcid=*, frameshift=false, inframe=false, intronExonDistance=5896, strand=+, numberOfTranscriptMaps=1,
-        // referenceAllele=C, alternateAllele=T, hgvsGenomic=NC_000012.12:g.40484948C>T, hgvsCodingSequence=NM_173600.2:c.11998C>T,
-        // hgvsTranscript=NM_173600.2:g.12050C>T, hgvsProtein=NP_775871.2:p.Glu4000*, nonCanonicalExon=56, featureId=2061983]
-
         assertTrue(variant.getLocatedVariant().getId().equals(553562444L));
         assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.12"));
         assertTrue(variant.getLocatedVariant().getPosition().equals(40484948));
@@ -526,6 +519,22 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgvsCodingSequence().equals("NM_173600.2:c.11996C>T"));
         assertTrue(variant.getHgvsTranscript().equals("NM_173600.2:g.12050C>T"));
         assertTrue(variant.getHgvsProtein().equals("NP_775871.2:p.Ala3999Val"));
+
+    }
+
+    @Test
+    public void testLocatedVariant527545933() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(527545933L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001243182.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(527545933L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000013.11"));
 
     }
 
