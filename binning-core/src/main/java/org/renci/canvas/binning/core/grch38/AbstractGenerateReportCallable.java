@@ -89,17 +89,13 @@ public abstract class AbstractGenerateReportCallable implements Callable<Void> {
 
             Map<Long, Set<String>> asdf = new HashMap<>();
             for (Variants_80_4 variant : variants) {
-                if (!asdf.containsKey(variant.getLocatedVariant().getId())) {
-                    asdf.put(variant.getLocatedVariant().getId(), new HashSet<>());
-                }
+                asdf.putIfAbsent(variant.getLocatedVariant().getId(), new HashSet<>());
                 asdf.get(variant.getLocatedVariant().getId()).add(variant.getLocationType().getId());
             }
 
             Map<Set<String>, Integer> qwer = new HashMap<>();
             for (Long locatedVariantId : asdf.keySet()) {
-                if (!qwer.containsKey(asdf.get(locatedVariantId))) {
-                    qwer.put(asdf.get(locatedVariantId), 0);
-                }
+                qwer.putIfAbsent(asdf.get(locatedVariantId), 0);
                 qwer.put(asdf.get(locatedVariantId), qwer.get(asdf.get(locatedVariantId)) + 1);
             }
 
@@ -117,10 +113,7 @@ public abstract class AbstractGenerateReportCallable implements Callable<Void> {
                     zxcvKey = "noncoding";
                 }
 
-                if (!zxcv.containsKey(zxcvKey)) {
-                    zxcv.put(zxcvKey, 0);
-                }
-
+                zxcv.putIfAbsent(zxcvKey, 0);
                 zxcv.put(zxcvKey, zxcv.get(zxcvKey) + qwer.get(locationTypeSet));
 
             }
