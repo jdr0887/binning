@@ -1022,7 +1022,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     String altAllele = new DNASequence(variant.getAlternateAllele()).getReverseComplement().getSequenceAsString();
                     finalDNASeq = String.format("%s%s%s", dnaSequenceParts.getLeft(), altAllele, dnaSequenceParts.getRight());
                 }
-                
+
                 DNASequence finalDNASequence = new DNASequence(finalDNASeq);
                 Sequence<NucleotideCompound> finalRNASequence = dna2RnaTranslator.createSequence(finalDNASequence);
                 Sequence<AminoAcidCompound> finalProteinSequence = rna2AminoAcidTranslator.createSequence(finalRNASequence);
@@ -1306,16 +1306,22 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
                         case "+":
-
                             variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
                                     variant.getVariantType().getId(), Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition()
                                             + variant.getIntronExonDistance() - 1),
                                     locatedVariant.getRef(), locatedVariant.getSeq(), variant.getIntronExonDistance()));
                             break;
                         case "-":
-                            variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                                    variant.getVariantType().getId(), proteinRange.getMaximum(), locatedVariant.getRef(),
-                                    locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
+                            if (transcriptPosition < proteinRange.getMaximum()) {
+                                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                                        variant.getVariantType().getId(), variant.getTranscriptPosition() - proteinRange.getMinimum() + 2,
+                                        locatedVariant.getRef(), locatedVariant.getSeq(), null, false));
+                            } else {
+                                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                                        variant.getVariantType().getId(), proteinRange.getMaximum(), locatedVariant.getRef(),
+                                        locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
+                            }
+
                             break;
                     }
 
