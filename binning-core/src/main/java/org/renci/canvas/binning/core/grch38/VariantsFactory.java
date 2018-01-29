@@ -1022,7 +1022,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     String altAllele = new DNASequence(variant.getAlternateAllele()).getReverseComplement().getSequenceAsString();
                     finalDNASeq = String.format("%s%s%s", dnaSequenceParts.getLeft(), altAllele, dnaSequenceParts.getRight());
                 }
-
+                
                 DNASequence finalDNASequence = new DNASequence(finalDNASeq);
                 Sequence<NucleotideCompound> finalRNASequence = dna2RnaTranslator.createSequence(finalDNASequence);
                 Sequence<AminoAcidCompound> finalProteinSequence = rna2AminoAcidTranslator.createSequence(finalRNASequence);
@@ -1500,9 +1500,12 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         }
 
                         ++tmpStart;
+
                         tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
                         tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
-                        if (!tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
+
+                        if (finalProteinSequence.getLength() == tmpStart
+                                || !tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
                             aaCompounds.add(tmpFinalAACompound);
                             break;
                         }
@@ -1530,7 +1533,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         ++tmpStart;
                         tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
                         tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
-                        if (!tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
+                        if (finalProteinSequence.getLength() == tmpStart
+                                || !tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
                             aaCompounds.add(tmpFinalAACompound);
                             break;
                         }
