@@ -436,10 +436,19 @@ public abstract class AbstractVariantsFactory {
 
             if (exonTranscriptRange.contains(proteinRange.getMaximum()) && transcriptPosition > proteinRange.getMaximum()) {
                 transcriptPosition = locatedVariant.getPosition() - exonContigRange.getMinimum() + proteinRange.getMinimum();
+                
+                if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+                    transcriptPosition = proteinRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
+                }
+                
             }
 
             if (exonTranscriptRange.contains(proteinRange.getMinimum()) && transcriptPosition < proteinRange.getMinimum()) {
                 transcriptPosition = proteinRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
+                
+                if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
+                    transcriptPosition = exonTranscriptRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
+                }
             }
 
         }
