@@ -18,6 +18,28 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         super();
     }
 
+    // @Test
+    // public void testLocatedVariant522370587() throws Exception {
+    // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522370587L);
+    // logger.info(locatedVariant.toString());
+    //
+    // List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+    //
+    // Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NR_133575.1")).findFirst().get();
+    // logger.info(variant.toString());
+    //
+    // assertTrue(variant.getLocatedVariant().getId().equals(522370587L));
+    // assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.12"));
+    // assertTrue(variant.getLocatedVariant().getPosition().equals(11021620));
+    // assertTrue(variant.getLocationType().getId().equals("intron"));
+    // assertTrue(variant.getVariantType().getId().equals("sub"));
+    // assertTrue(variant.getId().getTranscript().equals("NR_133575.1"));
+    // assertTrue(variant.getRefSeqGene().equals("PRH1"));
+    // assertTrue(variant.getHgncGene().equals("PRH1"));
+    // assertTrue(variant.getStrand().equals("-"));
+    //
+    // }
+
     @Test
     public void testLocatedVariant495918232() throws Exception {
         // ins, synonmous indel

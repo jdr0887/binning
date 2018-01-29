@@ -19,6 +19,60 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
     }
 
     @Test
+    public void testLocatedVariant522371209() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522371209L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("XM_006720981.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(522371209L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000016.10"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(2038418));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("XM_006720981.1"));
+        assertTrue(variant.getRefSeqGene().equals("SLC9A3R2"));
+        assertTrue(variant.getHgncGene().equals("SLC9A3R2"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+
+    }
+
+    @Test
+    public void testLocatedVariant546704464() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(546704464L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_194322.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(546704464L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000002.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(26477955));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_194322.2"));
+        assertTrue(variant.getRefSeqGene().equals("OTOF"));
+        assertTrue(variant.getHgncGene().equals("OTOF"));
+        assertTrue(variant.getLocationType().getId().equals("UTR-5"));
+        assertTrue(variant.getStrand().equals("-"));
+        assertTrue(variant.getTranscriptPosition().equals(88));
+        assertTrue(variant.getIntronExonDistance().equals(158));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR-5"));
+        assertTrue(variant.getGene().getId().equals(20932));
+        assertTrue(variant.getReferenceAllele().equals("GG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000002.12:g.26477955_26477956delGG"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_194322.2:g.87_88delCC"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_194322.2:c.-60_-59delGG"));
+
+    }
+
+    @Test
     public void testLocatedVariant492043345() throws Exception {
         // boundary crossing, negative strand
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(492043345L);
@@ -336,7 +390,7 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getVariantType().getId().equals("del"));
         assertTrue(variant.getLocationType().getId().equals("exon"));
     }
-    
+
     @Test
     public void testLocatedVariant526377012() throws Exception {
 
@@ -355,7 +409,4 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getLocationType().getId().equals("intron"));
     }
 
-    
-    
-    
 }
