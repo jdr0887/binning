@@ -19,6 +19,46 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
     }
 
     @Test
+    public void testLocatedVariant546992721() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(546992721L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        // Variants_80_4 [key=Variants_80_4PK [locatedVariant=546992721, genomeRefSeq=NC_000007.14, position=117559592, variantType=del,
+        // transcript=NM_000492.3, locationType=exon, variantEffect=non-frameshifting indel, mapNumber=1], refSeqGene=CFTR, hgncGene=CFTR,
+        // transcriptPosition=1653, codingSequencePosition=1521, aminoAcidStart=507, aminoAcidEnd=508, originalAminoAcid=IF,
+        // finalAminoAcid=G, frameshift=false, inframe=true, intronExonDistance=-64, strand=+, numberOfTranscriptMaps=1,
+        // referenceAllele=CTT, alternateAllele=, hgvsGenomic=NC_000007.14:g.117559592_117559594delCTT,
+        // hgvsCodingSequence=NM_000492.3:c.1521_1523delCTT, hgvsTranscript=NM_000492.3:g.1653_1655delCTT,
+        // hgvsProtein=NP_000483.3:p.Ile507del, nonCanonicalExon=11, featureId=2542854]
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_000492.3")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(546992721L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000007.14"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(117559592));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_000492.3"));
+        assertTrue(variant.getRefSeqGene().equals("CFTR"));
+        assertTrue(variant.getHgncGene().equals("CFTR"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(1653));
+        assertTrue(variant.getIntronExonDistance().equals(-64));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getGene().getId().equals(4960));
+        assertTrue(variant.getReferenceAllele().equals("CTT"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000007.14:g.117559592_117559594delCTT"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_000492.3:c.1521_1523delCTT"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_000492.3:g.1653_1655delCTT"));
+        assertTrue(variant.getHgvsProtein().equals("NP_000483.3:p.Phe508del"));
+
+    }
+
+    @Test
     public void testLocatedVariant522371209() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522371209L);
