@@ -1553,6 +1553,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     AminoAcidCompound nextOriginalAACompound = originalProteinSequence
                             .getCompoundAt(variant.getAminoAcidStart() + (locatedVariant.getRef().length() / 3));
+
                     if (nextOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
 
                         if ((variant.getAminoAcidStart().equals(variant.getAminoAcidEnd() - 1))) {
@@ -1580,8 +1581,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                         } else if ((variant.getAminoAcidEnd() - variant.getAminoAcidStart()) == 1) {
 
-                            variant.setHgvsProtein(String.format("%s:p.%s%ddel", refSeqCDS.getProteinId(), firstOriginalAACompoundValue,
-                                    variant.getAminoAcidStart()));
+                            variant.setHgvsProtein(
+                                    String.format("%s:p.%s%ddel", refSeqCDS.getProteinId(), tmpOriginalAACompound.getLongName(), tmpStart));
 
                         } else if ("*".equals(variant.getFinalAminoAcid())) {
                             variant.setHgvsProtein(String.format("%s:p.%s%d_%s%ddelins%s", refSeqCDS.getProteinId(),
