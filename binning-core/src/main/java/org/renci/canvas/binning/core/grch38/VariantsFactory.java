@@ -507,8 +507,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             }
 
                             variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c", variant.getVariantType().getId(),
-                                    variant.getTranscriptPosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
-                                    variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
+                                    Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition() - 1), locatedVariant.getRef(),
+                                    locatedVariant.getSeq(), variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
 
                         }
                     }
