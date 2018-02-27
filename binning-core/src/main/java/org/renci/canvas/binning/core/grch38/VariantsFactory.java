@@ -667,6 +667,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
             Range<Integer> transcriptMapsExonsContigRange = transcriptMapsExons.getContigRange();
             Range<Integer> transcriptMapsExonsTranscriptRange = transcriptMapsExons.getTranscriptRange();
 
+            logger.debug(transcriptMapsExons.getTranscriptMaps().getTranscript().toString());
+
             Integer transcriptPosition = getTranscriptPosition(locatedVariant, transcriptMapsExons, proteinRange);
             variant.setTranscriptPosition(transcriptPosition);
 
@@ -689,8 +691,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     variant.getVariantType().getId(), variant.getTranscriptPosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
                     null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
 
-            logger.debug(transcriptMapsExons.getTranscriptMaps().getTranscript().toString());
-
             String locationType = getLocationType(daoBean, locatedVariantRange, transcriptMapsExonsContigRange,
                     transcriptMapsExonsTranscriptRange, proteinRange, transcriptMapsExons.getTranscriptMaps(),
                     variant.getTranscriptPosition());
@@ -707,16 +707,21 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
                             proteinRange, variant.getTranscriptPosition()));
 
+                    Integer position = null;
+
                     switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
                         case "+":
+                            position = Math
+                                    .abs(proteinRange.getMinimum() - variant.getTranscriptPosition() + variant.getIntronExonDistance() - 1);
                             variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                                    variant.getVariantType().getId(), Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition()
-                                            + variant.getIntronExonDistance() - 1),
-                                    locatedVariant.getRef(), locatedVariant.getSeq(), variant.getIntronExonDistance()));
+                                    variant.getVariantType().getId(), position, locatedVariant.getRef(), locatedVariant.getSeq(),
+                                    variant.getIntronExonDistance()));
                             break;
                         case "-":
+                            position = variant.getLocationType().getId().equals("UTR-3") ? proteinRange.getMaximum()
+                                    : proteinRange.getMinimum();
                             variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                                    variant.getVariantType().getId(), proteinRange.getMaximum(), locatedVariant.getRef(),
+                                    variant.getVariantType().getId(), position, locatedVariant.getRef(),
                                     locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
                             break;
                     }
