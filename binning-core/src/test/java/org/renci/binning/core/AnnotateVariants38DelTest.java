@@ -26,14 +26,6 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
 
         List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
 
-        // Variants_80_4 [key=Variants_80_4PK [locatedVariant=546992721, genomeRefSeq=NC_000007.14, position=117559592, variantType=del,
-        // transcript=NM_000492.3, locationType=exon, variantEffect=non-frameshifting indel, mapNumber=1], refSeqGene=CFTR, hgncGene=CFTR,
-        // transcriptPosition=1653, codingSequencePosition=1521, aminoAcidStart=507, aminoAcidEnd=508, originalAminoAcid=IF,
-        // finalAminoAcid=G, frameshift=false, inframe=true, intronExonDistance=-64, strand=+, numberOfTranscriptMaps=1,
-        // referenceAllele=CTT, alternateAllele=, hgvsGenomic=NC_000007.14:g.117559592_117559594delCTT,
-        // hgvsCodingSequence=NM_000492.3:c.1521_1523delCTT, hgvsTranscript=NM_000492.3:g.1653_1655delCTT,
-        // hgvsProtein=NP_000483.3:p.Ile507del, nonCanonicalExon=11, featureId=2542854]
-
         Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_000492.3")).findFirst().get();
         logger.info(variant.toString());
 
