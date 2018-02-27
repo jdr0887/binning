@@ -51,8 +51,7 @@ public abstract class AbstractVariantsFactory {
         switch (type) {
             case "snp":
                 if (intronExonDistance != null) {
-                    ret = String.format("%s:%s.%d%s%s>%s", accession, accessionType, position, String.format("%+d", intronExonDistance),
-                            ref, alt);
+                    ret = String.format("%s:%s.%d%+d%s>%s", accession, accessionType, position, intronExonDistance, ref, alt);
                 } else {
                     ret = String.format("%s:%s.%d%s>%s", accession, accessionType, position, ref, alt);
                 }
@@ -329,8 +328,9 @@ public abstract class AbstractVariantsFactory {
 
                 if (proteinRange.isAfter(transcriptPosition)) {
                     // we are in UTR5 region
-                    return locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum()
-                            + (transcriptMapsExonsTranscriptRange.getMaximum() - proteinExonIntersection.getMinimum()) - 1;
+                    return transcriptPosition - proteinRange.getMinimum();
+                    // return locatedVariantRange.getMaximum() - transcriptMapsExonsContigRange.getMaximum()
+                    // + (transcriptMapsExonsTranscriptRange.getMaximum() - proteinExonIntersection.getMinimum()) - 1;
                 }
 
                 if (proteinRange.contains(transcriptPosition)) {
@@ -436,16 +436,17 @@ public abstract class AbstractVariantsFactory {
 
             if (exonTranscriptRange.contains(proteinRange.getMaximum()) && transcriptPosition > proteinRange.getMaximum()) {
                 transcriptPosition = locatedVariant.getPosition() - exonContigRange.getMinimum() + proteinRange.getMinimum();
-                
+
                 if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
-                    transcriptPosition = proteinRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
+                    transcriptPosition = exonTranscriptRange.getMaximum() - (locatedVariant.getPosition() - exonContigRange.getMinimum());
+                    // transcriptPosition = proteinRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
                 }
-                
+
             }
 
             if (exonTranscriptRange.contains(proteinRange.getMinimum()) && transcriptPosition < proteinRange.getMinimum()) {
                 transcriptPosition = proteinRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
-                
+
                 if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
                     transcriptPosition = exonTranscriptRange.getMinimum() + (exonContigRange.getMaximum() - locatedVariant.getPosition());
                 }
