@@ -471,6 +471,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                                 }
 
+                                variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c", variant.getVariantType().getId(),
+                                        Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition() - 1), locatedVariant.getRef(),
+                                        locatedVariant.getSeq(), variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
+
                             } else {
 
                                 rightDistance = locatedVariant.getPosition() - currentContigRange.getMinimum();
@@ -504,11 +508,11 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                                 }
 
-                            }
+                                variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c", variant.getVariantType().getId(),
+                                        variant.getTranscriptPosition() - proteinRange.getMinimum(), locatedVariant.getRef(),
+                                        locatedVariant.getSeq(), variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
 
-                            variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c", variant.getVariantType().getId(),
-                                    Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition() - 1), locatedVariant.getRef(),
-                                    locatedVariant.getSeq(), variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
+                            }
 
                         }
                     }
@@ -721,8 +725,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                             position = variant.getLocationType().getId().equals("UTR-3") ? proteinRange.getMaximum()
                                     : proteinRange.getMinimum();
                             variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                                    variant.getVariantType().getId(), position, locatedVariant.getRef(),
-                                    locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
+                                    variant.getVariantType().getId(), position, locatedVariant.getRef(), locatedVariant.getSeq(),
+                                    variant.getIntronExonDistance(), true));
                             break;
                     }
 
