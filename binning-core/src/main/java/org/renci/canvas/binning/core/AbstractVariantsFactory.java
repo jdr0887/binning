@@ -104,22 +104,44 @@ public abstract class AbstractVariantsFactory {
 
         // UTR, UTR-5, UTR-3, intron, exon, intergenic, potential RNA-editing site, intron/exon boundary
 
-        String locationTypeValue = "UTR";
-
         if (proteinRange != null) {
 
-            if (transcriptMapsExonsTranscriptRange != null && transcriptMapsExonsTranscriptRange.contains(transcriptPosition)) {
-                locationTypeValue = "exon";
+            if (proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
+                
+                Range<Integer> proteinTranscriptIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
+                
+                if (proteinRange.isBefore(transcriptPosition)) {
+                    return "UTR-3";
+                }
+
+                if (proteinRange.isAfter(transcriptPosition)) {
+                    return "UTR-5";
+                }
+
+                if (proteinTranscriptIntersection.isAfter(transcriptPosition)) {
+                    return "UTR-3";
+                }
+                if (proteinTranscriptIntersection.isBefore(transcriptPosition)) {
+                    return "UTR-5";
+                }
+
             }
 
             if (proteinRange.isBefore(transcriptPosition)) {
-                locationTypeValue = "UTR-3";
-            } else if (proteinRange.isAfter(transcriptPosition)) {
-                locationTypeValue = "UTR-5";
+                return "UTR-3";
+            }
+
+            if (proteinRange.isAfter(transcriptPosition)) {
+                return "UTR-5";
             }
 
         }
-        return locationTypeValue;
+
+        if (transcriptMapsExonsTranscriptRange != null && transcriptMapsExonsTranscriptRange.contains(transcriptPosition)) {
+            return "exon";
+        }
+
+        return "UTR";
     }
 
     protected Integer getIntronExonDistance(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
@@ -292,7 +314,7 @@ public abstract class AbstractVariantsFactory {
                         return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
                     }
 
-                    Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+                    Integer right = proteinExonIntersection.getMaximum() - transcriptPosition;
                     Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
 
                     return Math.abs(left) < Math.abs(right) ? left : right;
@@ -302,7 +324,7 @@ public abstract class AbstractVariantsFactory {
 
             if (isLast) {
 
-                if (proteinRange.isBefore(transcriptPosition)) {
+                if (proteinRange.isBefore(transcriptPosition) || proteinExonIntersection.isAfter(transcriptPosition)) {
                     // we are in UTR3 region
                     return transcriptPosition - proteinExonIntersection.getMaximum();
                 }
@@ -312,7 +334,13 @@ public abstract class AbstractVariantsFactory {
                         // last interval is an exon
                         return transcriptPosition - proteinExonIntersection.getMinimum() + 1;
                     }
-                    return transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+
+                    Integer right = proteinExonIntersection.getMaximum() - transcriptPosition;
+                    Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
+
+                    return Math.abs(left) < Math.abs(right) ? left : right;
+
+                    // return proteinExonIntersection.getMaximum() - transcriptPosition
                 }
 
             }
