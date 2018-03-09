@@ -709,19 +709,27 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                 if (proteinRange != null && proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
 
-                    intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
-                            proteinRange, variant.getTranscriptPosition());
+                    intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList, proteinRange,
+                            variant.getTranscriptPosition());
                     variant.setIntronExonDistance(intronExonDistance);
-
+                    Range<Integer> proteinExonIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
                     Integer position = null;
 
                     switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
                         case "+":
                             position = Math
                                     .abs(proteinRange.getMinimum() - variant.getTranscriptPosition() + variant.getIntronExonDistance() - 1);
-                            variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                                    variant.getVariantType().getId(), position, locatedVariant.getRef(), locatedVariant.getSeq(),
-                                    variant.getIntronExonDistance()));
+                            if (intronExonDistance < 0 && proteinExonIntersection.isAfter(transcriptPosition)) {
+                                Integer cdsLeft = position - (proteinExonIntersection.getMaximum() - proteinExonIntersection.getMinimum());
+                                Integer diff = variant.getIntronExonDistance() + cdsLeft - 1;
+                                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                                        variant.getVariantType().getId(), cdsLeft, locatedVariant.getRef(), locatedVariant.getSeq(), diff));
+                            } else {
+                                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                                        variant.getVariantType().getId(), position, locatedVariant.getRef(), locatedVariant.getSeq(),
+                                        variant.getIntronExonDistance()));
+                            }
+
                             break;
                         case "-":
                             position = variant.getLocationType().getId().equals("UTR-3") ? proteinRange.getMaximum()
