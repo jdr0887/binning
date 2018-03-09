@@ -147,7 +147,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getFinalAminoAcid().equals("A"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.TRUE));
-        assertTrue(variant.getIntronExonDistance().equals(-57));
+        assertTrue(variant.getIntronExonDistance().equals(56));
         assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
         assertTrue(variant.getGene().getId().equals(5786));
         assertTrue(variant.getReferenceAllele().equals("ACC"));
@@ -266,7 +266,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getFinalAminoAcid().equals("RRK*P"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.FALSE));
-        assertTrue(variant.getIntronExonDistance().equals(-4));
+        assertTrue(variant.getIntronExonDistance().equals(3));
         assertTrue(variant.getId().getVariantEffect().equals("nonsense indel"));
         assertTrue(variant.getGene().getId().equals(18892));
         assertTrue(variant.getAlternateAllele().equals("GACGTAAGT"));
@@ -406,7 +406,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getFinalAminoAcid().equals("Y"));
         assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
         assertTrue(variant.getInframe().equals(Boolean.TRUE));
-        assertTrue(variant.getIntronExonDistance().equals(-73));
+        assertTrue(variant.getIntronExonDistance().equals(18));
         assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
         assertTrue(variant.getGene().getId().equals(5177));
         assertTrue(variant.getAlternateAllele().equals("CTCAT"));

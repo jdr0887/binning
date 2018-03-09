@@ -1632,11 +1632,11 @@ public class VariantsFactory extends AbstractVariantsFactory {
                     variant.getId().setVariantEffect(variant.getVariantEffect().getId());
                 }
 
-            }
+                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                        variant.getVariantType().getId(), variant.getCodingSequencePosition(), locatedVariant.getRef(),
+                        locatedVariant.getSeq(), null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
 
-            variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                    variant.getVariantType().getId(), variant.getCodingSequencePosition(), locatedVariant.getRef(), locatedVariant.getSeq(),
-                    null, "-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())));
+            }
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
