@@ -83,7 +83,8 @@ public abstract class AbstractVariantsFactory {
                         ret = String.format("%s:%s.%d_%ddel%s", accession, accessionType, start, end, ref);
                     }
                 } else {
-                    ret = String.format("%s:%s.%d%+d_%ddel%s", accession, accessionType, start, intronExonDistance, end, ref);
+                    ret = String.format("%s:%s.%d%+d_%d+%ddel", accession, accessionType, end, intronExonDistance, end,
+                            intronExonDistance + ref.length() - 1);
                 }
                 break;
             case "ins":
