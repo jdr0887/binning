@@ -685,7 +685,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 variant.setFeatureId(feature.getId());
             }
 
-            variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList));
+            Integer intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList);
+            variant.setIntronExonDistance(intronExonDistance);
 
             if (variant.getIntronExonDistance() != null && variant.getIntronExonDistance().equals(variant.getTranscriptPosition())) {
                 variant.setIntronExonDistance(null);
@@ -708,8 +709,9 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                 if (proteinRange != null && proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
 
-                    variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
-                            proteinRange, variant.getTranscriptPosition()));
+                    intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
+                            proteinRange, variant.getTranscriptPosition());
+                    variant.setIntronExonDistance(intronExonDistance);
 
                     Integer position = null;
 
@@ -759,8 +761,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 // variant.setNonCanonicalExon(transcriptMapsExonsList.indexOf(transcriptMapsExons) + 1);
                 variant.setNonCanonicalExon(getNonCanonicalExon(transcriptMapsExonsList, transcriptMapsExons, proteinRange));
 
-                Integer intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
-                        proteinRange, variant.getTranscriptPosition());
+                intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList, proteinRange,
+                        variant.getTranscriptPosition());
                 variant.setIntronExonDistance(intronExonDistance);
 
                 Integer codingSequencePosition = getCodingSequencePosition(locatedVariant, transcriptMapsExons,
