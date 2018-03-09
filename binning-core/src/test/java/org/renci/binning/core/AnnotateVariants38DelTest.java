@@ -19,6 +19,36 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
     }
 
     @Test
+    public void testLocatedVariant522364463() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522364463L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_015627.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(522364463L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000001.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(25562853));
+        assertTrue(variant.getVariantType().getId().equals("del"));
+        assertTrue(variant.getId().getTranscript().equals("NM_015627.2"));
+        assertTrue(variant.getRefSeqGene().equals("LDLRAP1"));
+        assertTrue(variant.getHgncGene().equals("LDLRAP1"));
+        assertTrue(variant.getLocationType().getId().equals("intron"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(646));
+        assertTrue(variant.getIntronExonDistance().equals(137));
+        assertTrue(variant.getId().getVariantEffect().equals("intron"));
+        assertTrue(variant.getGene().getId().equals(14604));
+        assertTrue(variant.getReferenceAllele().equals("GA"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000001.11:g.25562853_25562854delGA"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_015627.2:c.532+137_532+138del"));
+
+    }
+
+    @Test
     public void testLocatedVariant546992721() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(546992721L);
