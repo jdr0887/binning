@@ -317,7 +317,7 @@ public abstract class AbstractVariantsFactory {
 
             }
 
-            Integer right = transcriptPosition - proteinExonIntersection.getMaximum() - 1;
+            Integer right = proteinExonIntersection.getMaximum() - transcriptPosition;
             Integer left = transcriptPosition - proteinExonIntersection.getMinimum() + 1;
             return Math.abs(left) < Math.abs(right) ? left : right;
 
