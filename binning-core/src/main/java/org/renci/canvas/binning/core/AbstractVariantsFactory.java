@@ -107,9 +107,9 @@ public abstract class AbstractVariantsFactory {
         if (proteinRange != null) {
 
             if (proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
-                
+
                 Range<Integer> proteinTranscriptIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
-                
+
                 if (proteinRange.isBefore(transcriptPosition)) {
                     return "UTR-3";
                 }
@@ -135,13 +135,14 @@ public abstract class AbstractVariantsFactory {
                 return "UTR-5";
             }
 
+        } 
+
+        if (proteinRange == null && transcriptMapsExonsTranscriptRange != null
+                && transcriptMapsExonsTranscriptRange.contains(transcriptPosition)) {
+            return "UTR";
         }
 
-        if (transcriptMapsExonsTranscriptRange != null && transcriptMapsExonsTranscriptRange.contains(transcriptPosition)) {
-            return "exon";
-        }
-
-        return "UTR";
+        return "exon";
     }
 
     protected Integer getIntronExonDistance(LocatedVariant locatedVariant, TranscriptMapsExons transcriptMapsExons,
