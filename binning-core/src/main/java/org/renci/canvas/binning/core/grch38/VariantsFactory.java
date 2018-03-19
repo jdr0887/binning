@@ -18,7 +18,6 @@ import org.biojava.nbio.core.sequence.compound.AminoAcidCompound;
 import org.biojava.nbio.core.sequence.compound.AminoAcidCompoundSet;
 import org.biojava.nbio.core.sequence.compound.NucleotideCompound;
 import org.biojava.nbio.core.sequence.template.Sequence;
-import org.biojava.nbio.core.sequence.template.SequenceView;
 import org.biojava.nbio.core.sequence.transcription.DNAToRNATranslator;
 import org.biojava.nbio.core.sequence.transcription.RNAToAminoAcidTranslator;
 import org.biojava.nbio.core.sequence.transcription.TranscriptionEngine;
