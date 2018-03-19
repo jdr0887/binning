@@ -135,7 +135,7 @@ public abstract class AbstractVariantsFactory {
                 return "UTR-5";
             }
 
-        } 
+        }
 
         if (proteinRange == null && transcriptMapsExonsTranscriptRange != null
                 && transcriptMapsExonsTranscriptRange.contains(transcriptPosition)) {
@@ -466,6 +466,9 @@ public abstract class AbstractVariantsFactory {
 
             if (exonTranscriptRange.contains(proteinRange.getMaximum()) && transcriptPosition > proteinRange.getMaximum()) {
                 transcriptPosition = locatedVariant.getPosition() - exonContigRange.getMinimum() + proteinRange.getMinimum();
+                transcriptPosition = locatedVariant.getPosition()
+                        - (exonContigRange.getMinimum() + (proteinRange.getMaximum() - exonTranscriptRange.getMinimum()))
+                        + proteinRange.getMaximum();
 
                 if ("-".equals(transcriptMapsExons.getTranscriptMaps().getStrand())) {
                     transcriptPosition = exonTranscriptRange.getMaximum() - (locatedVariant.getPosition() - exonContigRange.getMinimum());

@@ -18,27 +18,35 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         super();
     }
 
-    // @Test
-    // public void testLocatedVariant522370587() throws Exception {
-    // LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522370587L);
-    // logger.info(locatedVariant.toString());
-    //
-    // List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
-    //
-    // Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NR_133575.1")).findFirst().get();
-    // logger.info(variant.toString());
-    //
-    // assertTrue(variant.getLocatedVariant().getId().equals(522370587L));
-    // assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.12"));
-    // assertTrue(variant.getLocatedVariant().getPosition().equals(11021620));
-    // assertTrue(variant.getLocationType().getId().equals("intron"));
-    // assertTrue(variant.getVariantType().getId().equals("sub"));
-    // assertTrue(variant.getId().getTranscript().equals("NR_133575.1"));
-    // assertTrue(variant.getRefSeqGene().equals("PRH1"));
-    // assertTrue(variant.getHgncGene().equals("PRH1"));
-    // assertTrue(variant.getStrand().equals("-"));
-    //
-    // }
+    @Test
+    public void testLocatedVariant522383386() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522383386L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001099693.1")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(522383386L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000002.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(101006236));
+        assertTrue(variant.getVariantType().getId().equals("ins"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001099693.1"));
+        assertTrue(variant.getRefSeqGene().equals("RPL31"));
+        assertTrue(variant.getHgncGene().equals("RPL31"));
+        assertTrue(variant.getLocationType().getId().equals("UTR-3"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(598));
+        assertTrue(variant.getIntronExonDistance().equals(145));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR-3"));
+        assertTrue(variant.getAlternateAllele().equals("G"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000002.12:g.101006236_101006237insG"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001099693.1:g.598_599insG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001099693.1:c.366_367insG"));
+
+    }
 
     @Test
     public void testLocatedVariant495918232() throws Exception {

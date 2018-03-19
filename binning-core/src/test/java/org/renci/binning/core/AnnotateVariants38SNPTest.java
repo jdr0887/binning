@@ -19,6 +19,99 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
     }
 
     @Test
+    public void testLocatedVariant575289850() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(575289850L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001079911.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(575289850L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000004.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(87663355));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001079911.2"));
+        assertTrue(variant.getRefSeqGene().equals("DMP1"));
+        assertTrue(variant.getHgncGene().equals("DMP1"));
+        assertTrue(variant.getLocationType().getId().equals("UTR-3"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(1633));
+        assertTrue(variant.getIntronExonDistance().equals(35));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR-3"));
+        assertTrue(variant.getReferenceAllele().equals("G"));
+        assertTrue(variant.getAlternateAllele().equals("A"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000004.12:g.87663355G>A"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001079911.2:g.1633G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001079911.2:c.1494+35G>A"));
+
+    }
+
+    @Test
+    public void testLocatedVariant559726800() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(559726800L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_213607.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(559726800L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000017.11"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(44902821));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getId().getTranscript().equals("NM_213607.2"));
+        assertTrue(variant.getRefSeqGene().equals("CCDC103"));
+        assertTrue(variant.getHgncGene().equals("CCDC103"));
+        assertTrue(variant.getLocationType().getId().equals("UTR-3"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(890));
+        assertTrue(variant.getIntronExonDistance().equals(4));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR-3"));
+        assertTrue(variant.getReferenceAllele().equals("G"));
+        assertTrue(variant.getAlternateAllele().equals("A"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000017.11:g.44902821G>A"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_213607.2:g.890G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_213607.2:c.729+4G>A"));
+
+    }
+
+    @Test
+    public void testLocatedVariant569046823() throws Exception {
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(569046823L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_002246.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(569046823L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000002.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(26728581));
+        assertTrue(variant.getVariantType().getId().equals("snp"));
+        assertTrue(variant.getId().getTranscript().equals("NM_002246.2"));
+        assertTrue(variant.getRefSeqGene().equals("KCNK3"));
+        assertTrue(variant.getHgncGene().equals("KCNK3"));
+        assertTrue(variant.getLocationType().getId().equals("UTR-3"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(1361));
+        assertTrue(variant.getIntronExonDistance().equals(13));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR-3"));
+        assertTrue(variant.getReferenceAllele().equals("G"));
+        assertTrue(variant.getAlternateAllele().equals("A"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000002.12:g.26728581G>A"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_002246.2:g.1361G>A"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_002246.2:c.1185+13G>A"));
+
+    }
+
+    @Test
     public void testLocatedVariant559726791() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(559726791L);
@@ -128,14 +221,14 @@ public class AnnotateVariants38SNPTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getHgncGene().equals("BSND"));
         assertTrue(variant.getLocationType().getId().equals("UTR-3"));
         assertTrue(variant.getStrand().equals("+"));
-        assertTrue(variant.getTranscriptPosition().equals(682));
-        assertTrue(variant.getIntronExonDistance().equals(-524));
+        assertTrue(variant.getTranscriptPosition().equals(1230));
+        assertTrue(variant.getIntronExonDistance().equals(24));
         assertTrue(variant.getId().getVariantEffect().equals("UTR-3"));
         assertTrue(variant.getReferenceAllele().equals("A"));
         assertTrue(variant.getAlternateAllele().equals("C"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.11:g.55008652A>C"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_057176.2:c.549+24A>C"));
-        assertTrue(variant.getHgvsTranscript().equals("NM_057176.2:g.682A>C"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_057176.2:c.963+24A>C"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_057176.2:g.1230A>C"));
 
     }
 
