@@ -19,6 +19,55 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
     }
 
     @Test
+    public void testLocatedVariant547150520() throws Exception {
+        // locvar: 547150520
+        // genomic: NC_000012.12:g.2681964_2681966delinsTGG
+        // currently reported as: NP_001123302.2:p.Pro1820Leu
+
+        // Variants_80_4 [key=Variants_80_4PK [locatedVariant=547150520, genomeRefSeq=NC_000012.12, position=2681964, variantType=sub,
+        // transcript=NM_001167624.2, locationType=exon, variantEffect=non-frameshifting indel, mapNumber=1], refSeqGene=CACNA1C,
+        // hgncGene=CACNA1C, transcriptPosition=5737, codingSequencePosition=5459, aminoAcidStart=1820, aminoAcidEnd=1821,
+        // originalAminoAcid=PM, finalAminoAcid=LV, frameshift=false, inframe=true, intronExonDistance=15, strand=+,
+        // numberOfTranscriptMaps=1, referenceAllele=CGA, alternateAllele=TGG, hgvsGenomic=NC_000012.12:g.2681964_2681966delinsTGG,
+        // hgvsCodingSequence=NM_001167624.2:c.5459_5461delinsTGG, hgvsTranscript=NM_001167624.2:g.5737_5739delinsTGG,
+        // hgvsProtein=NP_001161096.2:p.Pro1820_Met1821delinsLeuVal, nonCanonicalExon=43, featureId=2474501]
+
+        LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(547150520L);
+        logger.info(locatedVariant.toString());
+
+        List<Variants_80_4> variants = annotateLocatedVariant(locatedVariant);
+
+        Variants_80_4 variant = variants.stream().filter(a -> a.getId().getTranscript().equals("NM_001167624.2")).findFirst().get();
+        logger.info(variant.toString());
+
+        assertTrue(variant.getLocatedVariant().getId().equals(547150520L));
+        assertTrue(variant.getGenomeRefSeq().getId().equals("NC_000012.12"));
+        assertTrue(variant.getLocatedVariant().getPosition().equals(2681964));
+        assertTrue(variant.getVariantType().getId().equals("sub"));
+        assertTrue(variant.getId().getTranscript().equals("NM_001167624.2"));
+        assertTrue(variant.getRefSeqGene().equals("CACNA1C"));
+        assertTrue(variant.getHgncGene().equals("CACNA1C"));
+        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(5737));
+        assertTrue(variant.getIntronExonDistance().equals(15));
+        assertTrue(variant.getAminoAcidStart().equals(1820));
+        assertTrue(variant.getAminoAcidEnd().equals(1821));
+        assertTrue(variant.getOriginalAminoAcid().equals("PM"));
+        assertTrue(variant.getFinalAminoAcid().equals("LV"));
+        assertTrue(variant.getFrameshift().equals(Boolean.FALSE));
+        assertTrue(variant.getInframe().equals(Boolean.TRUE));
+        assertTrue(variant.getId().getVariantEffect().equals("non-frameshifting indel"));
+        assertTrue(variant.getReferenceAllele().equals("CGA"));
+        assertTrue(variant.getAlternateAllele().equals("TGG"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000012.12:g.2681964_2681966delinsTGG"));
+        assertTrue(variant.getHgvsTranscript().equals("NM_001167624.2:g.5737_5739delinsTGG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001167624.2:c.5459_5461delinsTGG"));
+        assertTrue(variant.getHgvsProtein().equals("NP_001161096.2:p.Pro1820_Met1821delinsLeuVal"));
+
+    }
+
+    @Test
     public void testLocatedVariant522383386() throws Exception {
 
         LocatedVariant locatedVariant = daoBean.getLocatedVariantDAO().findById(522383386L);
