@@ -44,7 +44,7 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getGene().getId().equals(14604));
         assertTrue(variant.getReferenceAllele().equals("GA"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000001.11:g.25562853_25562854delGA"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_015627.2:c.532+137_532+138del"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_015627.2:c.533+137_533+138del"));
 
     }
 
@@ -98,8 +98,16 @@ public class AnnotateVariants38DelTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getId().getTranscript().equals("XM_006720981.1"));
         assertTrue(variant.getRefSeqGene().equals("SLC9A3R2"));
         assertTrue(variant.getHgncGene().equals("SLC9A3R2"));
-        assertTrue(variant.getLocationType().getId().equals("exon"));
+        assertTrue(variant.getLocationType().getId().equals("UTR-3"));
         assertTrue(variant.getStrand().equals("+"));
+        assertTrue(variant.getTranscriptPosition().equals(3063));
+        assertTrue(variant.getIntronExonDistance().equals(434));
+        assertTrue(variant.getId().getVariantEffect().equals("UTR-3"));
+        assertTrue(variant.getGene().getId().equals(27855));
+        assertTrue(variant.getReferenceAllele().equals("CCCCTTCCCCTC"));
+        assertTrue(variant.getHgvsGenomic().equals("NC_000016.10:g.2038418_2038429delCCCCTTCCCCTC"));
+        assertTrue(variant.getHgvsCodingSequence().equals("XM_006720981.1:c.620+434_620+445del"));
+        assertTrue(variant.getHgvsTranscript().equals("XM_006720981.1:g.3063_3074delCCCCTTCCCCTC"));
 
     }
 
