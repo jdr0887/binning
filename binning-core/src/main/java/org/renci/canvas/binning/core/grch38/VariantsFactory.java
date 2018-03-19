@@ -915,7 +915,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                 variant.setFeatureId(feature.getId());
             }
 
-            variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList));
+            Integer intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList);
+            variant.setIntronExonDistance(intronExonDistance);
 
             if (variant.getIntronExonDistance() != null && variant.getIntronExonDistance().equals(variant.getTranscriptPosition())) {
                 variant.setIntronExonDistance(null);
@@ -938,16 +939,35 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                 if (proteinRange != null && proteinRange.isOverlappedBy(transcriptMapsExonsTranscriptRange)) {
 
-                    variant.setIntronExonDistance(getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList,
-                            proteinRange, variant.getTranscriptPosition()));
+                    intronExonDistance = getIntronExonDistance(locatedVariant, transcriptMapsExons, transcriptMapsExonsList, proteinRange,
+                            variant.getTranscriptPosition());
+                    variant.setIntronExonDistance(intronExonDistance);
+
+                    Range<Integer> proteinExonIntersection = proteinRange.intersectionWith(transcriptMapsExonsTranscriptRange);
+                    Integer position = null;
 
                     switch (transcriptMapsExons.getTranscriptMaps().getStrand()) {
                         case "+":
 
-                            variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
-                                    variant.getVariantType().getId(), Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition()
-                                            + variant.getIntronExonDistance() - 1),
-                                    locatedVariant.getRef(), locatedVariant.getSeq(), variant.getIntronExonDistance()));
+                            position = Math
+                                    .abs(proteinRange.getMinimum() - variant.getTranscriptPosition() + variant.getIntronExonDistance() + 1);
+                            if (intronExonDistance < 0 && proteinExonIntersection.isAfter(transcriptPosition)) {
+                                Integer cdsLeft = position - (proteinExonIntersection.getMaximum() - proteinExonIntersection.getMinimum());
+                                Integer diff = variant.getIntronExonDistance() + cdsLeft - 1;
+                                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                                        variant.getVariantType().getId(), cdsLeft, locatedVariant.getRef(), locatedVariant.getSeq(), diff));
+                            } else if (intronExonDistance > 0 && proteinExonIntersection.isBefore(transcriptPosition)) {
+                                variant.setHgvsCodingSequence(
+                                        String.format("%s:c.*%dins%s", transcriptMapsExons.getTranscriptMaps().getTranscript().getId(),
+                                                variant.getIntronExonDistance() + 1, variant.getAlternateAllele()));
+                            } else {
+                                variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",
+                                        variant.getVariantType().getId(),
+                                        Math.abs(proteinRange.getMinimum() - variant.getTranscriptPosition()
+                                                + variant.getIntronExonDistance() - 1),
+                                        locatedVariant.getRef(), locatedVariant.getSeq(), variant.getIntronExonDistance()));
+                            }
+
                             break;
                         case "-":
                             variant.setHgvsCodingSequence(toHGVS(transcriptMapsExons.getTranscriptMaps().getTranscript().getId(), "c",

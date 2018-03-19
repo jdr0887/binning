@@ -44,7 +44,7 @@ public class AnnotateVariants38InsTest extends AbstractAnnotateVariants38Test {
         assertTrue(variant.getAlternateAllele().equals("G"));
         assertTrue(variant.getHgvsGenomic().equals("NC_000002.12:g.101006236_101006237insG"));
         assertTrue(variant.getHgvsTranscript().equals("NM_001099693.1:g.598_599insG"));
-        assertTrue(variant.getHgvsCodingSequence().equals("NM_001099693.1:c.366_367insG"));
+        assertTrue(variant.getHgvsCodingSequence().equals("NM_001099693.1:c.*146insG"));
 
     }
 
