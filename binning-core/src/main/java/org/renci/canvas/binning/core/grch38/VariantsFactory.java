@@ -472,7 +472,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 }
 
                                 variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c", variant.getVariantType().getId(),
-                                        variant.getTranscriptPosition() - proteinRange.getMinimum(), locatedVariant.getRef(),
+                                        variant.getTranscriptPosition() - proteinRange.getMinimum() + 1, locatedVariant.getRef(),
                                         locatedVariant.getSeq(), variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
 
                             } else {
@@ -1170,7 +1170,6 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                         List<Triple<Integer, AminoAcidCompound, AminoAcidCompound>> positionOriginalFinal = new LinkedList<>();
 
-                        int tmpStart = variant.getAminoAcidStart() - 1;
                         int count = 0;
                         for (Integer i = variant.getAminoAcidStart() - 1; i < originalProteinSequence.getLength(); i++) {
                             if (count == 5 || i == originalProteinSequence.getLength() - 1) {
@@ -1205,7 +1204,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                     positionOriginalFinal.get(0).getMiddle().getLongName(), positionOriginalFinal.get(0).getLeft(),
                                     positionOriginalFinal.get(0).getRight().getLongName()));
 
-                        } else if (positionOriginalFinal.size() == 2) {
+                        } else if (positionOriginalFinal.size() >= 2) {
 
                             variant.setOriginalAminoAcid(
                                     positionOriginalFinal.stream().map(a -> a.getMiddle().getBase()).collect(Collectors.joining()));
