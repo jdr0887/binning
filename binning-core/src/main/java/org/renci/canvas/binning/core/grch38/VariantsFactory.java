@@ -1026,6 +1026,10 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         variant.getFrameshift(), variant.getInframe(), variant.getReferenceAllele(),
                         transcriptMapsExons.getTranscriptMaps().getStrand());
 
+                if (aaStart.equals(0)) {
+                    aaStart = 1;
+                }
+
                 variant.setAminoAcidStart(aaStart);
 
                 if (variant.getReferenceAllele().length() == variant.getAlternateAllele().length()) {
