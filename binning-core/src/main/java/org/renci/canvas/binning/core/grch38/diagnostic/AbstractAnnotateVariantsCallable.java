@@ -1,7 +1,7 @@
 package org.renci.canvas.binning.core.grch38.diagnostic;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,11 +64,9 @@ public abstract class AbstractAnnotateVariantsCallable implements Callable<Void>
                         Variants_80_4_DAO dao = daoBean.getVariants_80_4_DAO();
                         try {
                             dao.deleteByLocatedVariantId(locatedVariant.getId());
-                            Collection<Variants_80_4> variants = vFactory.annotateVariant(locatedVariant, refseqVersion, genomeRef.getId(),
+                            Set<Variants_80_4> variants = vFactory.annotateVariant(locatedVariant, refseqVersion, genomeRef.getId(),
                                     daoBean);
-                            for (Variants_80_4 v : variants) {
-                                dao.save(v);
-                            }
+                            dao.save(variants);
                         } catch (Exception e) {
                             logger.error(e.getMessage(), e);
                         }
