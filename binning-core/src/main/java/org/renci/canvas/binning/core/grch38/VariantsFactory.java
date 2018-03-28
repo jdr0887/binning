@@ -444,11 +444,23 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                 leftDistance = currentContigRange.getMaximum() - locatedVariant.getPosition();
 
                                 if (Math.abs(leftDistance) < Math.abs(rightDistance)) {
+
                                     variant.setTranscriptPosition(currentTranscriptRange.getMinimum());
                                     variant.setIntronExonDistance(leftDistance);
+
+                                    variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c",
+                                            variant.getVariantType().getId(), variant.getTranscriptPosition() - proteinRange.getMinimum(),
+                                            locatedVariant.getRef(), locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
+
                                 } else {
                                     variant.setTranscriptPosition(previousTranscriptRange.getMaximum());
                                     variant.setIntronExonDistance(rightDistance);
+
+                                    variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c",
+                                            variant.getVariantType().getId(),
+                                            variant.getTranscriptPosition() - proteinRange.getMinimum() + 1, locatedVariant.getRef(),
+                                            locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
+
                                 }
 
                                 if (Math.abs(variant.getIntronExonDistance()) <= 2) {
@@ -456,6 +468,11 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                     variant.setVariantEffect(
                                             allVariantEffects.stream().filter(a -> a.getId().equals("splice-site")).findFirst().get());
                                     variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+
+                                    variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c",
+                                            variant.getVariantType().getId(),
+                                            variant.getTranscriptPosition() - proteinRange.getMinimum() + 1, locatedVariant.getRef(),
+                                            locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
 
                                     if (variant.getTranscriptPosition() > proteinRange.getMaximum()) {
                                         variant.setVariantEffect(allVariantEffects.stream()
@@ -467,13 +484,15 @@ public class VariantsFactory extends AbstractVariantsFactory {
                                         variant.setVariantEffect(allVariantEffects.stream()
                                                 .filter(a -> a.getId().equals("splice-site-UTR-5")).findFirst().get());
                                         variant.getId().setVariantEffect(variant.getVariantEffect().getId());
+
+                                        variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c",
+                                                variant.getVariantType().getId(),
+                                                variant.getTranscriptPosition() - proteinRange.getMinimum(), locatedVariant.getRef(),
+                                                locatedVariant.getSeq(), variant.getIntronExonDistance(), true));
+
                                     }
 
                                 }
-
-                                variant.setHgvsCodingSequence(toHGVS(tMap.getTranscript().getId(), "c", variant.getVariantType().getId(),
-                                        variant.getTranscriptPosition() - proteinRange.getMinimum() + 1, locatedVariant.getRef(),
-                                        locatedVariant.getSeq(), variant.getIntronExonDistance(), "-".equals(tMap.getStrand())));
 
                             } else {
 
