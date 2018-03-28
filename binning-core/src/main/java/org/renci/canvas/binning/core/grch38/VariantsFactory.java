@@ -1171,7 +1171,8 @@ public class VariantsFactory extends AbstractVariantsFactory {
                         List<Triple<Integer, AminoAcidCompound, AminoAcidCompound>> positionOriginalFinal = new LinkedList<>();
 
                         int count = 0;
-                        for (Integer i = variant.getAminoAcidStart() - 1; i < originalProteinSequence.getLength(); i++) {
+                        Integer start = variant.getAminoAcidStart() > 1 ? variant.getAminoAcidStart() - 1 : variant.getAminoAcidStart();
+                        for (Integer i = start; i < originalProteinSequence.getLength(); i++) {
                             if (count == 5 || i == originalProteinSequence.getLength() - 1) {
                                 break;
                             }
@@ -1533,7 +1534,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     List<AminoAcidCompound> aaCompounds = new LinkedList<>();
 
-                    int tmpStart = variant.getAminoAcidStart() - 1;
+                    int tmpStart = variant.getAminoAcidStart() > 1 ? variant.getAminoAcidStart() - 1 : variant.getAminoAcidStart();
                     AminoAcidCompound tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
                     AminoAcidCompound tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
                     int count = 0;
@@ -1570,7 +1571,7 @@ public class VariantsFactory extends AbstractVariantsFactory {
 
                     List<AminoAcidCompound> aaCompounds = new LinkedList<>();
 
-                    int tmpStart = variant.getAminoAcidStart() - 1;
+                    int tmpStart = variant.getAminoAcidStart() > 1 ? variant.getAminoAcidStart() - 1 : variant.getAminoAcidStart();
                     AminoAcidCompound tmpOriginalAACompound = originalProteinSequence.getCompoundAt(tmpStart);
                     AminoAcidCompound tmpFinalAACompound = finalProteinSequence.getCompoundAt(tmpStart);
                     while (tmpOriginalAACompound.getBase().equals(tmpFinalAACompound.getBase())) {
