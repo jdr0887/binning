@@ -279,35 +279,36 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
                             LocatedVariant existingLiftOverLocatedVariant = canonicalAllele.getLocatedVariants().stream()
                                     .filter(a -> a.getGenomeRef().getId().equals(getLiftOverGenomeRef().getId())).findFirst().orElse(null);
 
-                            if (existingLiftOverLocatedVariant == null) {
+                            if (existingLiftOverLocatedVariant != null) {
+                                // it does, so no need to lift over
+                                return;
+                            }
 
-                                LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
-                                if (liftOverLocatedVariant != null) {
+                            LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
+                            if (liftOverLocatedVariant == null) {
+                                // lift over doesn't always find the cooresponding located variant
+                                return;
+                            }
 
-                                    if (liftOverLocatedVariant.getVariantType().getId().equals("ins")) {
-                                        // could have had a deletion in ref
-                                        liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
-                                    }
+                            logger.info("liftOver: {}", liftOverLocatedVariant.toString());
 
-                                    List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
-                                            .findByExample(liftOverLocatedVariant);
+                            if (liftOverLocatedVariant.getVariantType().getId().equals("ins")) {
+                                // could have had a deletion in ref
+                                liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
+                            }
 
-                                    if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                                        liftOverLocatedVariant = foundLocatedVariants.get(0);
-                                    } else {
-                                        liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
-                                    }
-                                    logger.info("liftOver: {}", liftOverLocatedVariant.toString());
-                                    Set<LocatedVariant> caLocatedVariantSet = canonicalAllele.getLocatedVariants();
+                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                    .findByExample(liftOverLocatedVariant);
 
-                                    if (!caLocatedVariantSet.contains(liftOverLocatedVariant)) {
-                                        caLocatedVariantSet.add(liftOverLocatedVariant);
-                                    }
+                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                liftOverLocatedVariant = foundLocatedVariants.get(0);
+                            } else {
+                                liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
+                            }
 
-                                    daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
-
-                                }
-
+                            if (!canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
+                                canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                                daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
                             }
 
                         } catch (Exception e) {
