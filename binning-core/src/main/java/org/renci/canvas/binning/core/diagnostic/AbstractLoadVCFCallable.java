@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -182,7 +182,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
             final List<GenomeRefSeq> allGenomeRefSeqs = daoBean.getGenomeRefSeqDAO().findByGenomeRefIdAndSeqType(genomeRef.getId(),
                     "Chromosome");
 
-            final Set<LocatedVariant> locatedVariantSet = new HashSet<>();
+            final Set<LocatedVariant> locatedVariantSet = ConcurrentHashMap.newKeySet();
 
             for (String sampleName : variantContext2SampleNameMap.keySet()) {
 
@@ -245,7 +245,7 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                     }
                     es.shutdown();
-                    if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
+                    if (!es.awaitTermination(2L, TimeUnit.HOURS)) {
                         es.shutdownNow();
                     }
 
@@ -253,64 +253,75 @@ public abstract class AbstractLoadVCFCallable implements Callable<Void> {
 
                 logger.info("locatedVariantSet.size(): {}", locatedVariantSet.size());
 
+                ExecutorService es = Executors.newFixedThreadPool(4);
+
                 for (LocatedVariant locatedVariant : locatedVariantSet) {
 
-                    try {
+                    es.submit(() -> {
 
-                        logger.info(locatedVariant.toString());
+                        try {
 
-                        CanonicalAllele canonicalAllele = null;
-                        // first try to find CanonicalAllele by LocatedVariant
-                        List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
-                                .findByLocatedVariantId(locatedVariant.getId());
-                        if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
-                            canonicalAllele = foundCanonicalAlleles.get(0);
-                        } else {
-                            canonicalAllele = new CanonicalAllele();
-                            daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
-                            canonicalAllele.getLocatedVariants().add(locatedVariant);
-                            daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                            logger.info(locatedVariant.toString());
+
+                            CanonicalAllele canonicalAllele = null;
+                            // first try to find CanonicalAllele by LocatedVariant
+                            List<CanonicalAllele> foundCanonicalAlleles = daoBean.getCanonicalAlleleDAO()
+                                    .findByLocatedVariantId(locatedVariant.getId());
+                            if (CollectionUtils.isNotEmpty(foundCanonicalAlleles)) {
+                                canonicalAllele = foundCanonicalAlleles.get(0);
+                            } else {
+                                canonicalAllele = new CanonicalAllele();
+                                daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                                canonicalAllele.getLocatedVariants().add(locatedVariant);
+                                daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                            }
+
+                            // does canonical allele have liftOver LocatedVariant?
+                            LocatedVariant existingLiftOverLocatedVariant = canonicalAllele.getLocatedVariants().stream()
+                                    .filter(a -> a.getGenomeRef().getId().equals(getLiftOverGenomeRef().getId())).findFirst().orElse(null);
+
+                            if (existingLiftOverLocatedVariant != null) {
+                                // it does, so no need to lift over
+                                return;
+                            }
+
+                            LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
+                            if (liftOverLocatedVariant == null) {
+                                // lift over doesn't always find the cooresponding located variant
+                                return;
+                            }
+
+                            logger.info("liftOver: {}", liftOverLocatedVariant.toString());
+
+                            if (liftOverLocatedVariant.getVariantType().getId().equals("ins")) {
+                                // could have had a deletion in ref
+                                liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
+                            }
+
+                            List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO()
+                                    .findByExample(liftOverLocatedVariant);
+
+                            if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
+                                liftOverLocatedVariant = foundLocatedVariants.get(0);
+                            } else {
+                                liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
+                            }
+
+                            if (!canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
+                                canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
+                                daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
+                            }
+
+                        } catch (Exception e) {
+                            logger.error(e.getMessage(), e);
+                            throw new FlowableException(e.getMessage(), e);
                         }
 
-                        // does canonical allele have liftOver LocatedVariant?
-                        LocatedVariant existingLiftOverLocatedVariant = canonicalAllele.getLocatedVariants().stream()
-                                .filter(a -> a.getGenomeRef().getId().equals(getLiftOverGenomeRef().getId())).findFirst().orElse(null);
-
-                        if (existingLiftOverLocatedVariant != null) {
-                            // it does, so no need to lift over
-                            continue;
-                        }
-
-                        LocatedVariant liftOverLocatedVariant = liftOver(locatedVariant);
-                        if (liftOverLocatedVariant == null) {
-                            // lift over doesn't always find the cooresponding located variant
-                            continue;
-                        }
-
-                        logger.info("liftOver: {}", liftOverLocatedVariant.toString());
-
-                        if (liftOverLocatedVariant.getVariantType().getId().equals("ins")) {
-                            // could have had a deletion in ref
-                            liftOverLocatedVariant.setEndPosition(liftOverLocatedVariant.getPosition() + 1);
-                        }
-
-                        List<LocatedVariant> foundLocatedVariants = daoBean.getLocatedVariantDAO().findByExample(liftOverLocatedVariant);
-
-                        if (CollectionUtils.isNotEmpty(foundLocatedVariants)) {
-                            liftOverLocatedVariant = foundLocatedVariants.get(0);
-                        } else {
-                            liftOverLocatedVariant.setId(daoBean.getLocatedVariantDAO().save(liftOverLocatedVariant));
-                        }
-
-                        if (!canonicalAllele.getLocatedVariants().contains(liftOverLocatedVariant)) {
-                            canonicalAllele.getLocatedVariants().add(liftOverLocatedVariant);
-                            daoBean.getCanonicalAlleleDAO().save(canonicalAllele);
-                        }
-
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                        throw new FlowableException(e.getMessage(), e);
-                    }
+                    });
+                }
+                es.shutdown();
+                if (!es.awaitTermination(1L, TimeUnit.HOURS)) {
+                    es.shutdownNow();
                 }
 
                 VariantSetLoad variantSetLoad = new VariantSetLoad();
